@@ -1,0 +1,126 @@
+---
+import '../styles/global.css';
+import { languages, ui, type Lang } from '../i18n/ui';
+import ParticleField from '../components/ParticleField.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  lang: Lang;
+  /** Chemin equivalent dans l'autre langue, pour le switch (ex: "/projects/dgc-system"). */
+  altPath?: string;
+}
+const { title, description = '', lang, altPath = '' } = Astro.props;
+
+const other: Lang = lang === 'fr' ? 'en' : 'fr';
+const t = ui[lang];
+// Sur la home : ancre vers la section contact (qui se deplie). Ailleurs : retour home + ancre.
+const contactHref = `/${lang}/#contact`;
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {/* Icone d'onglet = la photo de profil GitHub (Yuno15-bb), declinee en PNG.
+        Le SVG reste en dernier recours pour les navigateurs qui le preferent ;
+        les PNG sont listes AVANT, donc choisis en priorite. */}
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="alternate" hreflang="fr" href={`/fr${altPath}`} />
+    <link rel="alternate" hreflang="en" href={`/en${altPath}`} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+  </head>
+  <body>
+    <ParticleField />
+    <a class="skip-link" href="#main">{t['skip']}</a>
+    <header class="container site-head">
+      <a href={`/${lang}/`} class="wordmark" aria-label="Accueil / Home">Yuno<span class="accent">15</span></a>
+      <nav class="site-nav" aria-label={lang === 'fr' ? 'Navigation principale' : 'Main navigation'}>
+        {/* Identité GitHub : photo de profil ronde + marque, un seul lien. */}
+        <a class="gh" href="https://github.com/Yuno15-bb" target="_blank" rel="me noopener noreferrer"
+           aria-label="GitHub — Yuno15-bb" title="GitHub — @Yuno15-bb">
+          <img class="gh__pic" src="/avatar.jpg" width="30" height="30" alt="" loading="lazy" decoding="async" />
+          <svg class="gh__mark" viewBox="0 0 16 16" width="17" height="17" aria-hidden="true" fill="currentColor">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+          </svg>
+        </a>
+        <a class="eyebrow nav-link" href={contactHref}>{t['nav.contact']}</a>
+        <a class="lang-switch eyebrow" href={`/${other}${altPath}`} hreflang={other} rel="alternate">
+          {languages[other]}
+        </a>
+      </nav>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="container site-foot eyebrow">
+      <span>© {new Date().getFullYear()} Yuno15</span>
+      <span>Astro · direction orage crépuscule</span>
+    </footer>
+
+    <style>
+      .site-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        padding-block: var(--space-4);
+      }
+      .wordmark {
+        font-family: var(--font-display);
+        font-weight: 600;
+        font-size: var(--fs-400);
+        letter-spacing: var(--tracking-tight);
+      }
+      .site-nav { display: flex; align-items: center; gap: var(--space-4); }
+
+      /* Photo de profil ronde liée au logo GitHub — vitre légère assortie au reste. */
+      .gh {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 4px 10px 4px 4px;
+        border-radius: 999px;
+        color: var(--c-fg);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: linear-gradient(158deg, rgba(255,255,255,0.075), rgba(255,255,255,0.02));
+        -webkit-backdrop-filter: blur(14px) saturate(1.4);
+        backdrop-filter: blur(14px) saturate(1.4);
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.16), 0 14px 30px -24px rgba(0,0,0,0.8);
+        transition: border-color var(--dur-trans) var(--ease-out),
+                    transform var(--dur-trans) var(--ease-out);
+      }
+      .gh:hover, .gh:focus-visible {
+        border-color: color-mix(in srgb, var(--c-ember) 55%, transparent);
+        transform: translateY(-1px);
+      }
+      .gh__pic {
+        width: 30px; height: 30px; border-radius: 50%; display: block;
+        object-fit: cover; border: 1px solid rgba(255,255,255,0.2);
+      }
+      .gh__mark { opacity: 0.9; flex: none; }
+      .gh:hover .gh__mark { color: var(--c-ember); opacity: 1; }
+      @media (prefers-reduced-motion: reduce) { .gh:hover { transform: none; } }
+      .nav-link { border-bottom: 1px solid transparent; }
+      .nav-link:hover { color: var(--c-accent); border-color: var(--c-accent); }
+      .lang-switch { border-bottom: 1px solid transparent; }
+      .lang-switch:hover { color: var(--c-accent); border-color: var(--c-accent); }
+      main { min-height: 70vh; }
+      .site-foot {
+        display: flex;
+        justify-content: space-between;
+        gap: var(--space-3);
+        flex-wrap: wrap;
+        padding-block: var(--space-8) var(--space-6);
+        margin-top: var(--space-12);
+        border-top: 1px solid var(--c-line);
+      }
+    </style>
+  </body>
+</html>

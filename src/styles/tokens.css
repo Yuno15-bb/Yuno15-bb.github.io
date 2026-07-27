@@ -1,0 +1,79 @@
+/* ============================================================
+   Design tokens — direction « CHAMP SPATIAL »
+   (refonte 2026-07-27 — remplace « Orage crepuscule »)
+
+   Style suisse (Muller-Brockmann) croise creative coding generatif :
+   grille et filets pour la structure, vide actif, typo serif en image,
+   et pour SEULE texture un champ de particules (ParticleField.astro).
+
+   Regle qui tient toute la direction : RIEN ne recouvre le champ.
+   Pas de voile, pas d'aplat, pas de fausse vitre — c'est ce qui rend les
+   surfaces reellement traversantes au lieu de blocs pleins deguises.
+
+   Source de verite unique : ne pas coder de valeurs en dur ailleurs.
+   ============================================================ */
+:root {
+  /* --- Couleur : nuit + un seul accent chaud --- */
+  --c-bg: #0a0b14;            /* la nuit du champ */
+  --c-surface: #12141f;
+  --c-line: #262a3d;          /* filet DECORATIF (1.4:1) — jamais sur un controle */
+  --c-line-ui: #5e6482;       /* filet PORTEUR DE SENS : 3.38:1 sur la nuit (WCAG 2.2) */
+  --c-fg: #e9e7f2;            /* blanc bleute */
+  --c-muted: #9698b5;
+
+  /* Un seul accent, chaud, sur toute la nuit : CTA, eyebrow, focus. */
+  --c-ember: #d8804a;
+
+  --c-accent: var(--c-ember);
+  --c-accent-ink: #1a1020;
+  --c-focus: var(--c-ember);
+
+  /* --- Typographie : serif display (voix) + grotesque (corps) --- */
+  --font-display: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+
+  --fs-100: 0.8rem;
+  --fs-200: 1rem;
+  --fs-300: 1.25rem;
+  --fs-400: 1.563rem;
+  --fs-500: 1.953rem;
+  --fs-600: 2.441rem;
+  --fs-700: 3.5rem;
+  --fs-800: 4.6rem;
+  --fs-900: 6rem;
+  --lh-tight: 1.02;
+  --lh-body: 1.6;
+  --tracking-tight: -0.01em;
+
+  /* --- Grille & espace (systeme 8px) --- */
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2rem;
+  --space-6: 3rem;
+  --space-8: 4rem;
+  --space-12: 6rem;
+  --grid-cols: 12;
+  --grid-gutter: var(--space-3);
+  --measure: 68ch;
+  --container: 76rem;
+
+  --radius: 0px;
+
+  /* --- Motion (tokens partages avec /motion et /gsap) --- */
+  --dur-micro: 180ms;
+  --dur-trans: 420ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+}
+
+/* ============================================================
+   Direction « CHAMP SPATIAL » — style suisse (Muller-Brockmann)
+   croise creative coding generatif.
+   Le fond n'est plus un aplat ni un degrade : c'est le champ de particules
+   (ParticleField.astro). Aucun voile ne le recouvre — c'est ce qui rend les
+   panneaux REELLEMENT transparents au lieu de faux verre sur fond opaque.
+   Les surfaces ne sont plus des « cartes » : filet 1px + vide + typo.
+   ============================================================ */
+

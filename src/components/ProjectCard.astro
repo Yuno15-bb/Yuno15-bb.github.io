@@ -1,0 +1,178 @@
+---
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  slug: string;
+  titre: string;
+  pitch: string;
+  audience: string[];
+  annee: number;
+  cover?: string;      // chemin image dans /public — active la carte "media"
+  cover2?: string;     // seconde maquette, posee A COTE de la premiere (diptyque)
+  tilt?: number;       // rotationFactor du tilt 3D (0 = pas de tilt)
+}
+const { lang, slug, titre, pitch, audience, annee, cover, cover2, tilt = 0 } = Astro.props;
+const tiltAttrs = tilt > 0 ? { 'data-tilt': String(tilt), 'data-tilt-reverse': '' } : {};
+---
+<a
+  class:list={['card', { 'card--media': cover }]}
+  href={`/${lang}/projects/${slug}`}
+  data-audience={audience.join(' ')}
+  {...tiltAttrs}
+>
+  {cover && (
+    <div class="card__cover">
+      <img class="shot shot--phone" src={cover} alt="" loading="lazy" decoding="async" width="300" height="627" />
+      {cover2 && <img class="shot shot--office" src={cover2} alt="" loading="lazy" decoding="async" width="720" height="608" />}
+    </div>
+  )}
+  <div class="card__meta eyebrow">
+    <span>{annee}</span>
+    <span>{audience.join(' · ')}</span>
+  </div>
+  <h3 class="card__title">{titre}</h3>
+  <p class="card__pitch">{pitch}</p>
+  <span class="card__go" aria-hidden="true">→</span>
+
+  <style>
+    .card {
+      position: relative;
+      display: grid;
+      gap: var(--space-2);
+      /* padding CONSTANT : plus aucun décalage du texte au survol */
+      padding: var(--space-4) var(--space-3) var(--space-4) 0;
+      border-top: 2px solid var(--c-fg);
+      transition: border-color var(--dur-trans) var(--ease-out);
+    }
+    /* le contenu passe AU-DESSUS de la vitre */
+    .card > * { position: relative; z-index: 1; }
+
+    /* Direction « champ spatial » : pas de vitre au survol. Une nappe QUASI
+       INEXISTANTE (5 % de la nuit) + un flou leger : au survol on doit sentir la
+       surface, pas la voir. Monter cette valeur = retomber dans le bloc plein. */
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0 calc(var(--space-3) * -1) 0 calc(var(--space-3) * -1);
+      z-index: 0;
+      background: color-mix(in srgb, var(--c-bg) 5%, transparent);
+      -webkit-backdrop-filter: blur(5px) saturate(1.1);
+      backdrop-filter: blur(5px) saturate(1.1);
+      border-bottom: 1px solid var(--c-line);
+      opacity: 0;
+      transition: opacity var(--dur-trans) var(--ease-out);
+    }
+    .card:hover::before,
+    .card:focus-visible::before { opacity: 1; }
+
+    /* Le filet du haut passe a l'accent : le seul signal de survol necessaire. */
+    .card:hover, .card:focus-visible { border-color: var(--c-ember); }
+    .card:hover .card__go { color: var(--c-ember); transform: translateX(6px); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card::before { transition: opacity 1ms; }
+      .card:hover .card__go { transform: none; }
+    }
+    .card__meta { display: flex; justify-content: space-between; color: var(--c-muted); }
+    .card__title {
+      font-size: clamp(var(--fs-500), 3.5vw, var(--fs-600));
+    }
+    .card__pitch { color: var(--c-muted); }
+    .card__go {
+      justify-self: end;
+      font-size: var(--fs-400);
+      color: var(--c-ember);
+      transition: transform var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
+    }
+
+    /* ---- Carte "media" : image de couverture en tête ---- */
+    .card--media { padding-top: var(--space-3); }
+    /* Vignette VERTICALE : la maquette telephone, en entier.
+       Ni cadre ni fond — le PNG porte sa propre transparence (canal alpha), donc
+       le champ de particules passe autour du telephone sans aucun artifice. */
+    .card__cover {
+      position: relative; z-index: 1;
+      display: flex;
+      align-items: flex-start;
+      /* Les deux maquettes doivent respirer : a --space-2 elles se lisaient comme
+         une seule image coupee. --space-4 en fait deux objets distincts. */
+      gap: var(--space-4);
+      justify-content: flex-start;
+      /* léger décrochage 3D : la vignette avance vers l'utilisateur pendant le tilt */
+      transform: translateZ(var(--cover-z, 0));
+    }
+    .shot {
+      display: block;
+      /* Vignette DEUX FOIS plus petite, et cadree sur la MOITIE SUPERIEURE du
+         telephone : c'est la qu'est l'information (en-tete, mission en cours,
+         carte). Le bas — actions rapides, barre d'onglets — n'apporte rien a
+         cette echelle.
+         Le PNG source fait 900x1878 ; sa moitie haute donne un rapport 900/939,
+         d'ou l'aspect-ratio ci-dessous. `cover` + `object-position: top` rogne
+         donc par le BAS, sans jamais deformer. */
+      height: auto;
+      object-fit: cover;
+      object-position: top center;
+      /* Le rognage tombait en plein milieu de la carte satellite : une coupe nette
+         se lit comme une image cassee, pas comme un cadrage. Ce degrade fait
+         disparaitre le bas dans la nuit — la coupe devient un choix. */
+      -webkit-mask-image: linear-gradient(to bottom, #000 68%, transparent 100%);
+      mask-image: linear-gradient(to bottom, #000 68%, transparent 100%);
+      transition: transform var(--dur-trans) var(--ease-out);
+    }
+    /* Telephone : portrait, moitie haute (rapport 900/939). */
+    .shot--phone { width: clamp(112px, 11vw, 146px); aspect-ratio: 300 / 313; }
+    /* Bureau : paysage, moitie haute aussi (2160/911) — les deux maquettes
+       partagent donc la meme hauteur et la rangee s'aligne toute seule. */
+    .shot--office { width: clamp(266px, 26vw, 346px); aspect-ratio: 720 / 304; }
+    @media (max-width: 700px) {
+      /* Sous 700px la rangee etoufferait : on ne garde que le telephone. */
+      .shot--office { display: none; }
+    }
+    .card:hover .shot,
+    .card:focus-visible .shot { transform: scale(1.04); }
+
+    /* ---- Tilt 3D (fidèle à motion-primitives : rotationFactor + reverse) ---- */
+    .card[data-tilt] {
+      transform: perspective(900px)
+                 rotateX(var(--rx, 0deg))
+                 rotateY(var(--ry, 0deg));
+      transform-style: preserve-3d;
+      transition: transform 0.32s var(--ease-out);
+      will-change: transform;
+    }
+    .card[data-tilt]:hover { --cover-z: 8px; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card[data-tilt] { transform: none; transition: none; }
+      .shot { transition: none; }
+      .card:hover .card__cover img { transform: none; }
+    }
+  </style>
+</a>
+
+<script>
+  // Tilt 3D vanilla — équivalent de <Tilt rotationFactor isRevese> (motion-primitives),
+  // sans framer-motion. Le pointeur incline la carte ; "reverse" inverse le sens.
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduce) {
+    document.querySelectorAll<HTMLElement>('[data-tilt]').forEach((el) => {
+      const factor = parseFloat(el.dataset.tilt || '8') || 8;
+      const rev = el.hasAttribute('data-tilt-reverse') ? -1 : 1;
+      const set = (rx: number, ry: number) => {
+        el.style.setProperty('--rx', rx.toFixed(2) + 'deg');
+        el.style.setProperty('--ry', ry.toFixed(2) + 'deg');
+      };
+      el.addEventListener('pointermove', (e) => {
+        if (e.pointerType === 'touch') return; // pas de tilt au doigt
+        const r = el.getBoundingClientRect();
+        const px = (e.clientX - r.left) / r.width - 0.5;   // -0.5 .. 0.5
+        const py = (e.clientY - r.top) / r.height - 0.5;
+        // bord = ±factor°. rotateX suit l'axe vertical (inversé), rotateY l'axe horizontal.
+        set(rev * -py * 2 * factor, rev * px * 2 * factor);
+      });
+      el.addEventListener('pointerleave', () => set(0, 0));
+    });
+  }
+</script>

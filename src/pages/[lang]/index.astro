@@ -1,0 +1,424 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { languages, ui, type Lang } from '../../i18n/ui';
+
+export async function getStaticPaths() {
+  return (Object.keys(languages) as Lang[]).map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const t = ui[lang];
+
+const all = await getCollection('projects');
+const projects = all
+  .filter((p) => p.id.startsWith(`${lang}/`))
+  .sort((a, b) => a.data.ordre - b.data.ordre);
+
+// Pastille "Créatif / XR" retirée pour l'instant (aucun projet XR publié).
+// La réactiver ici dès qu'un MDX porte `audience: [xr]`.
+const filters = [
+  { key: 'all', label: t['home.filter.all'] },
+  { key: 'business', label: t['home.filter.business'] },
+] as const;
+const email = 'sashapeellaert@gmail.com';
+const mail = `mailto:${email}`;
+---
+<Base title={`Yuno15 — ${t['site.role']}`} description={t['home.intro']} lang={lang} altPath="/">
+  {/* Garde progressive : n'arme l'intro que si JS + pas de reduced-motion. Failsafe 1.6s. */}
+  <script is:inline>
+    (function () {
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var el = document.documentElement;
+      el.setAttribute('data-hero', 'armed');
+      setTimeout(function () {
+        if (el.getAttribute('data-hero') === 'armed') el.setAttribute('data-hero', 'done');
+      }, 1600);
+    })();
+  </script>
+
+  <section class="hero" id="hero">
+    <div class="intro-wipe" aria-hidden="true"></div>
+    <div class="container hero__inner">
+      <div class="hero__blocks" aria-hidden="true">
+        <span class="hero__block"></span>
+        <span class="hero__block"></span>
+        <span class="hero__block"></span>
+      </div>
+      {/* Le bloc de texte repose sur une vitre (liquid glass) : elle floute le fond WebGL
+          derrière elle → lisibilité + profondeur, même langage que les cartes projet. */}
+      <div class="hero__panel">
+        <p class="hero__eyebrow anim-in">{t['site.role']}</p>
+        <h1 class="anim-in" id="hero-title">{t['home.intro']}</h1>
+        <p class="hero__lead anim-in">{t['home.lead']}</p>
+        <a class="btn hero__cta anim-in" href={mail}>{t['cta.contact']} →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="container work" aria-labelledby="work-title">
+    <div class="work__head">
+      <h2 id="work-title">{t['home.work.title']}</h2>
+      <div class="filter" role="group" aria-label={t['home.filter.label']}>
+        {filters.map((f, i) => (
+          <button class="filter__btn" type="button" data-filter={f.key} aria-pressed={i === 0 ? 'true' : 'false'}>
+            {f.label}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <ul role="list" class="grid work__grid" id="project-grid">
+      {projects.map((p) => (
+        <li class="work__item" data-audience={p.data.audience.join(' ')}>
+          <ProjectCard
+            lang={lang}
+            slug={p.id.split('/')[1]}
+            titre={p.data.titre}
+            pitch={p.data.pitch}
+            audience={p.data.audience}
+            annee={p.data.annee}
+            cover={p.data.cover}
+            cover2={p.data.cover2}
+            tilt={p.data.cover ? 2.5 : 0}
+          />
+        </li>
+      ))}
+    </ul>
+    <p class="empty-state" id="empty-state" hidden>{t['home.empty']}</p>
+  </section>
+
+  <section class="container contact" aria-labelledby="contact-title" id="contact">
+    <h2 id="contact-title">{t['home.contact.title']}</h2>
+    <p class="contact__body">{t['home.contact.body']}</p>
+
+    {/* Panneau qui se deplie reellement (accordeon accessible), au lieu d'un mailto muet. */}
+    <button
+      class="btn btn--primary"
+      type="button"
+      id="contact-toggle"
+      aria-expanded="false"
+      aria-controls="contact-panel"
+    >
+      <span data-label-open>{t['cta.contact']}</span>
+      <span class="contact__chev" aria-hidden="true">▾</span>
+    </button>
+
+    <div class="contact__panel" id="contact-panel" hidden>
+      <div class="contact__inner">
+        <p class="eyebrow">{t['contact.email']}</p>
+        <div class="contact__row">
+          <a class="contact__mail" href={mail}>{email}</a>
+          <button
+            class="btn contact__copy"
+            type="button"
+            id="contact-copy"
+            data-copy={email}
+            data-copied={t['contact.copied']}
+          >
+            {t['contact.copy']}
+          </button>
+        </div>
+        <p class="contact__status eyebrow" id="contact-status" role="status" aria-live="polite"></p>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    /* Hero — direction « champ spatial » : AUCUNE boite. Le texte pose
+       directement sur le champ de particules, tenu par un filet et du vide.
+       C'est la mise en page qui porte, plus un contenant. */
+    .hero { position: relative; margin-bottom: var(--space-12); }
+    .hero__inner { position: relative; padding-block: var(--space-8) var(--space-12); }
+
+    .hero__panel {
+      position: relative;
+      display: grid;
+      justify-items: start;
+      max-width: 62ch;
+      /* Filet de gauche : la seule « structure ». Reprend la discipline suisse
+         (un trait qui aligne la colonne) au lieu d'une carte en verre. */
+      padding-left: var(--space-4);
+      border-left: 1px solid var(--c-line);
+    }
+    @media (max-width: 720px) {
+      .hero__panel { padding-left: var(--space-3); }
+    }
+    .hero__eyebrow {
+      font-family: var(--font-mono);
+      font-size: var(--fs-100);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--c-ember);
+    }
+    /* Type-as-image : le titre EST la composition. Plus rien ne le contient. */
+    .hero h1 {
+      font-size: clamp(var(--fs-500), 3.6vw, var(--fs-700));
+      max-width: 20ch;
+      margin-top: var(--space-3);
+      color: var(--c-fg);
+    }
+    .hero__lead {
+      color: var(--c-muted);
+      font-size: var(--fs-200);
+      line-height: 1.65;
+      margin-top: var(--space-3);
+      max-width: 46ch;
+    }
+    .hero__cta {
+      margin-top: var(--space-6);
+      background: var(--c-ember); color: var(--c-accent-ink); border-color: var(--c-ember);
+      font-weight: 600;
+    }
+    .hero__cta:hover { background: transparent; color: var(--c-ember); border-color: var(--c-ember); }
+
+    /* Wipe d'intro : voile clair sur le champ orage. Cachee par defaut (no-JS safe). */
+    .intro-wipe {
+      position: absolute; inset: 0; z-index: 5;
+      background: var(--c-fg);
+      transform: scaleY(0); transform-origin: top;
+      pointer-events: none;
+    }
+    /* Blocs geometriques (nod motion-design), decoratifs. */
+    .hero__blocks {
+      position: absolute; top: var(--space-6); right: 0; z-index: 1;
+      display: flex; gap: var(--space-1); pointer-events: none;
+    }
+    .hero__block { width: 24px; height: 24px; background: var(--c-ember); }
+    .hero__block:nth-child(2) { background: transparent; border: 1px solid var(--c-line-ui); }
+    .hero__block:nth-child(3) { background: var(--c-fg); }
+    @media (max-width: 720px) { .hero__blocks { display: none; } }
+
+    /* Pre-masquage anti-flash : uniquement quand l'intro est armee. */
+    :global(:root[data-hero='armed']) .anim-in { opacity: 0; }
+
+    .work__head {
+      display: flex; align-items: end; justify-content: space-between;
+      gap: var(--space-3); flex-wrap: wrap;
+      padding-bottom: var(--space-4); margin-bottom: var(--space-4);
+      border-bottom: 1px solid var(--c-line);
+    }
+    .work__grid { row-gap: var(--space-4); }
+    /* span en CSS (pas inline) : Flip clearProps ne doit rien casser au layout */
+    .work__item { grid-column: span 6; }
+
+    /* Section contact resserrée : elle ne doit pas peser autant qu'une section de projets. */
+    .contact {
+      margin-top: var(--space-8);
+      display: grid; gap: var(--space-2); justify-items: start;
+    }
+    .contact h2 { font-size: clamp(var(--fs-300), 2vw, var(--fs-500)); }
+    .contact__body {
+      color: var(--c-muted);
+      font-size: var(--fs-200);
+      max-width: 48ch;
+    }
+    .contact .btn { margin-top: var(--space-1); }
+    .contact__chev { transition: transform var(--dur-micro) var(--ease-out); }
+    #contact-toggle[aria-expanded='true'] .contact__chev { transform: rotate(180deg); }
+
+    /* Panneau depliant : hauteur animee par GSAP, mais utilisable sans JS (hidden retire). */
+    .contact__panel { overflow: hidden; width: 100%; }
+    .contact__inner {
+      display: grid; gap: var(--space-2);
+      padding: var(--space-4);
+      border: 1px solid var(--c-line);
+      border-left: 2px solid var(--c-ember);
+      background: var(--c-surface);
+      max-width: 34rem;
+    }
+    .contact__row { display: flex; align-items: center; gap: var(--space-2); flex-wrap: wrap; }
+    .contact__mail {
+      font-family: var(--font-mono);
+      font-size: var(--fs-300);
+      color: var(--c-fg);
+      border-bottom: 1px solid var(--c-line);
+    }
+    .contact__mail:hover { color: var(--c-ember); border-color: var(--c-ember); }
+    .contact__copy { padding: 0.45em 0.9em; }
+    .contact__status { color: var(--c-ember); min-height: 1.2em; }
+
+    @media (max-width: 720px) {
+      .work__grid > li { grid-column: 1 / -1 !important; }
+    }
+  </style>
+
+  <script>
+    // Hero cinetique (moment fort) — GSAP, 100% code. Progressive enhancement :
+    // ne s'execute que si l'intro a ete armee (JS + pas de reduced-motion).
+    import gsap from 'gsap';
+    import { SplitText } from 'gsap/SplitText';
+
+    const root = document.documentElement;
+    if (root.getAttribute('data-hero') === 'armed') {
+      const q = (s: string) => document.querySelector<HTMLElement>(s);
+      const wipe = q('.intro-wipe');
+      const eyebrow = q('.hero__eyebrow');
+      const title = q('#hero-title');
+      const lead = q('.hero__lead');
+      const cta = q('.hero__cta');
+      const blocks = gsap.utils.toArray<HTMLElement>('.hero__block');
+
+      gsap.set(cta, { opacity: 0, y: 24 });
+      gsap.set(blocks, { scale: 0, transformOrigin: 'center' });
+
+      // Révélation CARACTÈRE PAR CARACTÈRE (machine à écrire) sur l'eyebrow,
+      // le titre et le lead. SplitText est reverté à la fin : le texte
+      // redevient du texte normal (sélectionnable, lisible aux lecteurs d'écran).
+      const splits: SplitText[] = [];
+      const charsOf = (el: HTMLElement | null): Element[] => {
+        if (!el) return [];
+        try {
+          // 'words,chars' et PAS 'chars' seul : sinon les mots peuvent être coupés
+          // en fin de ligne, le retour à la ligne diffère de l'original, et le texte
+          // SAUTE au moment du revert. Avec les mots, la césure reste identique.
+          const s = new SplitText(el, { type: 'words,chars' });
+          splits.push(s);
+          gsap.set(el, { opacity: 1 });
+          gsap.set(s.chars, { opacity: 0 });
+          return s.chars;
+        } catch {
+          gsap.set(el, { opacity: 0 });
+          return [el];
+        }
+      };
+
+      let cEyebrow: Element[] = [], cTitle: Element[] = [], cLead: Element[] = [];
+      try {
+        gsap.registerPlugin(SplitText);
+        cEyebrow = charsOf(eyebrow);
+        cTitle = charsOf(title);
+        cLead = charsOf(lead);
+      } catch {
+        gsap.set([eyebrow, title, lead], { opacity: 0 });
+        cEyebrow = eyebrow ? [eyebrow] : [];
+        cTitle = title ? [title] : [];
+        cLead = lead ? [lead] : [];
+      }
+
+      root.setAttribute('data-hero', 'playing');
+
+      gsap.timeline({
+        defaults: { ease: 'none' },
+        onComplete: () => {
+          root.setAttribute('data-hero', 'done');
+          splits.forEach((s) => s.revert());
+        },
+      })
+        .set(wipe, { scaleY: 1, transformOrigin: 'bottom' })
+        .to(wipe, { scaleY: 0, transformOrigin: 'top', duration: 0.5, ease: 'power4.inOut' })
+        // chaque caractère apparaît l'un après l'autre — cadence posée, lisible
+        .to(cEyebrow, { opacity: 1, duration: 0.01, stagger: 0.035 }, '-=0.2')
+        .to(cTitle, { opacity: 1, duration: 0.01, stagger: 0.024 }, '-=0.05')
+        .to(cLead, { opacity: 1, duration: 0.01, stagger: 0.011 }, '-=0.15')
+        .to(cta, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' }, '-=0.1')
+        .to(blocks, { scale: 1, duration: 0.4, stagger: 0.06, ease: 'back.out(2)' }, '-=0.4');
+    }
+  </script>
+
+  <script>
+    // L3 — filtre accessible avec Flip (le layout anime le vrai changement DOM)
+    // + reveals au scroll (ScrollTrigger). Reduced-motion => bascule instantanée.
+    import gsap from 'gsap';
+    import { Flip } from 'gsap/Flip';
+    import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const grid = document.getElementById('project-grid');
+    const empty = document.getElementById('empty-state');
+    const btns = Array.from(document.querySelectorAll<HTMLButtonElement>('.filter__btn'));
+
+    if (grid && empty) {
+      const items = Array.from(grid.querySelectorAll<HTMLLIElement>('.work__item'));
+      const apply = (key: string) => {
+        let visible = 0;
+        items.forEach((li) => {
+          const show = key === 'all' || (li.dataset.audience ?? '').split(' ').includes(key);
+          li.hidden = !show;
+          if (show) visible++;
+        });
+        empty.hidden = visible !== 0;
+      };
+      btns.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const key = btn.dataset.filter ?? 'all';
+          btns.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+          if (reduce) { apply(key); return; }
+          gsap.registerPlugin(Flip);
+          const state = Flip.getState(items);
+          apply(key);
+          Flip.from(state, {
+            duration: 0.42,
+            ease: 'power3.out',
+            absolute: true,
+            onEnter: (els) => gsap.fromTo(els, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.35 }),
+            onLeave: (els) => gsap.to(els, { opacity: 0, duration: 0.2 }),
+            // Flip absolute pose des styles inline (position/width) : on nettoie en fin,
+            // sinon les cartes réapparaissent écrasées (bug vu en test réel).
+            onComplete: () => gsap.set(items, { clearProps: 'all' }),
+          });
+        });
+      });
+    }
+
+    // Panneau contact depliant (remplace le mailto muet). Accordeon accessible.
+    const toggle = document.getElementById('contact-toggle');
+    const panel = document.getElementById('contact-panel');
+    const copyBtn = document.getElementById('contact-copy');
+    const status = document.getElementById('contact-status');
+
+    if (toggle && panel) {
+      toggle.addEventListener('click', () => {
+        const open = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', String(!open));
+        if (open) {
+          if (reduce) { panel.hidden = true; return; }
+          gsap.to(panel, {
+            height: 0, opacity: 0, duration: 0.3, ease: 'power2.in',
+            onComplete: () => { panel.hidden = true; gsap.set(panel, { clearProps: 'all' }); },
+          });
+        } else {
+          panel.hidden = false;
+          if (reduce) return;
+          gsap.fromTo(panel,
+            { height: 0, opacity: 0 },
+            { height: 'auto', opacity: 1, duration: 0.42, ease: 'power3.out',
+              onComplete: () => gsap.set(panel, { clearProps: 'height' }) });
+        }
+      });
+    }
+
+    if (copyBtn && status) {
+      copyBtn.addEventListener('click', async () => {
+        const value = copyBtn.dataset.copy ?? '';
+        try {
+          await navigator.clipboard.writeText(value);
+          status.textContent = copyBtn.dataset.copied ?? '';
+        } catch {
+          // Presse-papier refuse (http, permission) : on selectionne l'adresse a la place.
+          const mailEl = document.querySelector<HTMLElement>('.contact__mail');
+          if (mailEl) {
+            const range = document.createRange();
+            range.selectNodeContents(mailEl);
+            const sel = window.getSelection();
+            sel?.removeAllRanges();
+            sel?.addRange(range);
+          }
+          status.textContent = value;
+        }
+      });
+    }
+
+    // Reveals au scroll — une fois, sobres (opacity+y), jamais porteurs d'info seuls.
+    if (!reduce) {
+      gsap.registerPlugin(ScrollTrigger);
+      gsap.utils.toArray<HTMLElement>('.work__item, .contact > *').forEach((el) => {
+        gsap.fromTo(el, { opacity: 0, y: 28 }, {
+          opacity: 1, y: 0, duration: 0.55, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 88%', once: true },
+        });
+      });
+    }
+  </script>
+</Base>

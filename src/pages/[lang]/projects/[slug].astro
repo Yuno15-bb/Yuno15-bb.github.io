@@ -1,0 +1,426 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../../layouts/Base.astro';
+import DgcScreens from '../../../components/DgcScreens.astro';
+import { ui, type Lang } from '../../../i18n/ui';
+
+export async function getStaticPaths() {
+  const all = await getCollection('projects');
+  return all.map((entry) => {
+    const [lang, slug] = entry.id.split('/');
+    return { params: { lang, slug }, props: { entry } };
+  });
+}
+
+const { entry } = Astro.props;
+const lang = Astro.params.lang as Lang;
+const t = ui[lang];
+const { Content } = await render(entry);
+const d = entry.data;
+const slug = entry.id.split('/')[1];
+---
+<Base title={`${d.titre} — Yuno15`} description={d.pitch} lang={lang} altPath={`/projects/${slug}`}>
+  <article class="project">
+    <div class="project__band">
+      <div class="container">
+        <a class="eyebrow project__back" href={`/${lang}/`}>{t['project.back']}</a>
+        <header class="project__head project__head--center">
+          <p class="project__kicker">{d.audience.join(' · ')} · {d.annee}</p>
+          <h1>{d.titre}</h1>
+          <p class="project__pitch">{d.pitch}</p>
+        </header>
+      </div>
+    </div>
+
+    {/* Le contexte d'abord : faits + récit, en composition éditoriale asymétrique. */}
+    <div class="container">
+      <dl class="grid project__facts">
+        <div style="grid-column: span 4;"><dt class="eyebrow">{t['project.role']}</dt><dd>{d.role}</dd></div>
+        <div style="grid-column: span 4;"><dt class="eyebrow">{t['project.stack']}</dt><dd>{d.stack.join(', ')}</dd></div>
+        <div style="grid-column: span 4;"><dt class="eyebrow">{t['project.result']}</dt><dd>{d.resultat}</dd></div>
+      </dl>
+
+      <div class="project__body">
+        <Content />
+      </div>
+    </div>
+
+    {/* Puis la démonstration : la pile de cartes, au milieu de la page. */}
+    {slug === 'dgc-system' && (
+      <section class="story" aria-label={t['story.title']}>
+        <div class="container">
+          <div class="stack" id="story-stack">
+            <aside class="stack__side">
+              <ol class="stack__steps" role="list">
+                {[1, 2].map((n) => (
+                  <li class="stack__step" data-step={n - 1}>
+                    <h3>{t[`story.s${n}.t` as keyof typeof t]}</h3>
+                    <p>{t[`story.s${n}.b` as keyof typeof t]}</p>
+                  </li>
+                ))}
+              </ol>
+              <div class="stack__progress" aria-hidden="true"><span class="stack__bar" id="story-bar"></span></div>
+              <p class="stack__caption eyebrow">{t['project.mockup']}</p>
+            </aside>
+
+            <div class="stack__cards">
+              <DgcScreens />
+            </div>
+          </div>
+        </div>
+      </section>
+    )}
+  </article>
+
+  <style>
+    .project { padding-block: 0 var(--space-8); }
+    /* En-tête projet : TRANSPARENCE TOTALE (décision 2026-07-13).
+       Aucun fond, aucun gradient, aucun filtre entre le fond dynamique (WebGL) et le texte —
+       les mots posent directement sur le champ de particules. Aucune vitre, aucun aplat. */
+    .project__band {
+      background: none;
+      padding-block: var(--space-3) var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+    .project__head {
+      position: relative;
+      background: none;
+      border: 0;
+      box-shadow: none;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      padding: 0;
+    }
+    .project__band h1 {
+      color: var(--c-fg);
+      font-size: clamp(var(--fs-500), 3vw, var(--fs-600));
+      margin-top: var(--space-1);
+    }
+    .project__back { display: inline-block; margin-bottom: var(--space-3); color: color-mix(in srgb, var(--c-fg) 75%, transparent); }
+    .project__back:hover { color: var(--c-ember); }
+    .project__kicker {
+      font-family: var(--font-mono); font-size: var(--fs-100);
+      letter-spacing: 0.22em; text-transform: uppercase; color: var(--c-ember);
+    }
+    .project__head { max-width: var(--container); }
+    /* Titre de page : centre, comme un titre d'ouverture. Le bloc entier
+       (surtitre, titre, accroche) se cale sur l'axe median ; l'accroche garde
+       sa mesure de lecture (60ch) mais est centree par margin-inline: auto. */
+    .project__head--center { text-align: center; }
+    /* ⚠ global.css impose `p { max-width: var(--measure) }` : sans margin-inline
+       auto, ces paragraphes restent collos a gauche dans une boite etroite et
+       `text-align: center` ne centre QUE le texte a l'interieur de cette boite —
+       le surtitre partait donc a gauche alors que le titre etait bien centre. */
+    .project__head--center .project__pitch,
+    .project__head--center .project__kicker { margin-inline: auto; }
+    .project__pitch {
+      font-size: var(--fs-200);
+      color: color-mix(in srgb, var(--c-fg) 80%, transparent);
+      margin-top: var(--space-2);
+      max-width: 60ch;
+    }
+    .project__nda {
+      margin-top: var(--space-4); padding: var(--space-2) var(--space-3);
+      border: 1px solid var(--c-line); border-left: 2px solid var(--c-accent);
+      border-radius: var(--radius); color: var(--c-fg);
+    }
+    .project__facts { margin-block: var(--space-6); row-gap: var(--space-4); }
+
+    /* ---- Scrollytelling : la démo occupe le milieu de la page ---- */
+    .story {
+      margin-top: var(--space-8);
+      padding-block: var(--space-8);
+      border-top: 1px solid var(--c-line);
+      background:
+        none;   /* direction « champ spatial » : rien ne recouvre le champ */
+    }
+
+    /* ---- Pile de cartes collantes (sticky card stack) ----
+       Les cartes occupent TOUTE la largeur et sont centrées ; le texte est
+       posé PAR-DESSUS, à gauche. Sinon la pile reste coincée dans une colonne
+       et n'est jamais au milieu de la page. */
+    .stack {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      padding-bottom: 10vh;
+      /* Les cartes entrent par la droite : on rogne le debordement.
+         `clip` et NON `hidden` — `hidden` creerait un conteneur de defilement
+         et casserait le position:sticky des cartes. */
+      overflow-x: clip;
+    }
+    /* Les ecrans partagent la meme cellule de grille que la colonne de texte.
+       On leur RESERVE la place a droite de cette colonne au lieu de les laisser
+       la recouvrir — sinon, des qu'on elargit un ecran, il repasse sur le texte. */
+    .stack__cards {
+      grid-area: 1 / 1;
+      min-width: 0;
+      padding-left: calc(min(300px, 26%) + var(--space-4));
+    }
+
+    .stack__side {
+      grid-area: 1 / 1;
+      z-index: 3;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      width: min(300px, 26%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: var(--space-3);
+    }
+    .stack__steps { position: relative; margin: 0; padding: 0; list-style: none; min-height: 13rem; }
+    .stack__step {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: flex-start;
+      gap: var(--space-2);
+    }
+    .stack__step:first-child { position: relative; }
+    /* ⚠ Les etapes sont superposees (position: absolute au meme endroit). C'est
+       GSAP qui n'en montre qu'une — mais si le script ne tourne pas (erreur JS,
+       reseau, navigateur exotique), elles se retrouvent TOUTES visibles l'une
+       SUR l'autre et le texte devient illisible. L'etat par defaut doit donc
+       etre sur : seule la premiere est visible, GSAP prend la main ensuite. */
+    .stack__step:not(:first-child) { opacity: 0; }
+    .stack__step { pointer-events: none; }
+    .stack__step h3 { font-size: var(--fs-300); color: var(--c-ember); }
+    .stack__step p { color: var(--c-muted); max-width: 30ch; font-size: var(--fs-200); }
+
+    .stack__progress { height: 2px; background: var(--c-line); overflow: hidden; }
+    .stack__bar { display: block; height: 100%; width: 0%; background: var(--c-ember); }
+    .stack__caption { color: var(--c-muted); }
+
+    @media (max-width: 1100px) {
+      .stack { grid-template-columns: 1fr; gap: var(--space-4); padding-bottom: 20vh; }
+      .stack__side { grid-area: auto; position: relative; top: 0; height: auto; width: 100%; }
+      .stack__cards { grid-area: auto; padding-left: 0; }
+      .stack__steps { min-height: 0; }
+      .stack__step { position: relative; inset: auto; }
+      .stack__step:not(:first-child) { display: none; }
+    }
+    /* Reduced-motion : pas de pile — texte + écrans empilés en flux, tout lisible. */
+    @media (prefers-reduced-motion: reduce) {
+      .stack { grid-template-columns: 1fr; padding-bottom: 0; }
+      .stack__side { position: relative; top: 0; }
+      .stack__steps { min-height: 0; display: grid; gap: var(--space-6); }
+      .stack__step { position: relative !important; inset: auto; opacity: 1 !important; }
+      .stack__progress { display: none; }
+    }
+    .project__facts dt { margin-bottom: var(--space-1); }
+
+    /* ---- Récit : composition éditoriale asymétrique (pas un bloc uniforme) ----
+       Chaque section est décalée sur la grille et a sa propre mesure. */
+    .project__body {
+      margin-top: var(--space-8);
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      column-gap: var(--grid-gutter);
+    }
+    .project__body :global(h2) {
+      font-size: var(--fs-400);
+      color: var(--c-ember);
+      margin-bottom: var(--space-2);
+    }
+    .project__body :global(p) { color: var(--c-muted); }
+
+    /* 1er bloc — colonnes 1-6, texte plus grand (l'accroche) */
+    .project__body :global(h2:nth-of-type(1)),
+    .project__body :global(h2:nth-of-type(1) ~ p:nth-of-type(1)) {
+      grid-column: 1 / span 6;
+    }
+    .project__body :global(h2:nth-of-type(1) ~ p:nth-of-type(1)) {
+      font-size: var(--fs-300);
+      line-height: 1.55;
+      color: var(--c-fg);
+      margin-bottom: var(--space-8);
+    }
+    /* 2e bloc — décalé à droite, colonnes 6-12 */
+    .project__body :global(h2:nth-of-type(2)),
+    .project__body :global(h2:nth-of-type(2) ~ p:nth-of-type(2)) {
+      grid-column: 6 / span 7;
+    }
+    .project__body :global(h2:nth-of-type(2) ~ p:nth-of-type(2)) {
+      margin-bottom: var(--space-8);
+    }
+    /* 3e bloc — ramené à gauche, étroit et resserré */
+    .project__body :global(h2:nth-of-type(3)),
+    .project__body :global(h2:nth-of-type(3) ~ p:nth-of-type(3)) {
+      grid-column: 2 / span 5;
+    }
+    /* La citation finale (blockquote) : discrète, calée à droite */
+    .project__body :global(blockquote) {
+      grid-column: 8 / span 5;
+      margin-top: var(--space-4);
+      padding-left: var(--space-3);
+      border-left: 2px solid var(--c-line);
+      font-size: var(--fs-100);
+      font-family: var(--font-mono);
+      color: var(--c-muted);
+    }
+    .project__body :global(blockquote p) { font-size: inherit; }
+
+    @media (max-width: 900px) {
+      .project__body { display: block; }
+      .project__body :global(h2) { margin-top: var(--space-6); }
+      .project__body :global(p) { margin-bottom: var(--space-3); max-width: 62ch; }
+      .project__body :global(blockquote) { margin-top: var(--space-4); }
+    }
+    @media (max-width: 720px) {
+      .project__facts > div { grid-column: 1 / -1 !important; }
+    }
+  </style>
+
+  <script>
+    // Reveals sobres + SCROLLYTELLING (les écrans de l'app pivotent au fil du texte).
+    // Reduced-motion => aucun 3D, écrans empilés et lisibles (géré aussi en CSS).
+    import gsap from 'gsap';
+    import { ScrollTrigger } from 'gsap/ScrollTrigger';
+    import Lenis from 'lenis';
+
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!reduce) {
+      gsap.registerPlugin(ScrollTrigger);
+
+      // Scroll doux (Lenis) — la molette devient inertielle, la pile "glisse".
+      // Branché sur le ticker GSAP : une seule boucle rAF, pas de conflit avec ScrollTrigger.
+      const lenis = new Lenis({ lerp: 0.085, smoothWheel: true, wheelMultiplier: 1 });
+      lenis.on('scroll', ScrollTrigger.update);
+      gsap.ticker.add((time) => lenis.raf(time * 1000));
+      gsap.ticker.lagSmoothing(0);
+
+      // 1) Reveals sobres du corps de page
+      gsap.utils.toArray<HTMLElement>(
+        '.project__facts > div, .project__body h2, .project__body p'
+      ).forEach((el) => {
+        gsap.fromTo(el, { opacity: 0, y: 24 }, {
+          opacity: 1, y: 0, duration: 0.5, ease: 'power3.out',
+          scrollTrigger: { trigger: el, start: 'top 90%', once: true },
+        });
+      });
+
+      // 2) STICKY CARD STACK — chaque carte se colle, la suivante arrive par la
+      //    DROITE et la recouvre. Aucune mise a l'echelle : celle du dessous
+      //    s'enfonce simplement dans le noir (voile + opacite).
+      const stack = document.getElementById('story-stack');
+      const steps = gsap.utils.toArray<HTMLElement>('.stack__step');
+      const inners = gsap.utils.toArray<HTMLElement>('.card__inner');
+      const bar = document.getElementById('story-bar');
+
+      if (stack && steps.length && inners.length) {
+        const n = inners.length;
+        // Profondeur = nombre de cartes qui viendront se poser PAR-DESSUS celle-ci.
+        // La dernière carte a une profondeur 0 : elle ne rétrécit ni ne floute jamais.
+        const depth = (i: number) => n - 1 - i;
+        // Plus une carte est profonde, plus elle s'éloigne LOIN : petite, très floue,
+        // sombre et presque transparente — la plus ancienne devient à peine perceptible.
+        const minDim = (i: number) => Math.max(0.18, 1 - depth(i) * 0.2);     // profondeur → voile
+        const minOpa = (i: number) => Math.max(0.16, 1 - depth(i) * 0.2);     // opacité
+
+        gsap.set(steps, { opacity: 0, y: 16 });
+        gsap.set(steps[0], { opacity: 1, y: 0 });
+        let active = 0;
+
+        // Le recul d'une carte est piloté par LA POSITION RÉELLE de la carte suivante :
+        // tant qu'elle n'est pas montée, rien ne bouge ; pendant qu'elle recouvre,
+        // celle du dessous s'éloigne et se floute EN CONTINU.
+        const cards = gsap.utils.toArray<HTMLElement>('.deck > .card');
+        const stickyTop = () => 0; // la carte est collee plein ecran (centree dedans)
+
+        const topOf = (i: number) => cards[i].getBoundingClientRect().top;
+
+        const render = () => {
+          const vh = window.innerHeight;
+          const anchor = stickyTop();
+
+          inners.forEach((el, i) => {
+            let recede = 0; // 0 = au premier plan, 1 = complètement reculée
+
+            // couverture cumulée par CHAQUE carte suivante
+            for (let j = i + 1; j < n; j++) {
+              const top = topOf(j);
+              // 0 quand la carte j est encore un écran plus bas, 1 quand elle est collée
+              const cover = gsap.utils.clamp(0, 1, (vh - top) / (vh - anchor));
+              recede += cover;
+            }
+            recede = gsap.utils.clamp(0, 1, recede / Math.max(1, depth(i)));
+
+            const opacity = gsap.utils.interpolate(1, minOpa(i), recede);
+
+            // ⚠ PERF : ne JAMAIS animer `filter: blur()`/`brightness()` au scroll — chaque frame
+            // force une re-rasterisation complète de la carte (d'où le scroll saccadé). On rend
+            // la profondeur avec un VOILE sombre dont on anime l'opacity : composité par le GPU,
+            // coût ~nul. Seuls transform + opacity bougent.
+            const veil = recede * (1 - minDim(i));            // 0 → 1 : la carte s'enfonce dans le noir
+            el.style.setProperty('--veil', veil.toFixed(3));
+
+            // ---- GLISSEMENT LATERAL : la carte entre par le bord DROIT -----------
+            // Le scroll reste vertical, c'est lui qui pilote ; seul le mouvement est
+            // horizontal.
+            //   own : 0 = la carte est encore un ecran plus bas, 1 = elle est collee.
+            //   y   : on annule le trajet vertical restant TANT QUE la carte est sous
+            //         la fenetre, pour qu'il ne reste que l'horizontal. Une fois
+            //         relachee en fin de section (top < 0), on rend la main au scroll.
+            // ⚠ Arrivee a xPercent 0 exactement : meme centre que la carte du dessous.
+            //   Toute derive laterale ferait repartir la pile en biais et le bord de
+            //   l'ecran du dessus retomberait sur la colonne de texte.
+            // ⚠ La PREMIERE carte ne glisse pas. Elle n'a rien a recouvrir : la faire
+            //   entrer par la droite l'obligeait a partir hors cadre, donc a « revenir »
+            //   alors que le lecteur arrive dessus. Elle reste a sa place et se
+            //   decouvre simplement en descendant. Le glissement ne sert qu'aux
+            //   suivantes, dont il raconte l'arrivee PAR-DESSUS la precedente.
+            if (i === 0) {
+              gsap.set(el, { xPercent: 0, y: 0, opacity, force3D: true });
+              return;
+            }
+
+            const top = topOf(i);
+            const own = gsap.utils.clamp(0, 1, (vh - top) / (vh - anchor));
+
+            gsap.set(el, {
+              xPercent: (1 - own) * 112,
+              y: -Math.max(0, top),
+              opacity,
+              force3D: true,
+            });
+          });
+        };
+
+        ScrollTrigger.create({
+          trigger: stack,
+          start: 'top bottom',
+          end: 'bottom top',
+          onUpdate: (self) => {
+            render();
+            if (bar) {
+              const p = gsap.utils.clamp(0, 1, (self.progress - 0.15) / 0.7);
+              bar.style.width = `${(p * 100).toFixed(1)}%`;
+            }
+          },
+          onRefresh: render,
+        });
+        render();
+
+        // Le texte suit LA CARTE QUI SE POSE (déclencheur par carte : déterministe,
+        // pas une formule approximative sur la progression globale).
+        const setStep = (i: number) => {
+          if (i === active) return;
+          gsap.to(steps[active], { opacity: 0, y: -14, duration: 0.3, ease: 'power2.in' });
+          gsap.to(steps[i], { opacity: 1, y: 0, duration: 0.45, ease: 'power3.out' });
+          active = i;
+        };
+        gsap.utils.toArray<HTMLElement>('.deck > .card').forEach((card, i) => {
+          ScrollTrigger.create({
+            trigger: card,
+            start: 'top 40%',      // la carte vient de se coller en haut
+            end: 'bottom 40%',
+            onToggle: (self) => { if (self.isActive) setStep(i); },
+          });
+        });
+
+        // Les polices décalent les mesures : on recalcule après chargement.
+        document.fonts?.ready.then(() => ScrollTrigger.refresh());
+      }
+    }
+  </script>
+</Base>

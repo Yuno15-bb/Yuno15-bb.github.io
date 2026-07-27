@@ -1,0 +1,232 @@
+---
+// Fond ambiant « champ de particules » — WebGL autonome, aucune dependance externe.
+// Remplace FaultyBg (terminal glitch) : direction « Champ spatial » (style suisse ×
+// creative coding). C'est la SEULE texture du site : tout le reste est filet et vide.
+//
+// Parti pris technique
+// - gl.POINTS : 1 draw call, pas de geometrie. ~1400 points = quasi gratuit.
+// - Profondeur honnete : la taille ET l'opacite derivent du z. Pas de faux bokeh.
+// - Parallaxe pointeur tres douce (l'oeil la sent, ne la voit pas).
+// - Eco : resolution reduite, 30 fps plafonnes, pause quand l'onglet est masque.
+// - reduced-motion : le champ est peint UNE fois, immobile.
+//
+// ⚠ Aucun voile sombre par-dessus (contrairement a FaultyBg) : c'est ce voile qui
+// rendait les panneaux « en verre » opaques. La lisibilite est obtenue en gardant le
+// champ sombre et clairsemé a la source, pas en le recouvrant.
+---
+<canvas id="particle-field" aria-hidden="true"></canvas>
+
+<style>
+  #particle-field {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    display: block;
+    z-index: -2;
+    pointer-events: none;
+    /* Le fond de page reste la nuit du token ; le canvas ne peint QUE les points. */
+    background: var(--c-bg);
+  }
+</style>
+
+<script>
+  const canvas = document.getElementById('particle-field') as HTMLCanvasElement | null;
+  const gl = canvas?.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: false });
+
+  if (canvas && gl) {
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const CONFIG = {
+      count: 2600,
+      fps: 30,
+      renderScale: 1,      // les points sont fins : pas de sous-echantillonnage
+      maxDpr: 1.5,
+      drift: 0.016,        // vitesse de derive (unites de monde / seconde)
+      parallax: 0.05,      // amplitude de la parallaxe pointeur
+      emberRatio: 0.14,    // part de points a l'accent ambre
+    };
+
+    // --- Palette lue dans les tokens : aucune couleur en dur ---------------
+    const css = getComputedStyle(document.documentElement);
+    const hexToRgb = (hex: string): [number, number, number] => {
+      let h = hex.trim().replace('#', '');
+      if (h.length === 3) h = h.split('').map((c) => c + c).join('');
+      const n = parseInt(h, 16);
+      return [((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255];
+    };
+    const COLD = hexToRgb(css.getPropertyValue('--c-fg') || '#e9e7f2');
+    const EMBER = hexToRgb(css.getPropertyValue('--c-ember') || '#d8804a');
+
+    // --- Semis : position dans une boite, seed de scintillement, teinte -----
+    const N = CONFIG.count;
+    const positions = new Float32Array(N * 4); // x, y, z (profondeur), seed
+    const colors = new Float32Array(N * 3);
+    for (let i = 0; i < N; i++) {
+      const o = i * 4;
+      positions[o + 0] = Math.random() * 2 - 1;          // x  [-1, 1]
+      positions[o + 1] = Math.random() * 2 - 1;          // y  [-1, 1]
+      positions[o + 2] = Math.random();                  // z  [0, 1] : 0 = loin, 1 = pres
+      positions[o + 3] = Math.random() * 6.283;          // seed de scintillement
+      const c = Math.random() < CONFIG.emberRatio ? EMBER : COLD;
+      colors[i * 3 + 0] = c[0];
+      colors[i * 3 + 1] = c[1];
+      colors[i * 3 + 2] = c[2];
+    }
+
+    const vert = `
+      attribute vec4 aPos;      // xy = position, z = profondeur, w = seed
+      attribute vec3 aColor;
+      uniform float uTime;
+      uniform vec2 uRes;
+      uniform vec2 uPointer;
+      uniform float uDrift;
+      uniform float uParallax;
+      uniform float uDpr;
+      varying vec3 vColor;
+      varying float vAlpha;
+
+      void main() {
+        float z = aPos.z;
+
+        // Derive : lente montee + leger balayage, repliee dans [-1, 1].
+        float y = aPos.y + uTime * uDrift * (0.35 + z * 0.9);
+        y = fract((y + 1.0) * 0.5) * 2.0 - 1.0;
+        float x = aPos.x + sin(uTime * 0.07 + aPos.w) * 0.012;
+
+        // Parallaxe : les points proches suivent le pointeur plus que les lointains.
+        vec2 par = uPointer * uParallax * (0.25 + z);
+
+        // Un gl.POINT ne s'etire pas avec la fenetre : rien a corriger sur le ratio.
+        vec2 p = vec2(x, y) + par;
+
+        gl_Position = vec4(p, 0.0, 1.0);
+
+        // Profondeur honnete : plus c'est pres, plus c'est gros ET lumineux.
+        gl_PointSize = (0.9 + z * 2.9) * uDpr;
+
+        // Scintillement tres discret — le champ respire, il ne clignote pas.
+        float twinkle = 0.82 + 0.18 * sin(uTime * 0.6 + aPos.w * 3.0);
+        vAlpha = (0.16 + z * 0.78) * twinkle;
+        vColor = aColor;
+      }
+    `;
+
+    const frag = `
+      precision mediump float;
+      varying vec3 vColor;
+      varying float vAlpha;
+      void main() {
+        // Point rond a bord doux (sans texture) : gl_PointCoord -> disque.
+        vec2 d = gl_PointCoord - vec2(0.5);
+        float r = dot(d, d);
+        float mask = smoothstep(0.25, 0.02, r);
+        gl_FragColor = vec4(vColor, vAlpha * mask);
+      }
+    `;
+
+    const compile = (type: number, src: string) => {
+      const sh = gl.createShader(type)!;
+      gl.shaderSource(sh, src);
+      gl.compileShader(sh);
+      return sh;
+    };
+    const prog = gl.createProgram()!;
+    gl.attachShader(prog, compile(gl.VERTEX_SHADER, vert));
+    gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, frag));
+    gl.linkProgram(prog);
+    gl.useProgram(prog);
+
+    const posBuf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, positions, gl.STATIC_DRAW);
+    const aPos = gl.getAttribLocation(prog, 'aPos');
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 4, gl.FLOAT, false, 0, 0);
+
+    const colBuf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, colBuf);
+    gl.bufferData(gl.ARRAY_BUFFER, colors, gl.STATIC_DRAW);
+    const aColor = gl.getAttribLocation(prog, 'aColor');
+    gl.enableVertexAttribArray(aColor);
+    gl.vertexAttribPointer(aColor, 3, gl.FLOAT, false, 0, 0);
+
+    const uTime = gl.getUniformLocation(prog, 'uTime');
+    const uRes = gl.getUniformLocation(prog, 'uRes');
+    const uPointer = gl.getUniformLocation(prog, 'uPointer');
+    const uDrift = gl.getUniformLocation(prog, 'uDrift');
+    const uParallax = gl.getUniformLocation(prog, 'uParallax');
+    const uDpr = gl.getUniformLocation(prog, 'uDpr');
+
+    // Additif : les points s'ajoutent a la nuit, ils ne la percent pas.
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+    gl.clearColor(0, 0, 0, 0);
+
+    let dpr = 1;
+    // ⚠ PIEGE : ne JAMAIS dimensionner sur canvas.clientWidth/Height. Si le module
+    // s'execute avant que la feuille de style du composant soit appliquee, le canvas
+    // vaut encore sa taille par defaut (300x150) — on cree alors un buffer minuscule
+    // que le navigateur etire sur tout l'ecran : les points deviennent d'enormes
+    // taches floues. Le canvas est `position: fixed; inset: 0` : sa taille EST celle
+    // de la fenetre, on la lit donc directement a la source.
+    const resize = () => {
+      dpr = Math.min(window.devicePixelRatio || 1, CONFIG.maxDpr) * CONFIG.renderScale;
+      const w = Math.max(1, Math.floor(window.innerWidth * dpr));
+      const h = Math.max(1, Math.floor(window.innerHeight * dpr));
+      if (canvas.width === w && canvas.height === h) return false;
+      canvas.width = w;
+      canvas.height = h;
+      gl.viewport(0, 0, w, h);
+      gl.uniform2f(uRes, w, h);
+      gl.uniform1f(uDpr, dpr);
+      return true;
+    };
+    resize();
+    addEventListener('resize', resize, { passive: true });
+
+    // Pointeur : cible + lissage, pour que la parallaxe traine legerement.
+    let px = 0, py = 0, tx = 0, ty = 0;
+    if (!reduce) {
+      addEventListener('pointermove', (e) => {
+        tx = (e.clientX / innerWidth) * 2 - 1;
+        ty = -((e.clientY / innerHeight) * 2 - 1);
+      }, { passive: true });
+    }
+
+    gl.uniform1f(uDrift, CONFIG.drift);
+    gl.uniform1f(uParallax, reduce ? 0 : CONFIG.parallax);
+
+    const draw = (t: number) => {
+      resize();   // idempotent : ne fait rien tant que la taille n'a pas bouge
+      px += (tx - px) * 0.05;
+      py += (ty - py) * 0.05;
+      gl.uniform2f(uPointer, px, py);
+      gl.uniform1f(uTime, t);
+      gl.clear(gl.COLOR_BUFFER_BIT);
+      gl.drawArrays(gl.POINTS, 0, N);
+    };
+
+    if (reduce) {
+      // Immobile : un seul rendu, aucune boucle, aucun GPU sollicite ensuite.
+      draw(0);
+      addEventListener('resize', () => { resize(); draw(0); }, { passive: true });
+      addEventListener('load', () => { resize(); draw(0); });
+    } else {
+      const frame = 1000 / CONFIG.fps;
+      let last = 0;
+      let raf = 0;
+      const loop = (now: number) => {
+        raf = requestAnimationFrame(loop);
+        if (now - last < frame) return;
+        last = now;
+        draw(now * 0.001);
+      };
+      raf = requestAnimationFrame(loop);
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) cancelAnimationFrame(raf);
+        else raf = requestAnimationFrame(loop);
+      });
+    }
+  }
+</script>

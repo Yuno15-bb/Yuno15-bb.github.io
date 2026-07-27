@@ -1,0 +1,511 @@
+---
+// DGC System — les 2 ecrans de la demonstration, refaits d'apres la maquette
+// haute-fidelite du 26/07/2026 (elle-meme relevee sur l'app en prod, SW v259) :
+// jetons de couleur reels, effet verre, fond dither, tuiles satellite reelles.
+//
+// 1 — TERRAIN : l'accueil du technicien, dans un telephone.
+// 2 — BUREAU  : le tableau de bord dirigeant, dans une fenetre.
+//
+// ⚠ DONNEES NEUTRALISEES (nda: true) : client, syndics, adresses et techniciens
+// sont FICTIFS (Austin, TX). Ne JAMAIS reinjecter les vraies donnees ici.
+// Les tuiles satellite sont auto-hebergees dans /public/projects/map (Esri World
+// Imagery, credit affiche dans la carte) : aucun appel a un tiers au chargement.
+
+const upcoming = [
+  { d: 'Jul 27', t: 'Leak detection — Oakwood HOA', m: 'Scheduled · 7:00 AM · 1420 Cedar Ridge Dr' },
+  { d: 'Jul 28', t: 'Roof survey — Pinehurst Commons', m: 'Scheduled · 9:30 AM · 88 Pinehurst Ln' },
+];
+const recents = [
+  { ref: 'RDF WO-1045', n: 'Oakwood HOA — Bldg C', tech: 'J. Rivera', adr: '1420 Cedar Ridge Dr, Austin', st: 'Scheduled', cls: 'prog' },
+  { ref: 'DIAG WO-1046', n: 'Pinehurst Commons 2', tech: 'J. Rivera', adr: '88 Pinehurst Ln, Round Rock', st: 'Scheduled', cls: 'prog' },
+  { ref: 'JOB WO-1042', n: 'Canalside Lofts', tech: 'M. Chen', adr: '2 Harbor View St, Austin', st: 'Completed', cls: 'ok' },
+  { ref: 'DIAG WO-1041', n: 'Maple Court Residences', tech: 'D. Walker', adr: '1 Maple Ct, Cedar Park', st: 'Completed', cls: 'ok' },
+  { ref: 'JOB WO-1040', n: 'Capitol Square Apts', tech: 'M. Chen', adr: '21 Congress Ave, Austin', st: 'Draft', cls: 'draft' },
+];
+const quick = [
+  { k: 'photos', l: 'Photos' },
+  { k: 'reports', l: 'Reports' },
+  { k: 'start', l: 'Start' },
+  { k: 'profile', l: 'Profile' },
+];
+const tabs = [
+  { k: 'home', l: 'Home', on: true },
+  { k: 'schedule', l: 'Schedule', on: false },
+  { k: 'jobs', l: 'Jobs', on: false },
+  { k: 'profile', l: 'Profile', on: false },
+];
+---
+
+<div class="deck" id="dgc-deck">
+  {/* ============================ 1 — TERRAIN ============================ */}
+  <article class="card" data-card="0">
+    <div class="card__inner">
+      <div class="phone">
+        <div class="pscreen">
+          <span class="island" aria-hidden="true"></span>
+
+          <div class="phd">
+            <span class="pmk">DGC</span>
+            <div class="phi"><b>DGC System</b><span>Job tracking</span></div>
+            <span class="av av--sm">JR</span>
+          </div>
+
+          <div class="pbody">
+            <span class="btn3d btn3d--full"><i class="gl">＋</i>New job</span>
+
+            <div class="psec"><b>Current job</b><span>Details</span></div>
+            <div class="glass pmission">
+              <div class="pm-top"><span class="st st--draft">In progress</span><span class="pm-by">J. Rivera</span></div>
+              <p class="pm-t">Cladding — Canalside Lofts</p>
+              <p class="pm-c"><i class="gl">◉</i>2 Harbor View St, Austin</p>
+              <div class="pmap pmap--phone">
+                <span class="pmap__eta">View route</span>
+                <span class="pin" aria-hidden="true"></span>
+                <span class="pmap__credit">Imagery © Esri</span>
+              </div>
+              <div class="pm-act"><span class="mbtn">Directions</span><span class="mbtn mbtn--p">Resume</span></div>
+            </div>
+
+            <div class="psec"><b>Upcoming jobs</b><span>Schedule</span></div>
+            <div class="glass pday">
+              {upcoming.map((u) => (
+                <div class="piv">
+                  <b class="piv__d">{u.d}</b>
+                  <span class="dot dot--prog"></span>
+                  <div class="piv__b"><p class="piv__t">{u.t}</p><p class="piv__m">{u.m}</p></div>
+                  <span class="qcheck">✓</span>
+                </div>
+              ))}
+            </div>
+
+            <div class="psec"><b>Quick actions</b></div>
+            <div class="pqa">
+              {quick.map((q) => (
+                <span class="qa"><span class="qi"><i class={`gi gi--${q.k}`}></i></span><b>{q.l}</b></span>
+              ))}
+            </div>
+          </div>
+
+          <div class="ptab">
+            <span class="pfab" aria-hidden="true">⟳</span>
+            {tabs.map((t) => (
+              <span class={`ptab__i${t.on ? ' on' : ''}`}><i class={`ti ti--${t.k}`}></i>{t.l}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  {/* ============================ 2 — BUREAU ============================= */}
+  <article class="card" data-card="1">
+    <div class="card__inner">
+      <div class="win">
+        <header class="bar">
+          <span class="mk2">DGC</span>
+          <div class="brand"><b>DGC System</b><span>Job tracking</span></div>
+          <nav class="nav"><b>Dashboard</b><span>Jobs</span><span>Teams</span><span>Reports</span><span>Proposals</span></nav>
+          <span class="search"><i class="gl">⌕</i>Search job no., client…</span>
+          <span class="iconbtn">☾</span>
+          <span class="av">JR</span>
+        </header>
+
+        <div class="page">
+          <span class="dith" aria-hidden="true"></span>
+
+          <div class="head">
+            <p class="mkick">Next job Mon Jul 27 · 7:00 AM · Sunday 26 July</p>
+            <p class="hi">Good evening</p>
+            <p class="hi__sub"><b>4 online</b> · <b>4</b> in the field (GPS) · <b>2</b> in progress</p>
+          </div>
+
+          <div class="kpis">
+            <div class="glass kpi"><div class="kpi__t"><span class="ic ic--wrench"><i class="gi gi--wrench"></i></span><span class="chip">4 ✓</span></div><p class="kpi__v">8</p><p class="kpi__s">Total jobs</p></div>
+            <div class="glass kpi kpi--hi"><div class="kpi__t"><span class="ic ic--team"><i class="gi gi--team"></i></span><span class="chip">4/4 online</span></div><p class="kpi__v">4</p><p class="kpi__s">Technicians</p></div>
+            <div class="glass kpi"><div class="kpi__t"><span class="ic ic--draft"><i class="gi gi--draft"></i></span><span class="chip chip--neu">drafts</span></div><p class="kpi__v">2</p><p class="kpi__s">Jobs in progress</p></div>
+            <div class="glass kpi"><div class="kpi__t"><span class="ic ic--alert"><i class="gi gi--alert"></i></span><span class="chip chip--red">to handle</span></div><p class="kpi__v">1</p><p class="kpi__s">Urgent findings</p></div>
+          </div>
+
+          <div class="actions">
+            <span class="mbtn">Email the assistant</span>
+            <span class="mbtn">Export</span>
+            <span class="mbtn">Schedule</span>
+            <span class="btn3d"><i class="gl">＋</i>New job</span>
+          </div>
+
+          <div class="bento">
+            <div class="glass pmap pmap--win">
+              <span class="pmap__lab">Live crews</span>
+              <span class="pmap__gps"><i class="d"></i>GPS · 4 active</span>
+              <span class="pin" aria-hidden="true"></span>
+              <span class="pmap__credit">Imagery © Esri</span>
+            </div>
+
+            <div class="glass listile">
+              <p class="t-h"><b>Recent jobs</b><span>See all</span></p>
+              {recents.map((r) => (
+                <div class="iv">
+                  <div class="iv__b">
+                    <p class="iv__ref">{r.ref}<i class="orig">Manual entry</i></p>
+                    <p class="iv__n">{r.n}</p>
+                    <p class="iv__m"><i class="techchip">{r.tech}</i> · {r.adr}</p>
+                  </div>
+                  <span class={`st st--${r.cls}`}>{r.st}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <p class="foot">DGC System · Job tracking · v259</p>
+        <div class="dock"><span class="dock__seg"><i>Field</i><b>Office</b></span><span class="dock__b">⟳</span></div>
+      </div>
+    </div>
+  </article>
+</div>
+
+<style>
+  /* ================= Pile collante (pilotee par [slug].astro, inchangee) ===== */
+  .deck > .card {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: grid;
+    place-items: center;
+    margin-bottom: 0;
+  }
+  .card__inner {
+    position: relative;
+    transform-origin: 50% 0%;
+    /* ⚠ PERF : aucun filter anime (le blur au scroll rasterisait chaque frame).
+       Seuls transform + opacity bougent → composite GPU. */
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    width: 100%;
+  }
+  /* Voile de profondeur : opacity pilotee par --veil depuis le scroll. */
+  .card__inner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: #06070c;
+    opacity: var(--veil, 0);
+    pointer-events: none;
+    z-index: 5;
+  }
+  .card { width: 100%; }
+  /* Note de cadrage : chaque ecran reste centre TANT QUE sa carte est collee.
+     Quand la section se termine, la derniere carte est relachee et remonte avec
+     le scroll — comportement normal d'une pile collante, verifie au rendu.
+     Ne pas « rattraper » ca avec une marge sous .deck : ca allonge la section
+     sans rien coller de plus (essaye et mesure le 2026-07-27). */
+
+  /* ================= Jetons REELS de l'app (theme sombre) =================== */
+  .deck {
+    --green: #8fb15b;
+    --green-d: #a8c977;
+    --green-dd: #c3dd97;
+    --green-soft: rgba(143, 177, 91, 0.15);
+    --green-soft2: rgba(143, 177, 91, 0.24);
+    --bg: #0e100d;
+    --surface: #181b17;
+    --ink: #ecede6;
+    --mut: #8f9088;
+    --hair: rgba(255, 255, 255, 0.09);
+    --prog: #8fb4de;
+    --prog-s: rgba(63, 111, 168, 0.26);
+    --ok: #82c08f;
+    --ok-s: rgba(62, 122, 78, 0.24);
+    --amber: #e0bb72;
+    --amber-s: rgba(181, 131, 44, 0.2);
+    --alert: #e68c80;
+    --alert-s: rgba(178, 58, 46, 0.24);
+    --glass-bg: rgba(24, 27, 23, 0.52);
+    --glass-bd: rgba(255, 255, 255, 0.12);
+    --glass-hi: rgba(255, 255, 255, 0.07);
+    --glass-lo: rgba(0, 0, 0, 0.32);
+
+    /* Masques d'icones (SVG en data-URI) : zero police d'icones a charger. */
+    --i-img: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M21 5H3a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1Zm-1 2v6.6l-2.3-2.3a1 1 0 0 0-1.4 0L13 14.6l-2.3-2.3a1 1 0 0 0-1.4 0L4 17.6V7ZM8 8.5A1.5 1.5 0 1 1 6.5 10 1.5 1.5 0 0 1 8 8.5Z'/%3E%3C/svg%3E");
+    --i-folder: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M21 7h-8.6l-1.7-2.3A1 1 0 0 0 9.9 4H3a1 1 0 0 0-1 1v14a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1Z'/%3E%3C/svg%3E");
+    --i-play: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm3.5 10.9-5 3a1 1 0 0 1-1.5-.9V9a1 1 0 0 1 1.5-.9l5 3a1 1 0 0 1 0 1.8Z'/%3E%3C/svg%3E");
+    --i-user: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-4.4 0-8 2.5-8 5.5V21a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1.5c0-3-3.6-5.5-8-5.5Z'/%3E%3C/svg%3E");
+    --i-home: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M21.7 11.3 12.7 2.3a1 1 0 0 0-1.4 0l-9 9A1 1 0 0 0 3 13h1v8a1 1 0 0 0 1 1h5v-6h4v6h5a1 1 0 0 0 1-1v-8h1a1 1 0 0 0 .7-1.7Z'/%3E%3C/svg%3E");
+    --i-cal: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M20 4h-2V3a1 1 0 0 0-2 0v1H8V3a1 1 0 0 0-2 0v1H4a1 1 0 0 0-1 1v15a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1ZM5 19V9h14v10Z'/%3E%3C/svg%3E");
+    --i-build: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M13 2H4a1 1 0 0 0-1 1v18a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-6V3a1 1 0 0 0-1-1ZM7 18H5v-2h2Zm0-4H5v-2h2Zm0-4H5V8h2Zm0-4H5V4h2Zm4 12H9v-2h2Zm0-4H9v-2h2Zm0-4H9V8h2Zm0-4H9V4h2Zm8 12h-6v-2h6Zm0-4h-6v-2h6Z'/%3E%3C/svg%3E");
+    --i-wrench: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M21.7 5.4a1 1 0 0 0-1.6-.3l-2.9 2.9-2.2-2.2 2.9-2.9a1 1 0 0 0-.3-1.6 6 6 0 0 0-7.8 7.5l-7 7a2.5 2.5 0 0 0 3.6 3.6l7-7a6 6 0 0 0 7.5-7.8Z'/%3E%3C/svg%3E");
+    --i-warn: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23000' d='M22 19.2 13.1 3.6a1.3 1.3 0 0 0-2.2 0L2 19.2A1.2 1.2 0 0 0 3.1 21h17.8a1.2 1.2 0 0 0 1.1-1.8ZM11 9h2v5h-2Zm1 9.5a1.3 1.3 0 1 1 1.3-1.3 1.3 1.3 0 0 1-1.3 1.3Z'/%3E%3C/svg%3E");
+
+    position: relative;
+    display: block;
+    font-family: var(--font-sans);
+    color: var(--ink);
+  }
+  /* Le « verre » que l'app applique a toutes ses tuiles. */
+  .glass {
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(7px) saturate(1.4);
+    backdrop-filter: blur(7px) saturate(1.4);
+    border: 1px solid var(--glass-bd);
+    box-shadow:
+      inset 0 -1px 0 var(--glass-hi),
+      inset -1px -1px 0 var(--glass-lo),
+      0 14px 34px -20px rgba(0, 0, 0, 0.8);
+  }
+  .gl { font-style: normal; }
+
+  /* ---- primitives partagees ---- */
+  .mbtn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+    font-size: 9.5px; font-weight: 600; padding: 6px 10px; border-radius: 8px;
+    border: 1px solid var(--hair); background: var(--surface); color: var(--ink);
+  }
+  .mbtn--p { background: var(--green); border-color: var(--green); color: #10140d; }
+  .btn3d {
+    display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+    font-size: 10px; font-weight: 700; padding: 8px 12px; border-radius: 9px;
+    background: #5f7f35; color: #fff; box-shadow: 0 3px 0 #3e5424;
+  }
+  .btn3d--full { display: flex; width: 100%; margin-bottom: 10px; }
+  .st {
+    display: inline-flex; align-items: center; gap: 4px; flex: none;
+    font-size: 8px; font-weight: 700; padding: 3px 7px; border-radius: 999px;
+  }
+  .st::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
+  .st--draft { background: var(--amber-s); color: var(--amber); }
+  .st--prog { background: var(--prog-s); color: var(--prog); }
+  .st--ok { background: var(--ok-s); color: var(--ok); }
+  .av {
+    display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%;
+    background: var(--green-soft2); color: var(--green-dd); font-size: 8px; font-weight: 700; flex: none;
+  }
+  .av--sm { width: 22px; height: 22px; font-size: 8.5px; }
+
+  /* ---- Cartes satellite : tuiles AUTO-HEBERGEES, a leur taille NATIVE de
+     256 px. Jamais d'agrandissement (une tuile etiree = bouillie, pas du detail). */
+  .pmap { position: relative; overflow: hidden; background-color: var(--green-soft); background-repeat: no-repeat; background-size: 256px 256px; }
+  .pmap--phone {
+    height: 96px; border-radius: 9px; margin: 8px 0; border: 1px solid var(--hair);
+    background-position: -60px -170px, 196px -170px, -60px 86px, 196px 86px;
+    background-image:
+      url('/projects/map/z15-13490-7486.jpg'), url('/projects/map/z15-13490-7487.jpg'),
+      url('/projects/map/z15-13491-7486.jpg'), url('/projects/map/z15-13491-7487.jpg');
+  }
+  .pmap--win {
+    border-radius: 12px; min-height: 200px;
+    background-position: -60px -60px, 196px -60px, 452px -60px, -60px 196px, 196px 196px, 452px 196px;
+    background-image:
+      url('/projects/map/z13-3371-1870.jpg'), url('/projects/map/z13-3371-1871.jpg'), url('/projects/map/z13-3371-1872.jpg'),
+      url('/projects/map/z13-3372-1870.jpg'), url('/projects/map/z13-3372-1871.jpg'), url('/projects/map/z13-3372-1872.jpg');
+  }
+  .pmap__eta, .pmap__lab, .pmap__gps {
+    position: absolute; top: 7px; display: inline-flex; align-items: center; gap: 5px;
+    font-size: 8px; font-weight: 700; padding: 4px 8px; border-radius: 7px;
+    background: rgba(18, 21, 16, 0.88); color: var(--ink);
+  }
+  .pmap__eta { right: 7px; color: var(--green-dd); }
+  .pmap__lab { left: 7px; }
+  .pmap__gps { right: 7px; color: var(--green-d); }
+  .pmap__gps .d { width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
+  /* Credit d'imagerie : requis par Esri World Imagery. */
+  .pmap__credit {
+    position: absolute; right: 5px; bottom: 4px;
+    font-size: 6.5px; letter-spacing: 0.02em; color: rgba(255, 255, 255, 0.62);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+  }
+  .pin {
+    position: absolute; left: 50%; top: 50%; width: 15px; height: 15px;
+    border-radius: 50% 50% 50% 0; rotate: -45deg; translate: -50% -100%;
+    background: var(--green); border: 1.5px solid #fff; box-shadow: 0 3px 7px -2px rgba(0, 0, 0, 0.8);
+  }
+
+  /* ======================= 1 — TERRAIN (telephone) ========================= */
+  .phone {
+    width: 300px; margin-inline: auto; padding: 7px;
+    background: #111310; border-radius: 38px;
+    box-shadow: 0 50px 110px -50px rgba(0, 0, 0, 1);
+  }
+  .pscreen {
+    position: relative; border-radius: 31px; overflow: hidden;
+    display: flex; flex-direction: column;
+    background:
+      radial-gradient(480px 330px at 10% -6%, rgba(143, 177, 91, 0.1), transparent 65%),
+      var(--bg);
+    font-size: 10px; line-height: 1.35;
+  }
+  .island { position: absolute; top: 8px; left: 50%; translate: -50% 0; width: 74px; height: 21px; border-radius: 14px; background: #000; z-index: 4; }
+  .phd { display: flex; align-items: center; gap: 8px; padding: 34px 12px 10px; }
+  .pmk {
+    display: grid; place-items: center; width: 26px; height: 26px; border-radius: 8px;
+    background: #22261f; border: 1px solid var(--hair); color: var(--green-dd);
+    font-size: 7.5px; font-weight: 800; letter-spacing: 0.02em; flex: none;
+  }
+  .phi { flex: 1; }
+  .phi b { display: block; font-size: 11px; font-weight: 700; letter-spacing: -0.01em; }
+  .phi span { font-size: 8px; color: var(--mut); }
+  .pbody { padding: 0 12px 10px; }
+  .psec { display: flex; align-items: center; justify-content: space-between; margin: 0 1px 6px; }
+  .psec b { font-size: 10px; font-weight: 700; }
+  .psec span { font-size: 8.5px; font-weight: 600; color: var(--green-d); }
+  .pmission { border-radius: 13px; padding: 9px; margin-bottom: 12px; }
+  .pm-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+  .pm-by { font-size: 8px; color: var(--mut); font-weight: 600; }
+  .pm-t { font-size: 12px; font-weight: 700; letter-spacing: -0.01em; }
+  .pm-c { display: flex; align-items: center; gap: 4px; font-size: 8.5px; color: var(--mut); margin-top: 3px; }
+  .pm-c .gl { color: var(--green-d); }
+  .pm-act { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .pday { border-radius: 13px; padding: 2px 9px; margin-bottom: 12px; }
+  .piv { display: flex; align-items: center; gap: 7px; padding: 8px 0; border-bottom: 1px solid var(--hair); }
+  .piv:last-child { border-bottom: 0; }
+  .piv__d { font-size: 8.5px; font-weight: 800; width: 34px; flex: none; }
+  .dot { width: 5px; height: 5px; border-radius: 50%; flex: none; background: var(--mut); }
+  .dot--prog { background: var(--prog); }
+  .piv__b { flex: 1; min-width: 0; }
+  .piv__t { font-size: 9.5px; font-weight: 700; }
+  .piv__m { font-size: 8px; color: var(--mut); margin-top: 2px; }
+  .qcheck {
+    display: grid; place-items: center; width: 17px; height: 17px; border-radius: 50%; flex: none;
+    border: 1px solid var(--green); color: var(--green-d); font-size: 8px;
+  }
+  .pqa { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .qa {
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+    padding: 9px 2px 7px; border-radius: 11px;
+    background: var(--glass-bg); border: 1px solid var(--glass-bd);
+  }
+  .qa b { font-size: 7.5px; font-weight: 700; }
+  /* Icones = masques CSS. IMPORTANT : la pastille (fond colore) et le glyphe
+     (masque) sont DEUX elements. Sur un seul, le masque decoupe aussi le fond
+     et la pastille disparait. */
+  .gi, .ti {
+    display: block; background-color: currentColor;
+    -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
+    -webkit-mask-position: center; mask-position: center;
+    -webkit-mask-size: contain; mask-size: contain;
+  }
+  .ti { width: 14px; height: 14px; }
+  .gi { width: 100%; height: 100%; }
+  .qi { display: grid; place-items: center; width: 15px; height: 15px; padding: 6px; box-sizing: content-box; border-radius: 8px; background: var(--green-soft); color: var(--green-d); }
+  .qi .gi { width: 15px; height: 15px; }
+  .ptab {
+    display: flex; align-items: center; justify-content: space-around; position: relative;
+    padding: 7px 4px 11px; border-top: 1px solid var(--hair); background: rgba(18, 21, 16, 0.66);
+    -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  }
+  .ptab__i { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 7.5px; font-weight: 600; color: var(--mut); flex: 1; }
+  .ptab__i.on { color: var(--green-d); font-weight: 700; }
+  .pfab {
+    position: absolute; left: 50%; top: -16px; translate: -50% 0;
+    display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%;
+    background: #5f7f35; color: #fff; font-size: 15px; line-height: 1; border: 2px solid var(--bg);
+  }
+
+  /* ========================= 2 — BUREAU (fenetre) ========================== */
+  .win {
+    max-width: 720px; margin-inline: auto;
+    border-radius: 14px; overflow: hidden; position: relative;
+    background:
+      radial-gradient(60% 40% at 12% 0%, rgba(143, 177, 91, 0.1), transparent 60%),
+      var(--bg);
+    border: 1px solid var(--hair);
+    box-shadow: 0 50px 110px -50px rgba(0, 0, 0, 1);
+    font-size: 10px; line-height: 1.35;
+  }
+  .bar {
+    display: flex; align-items: center; gap: 9px; position: relative; z-index: 2;
+    padding: 8px 11px; border-bottom: 1px solid var(--hair); background: rgba(14, 16, 13, 0.82);
+  }
+  .mk2 {
+    display: grid; place-items: center; width: 22px; height: 22px; border-radius: 7px;
+    background: #22261f; border: 1px solid var(--hair); color: var(--green-dd); font-size: 7px; font-weight: 800; flex: none;
+  }
+  .brand b { display: block; font-size: 9.5px; font-weight: 700; }
+  .brand span { font-size: 7.5px; color: var(--mut); }
+  .nav { display: flex; align-items: center; gap: 2px; flex: 1; font-size: 8.5px; color: var(--mut); }
+  .nav b { color: var(--green-dd); background: rgba(143, 177, 91, 0.24); padding: 4px 7px; border-radius: 6px; font-weight: 600; }
+  .nav span { padding: 4px 5px; }
+  .search { display: inline-flex; align-items: center; gap: 5px; padding: 5px 9px; border-radius: 8px; background: rgba(255, 255, 255, 0.06); color: var(--mut); font-size: 8px; white-space: nowrap; }
+  .iconbtn { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 7px; background: rgba(255, 255, 255, 0.06); font-size: 9px; flex: none; }
+
+  .page { position: relative; padding: 14px 14px 8px; overflow: hidden; }
+  /* Fond « dither » de l'app : dans le vrai produit c'est un canvas WebGL —
+     ici, approximation CSS (grille de carres masquee en nuage). */
+  .dith {
+    position: absolute; inset: -20px -10px auto -10px; height: 260px; pointer-events: none;
+    background-image: conic-gradient(rgba(143, 177, 91, 0.22) 25%, transparent 0 100%);
+    background-size: 5px 5px;
+    -webkit-mask-image: radial-gradient(90% 70% at 34% 2%, #000 0%, transparent 72%), radial-gradient(60% 90% at 99% 34%, #000 0%, transparent 78%);
+    mask-image: radial-gradient(90% 70% at 34% 2%, #000 0%, transparent 72%), radial-gradient(60% 90% at 99% 34%, #000 0%, transparent 78%);
+  }
+  .head { position: relative; margin-bottom: 11px; }
+  .mkick { font-size: 8px; font-weight: 700; color: var(--mut); }
+  .hi { font-family: var(--font-display); font-size: 19px; font-weight: 600; letter-spacing: -0.02em; margin: 3px 0 2px; }
+  .hi__sub { font-size: 8.5px; color: var(--mut); }
+  .hi__sub b { color: var(--green-d); }
+
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; position: relative; }
+  .kpi { border-radius: 11px; padding: 9px; }
+  .kpi--hi { background: linear-gradient(150deg, rgba(143, 177, 91, 0.24), rgba(143, 177, 91, 0.1)); }
+  .kpi__t { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; }
+  .ic { display: grid; place-items: center; width: 13px; height: 13px; padding: 5px; box-sizing: content-box; border-radius: 7px; background: var(--green-soft); color: var(--green-d); }
+  .ic--alert { background: var(--alert-s); color: var(--alert); }
+  .chip { font-size: 7px; font-weight: 700; padding: 3px 6px; border-radius: 999px; background: var(--green-soft); color: var(--green-d); }
+  .chip--neu { background: rgba(255, 255, 255, 0.08); color: var(--mut); }
+  .chip--red { background: var(--alert-s); color: var(--alert); }
+  .kpi__v { font-family: var(--font-display); font-size: 20px; font-weight: 600; line-height: 1; }
+  .kpi__s { font-size: 8px; color: var(--mut); margin-top: 4px; }
+
+  .actions { display: flex; justify-content: flex-end; gap: 6px; margin: 10px 0; position: relative; }
+
+  .bento { display: grid; grid-template-columns: 1.5fr 1fr; gap: 7px; position: relative; }
+  .listile { border-radius: 12px; padding: 9px 10px; }
+  .t-h { display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px; }
+  .t-h b { font-size: 9px; font-weight: 700; }
+  .t-h span { font-size: 7.5px; font-weight: 700; color: var(--green-d); }
+  .iv { display: flex; align-items: center; gap: 7px; padding: 6px 0; border-bottom: 1px solid var(--hair); }
+  .iv:last-child { border-bottom: 0; }
+  .iv__b { flex: 1; min-width: 0; }
+  .iv__ref { display: flex; align-items: center; gap: 5px; font-size: 7.5px; font-weight: 800; color: var(--green-d); }
+  .orig { font-style: normal; font-size: 6.5px; font-weight: 700; color: var(--mut); background: rgba(255, 255, 255, 0.08); border-radius: 4px; padding: 1px 4px; }
+  .iv__n { font-size: 9px; font-weight: 700; margin: 2px 0; }
+  .iv__m { font-size: 7.5px; color: var(--mut); display: flex; align-items: center; gap: 4px; }
+  .techchip { font-style: normal; white-space: nowrap; background: rgba(255, 255, 255, 0.08); border-radius: 999px; padding: 2px 6px; color: var(--ink); font-weight: 600; }
+
+  .foot { text-align: center; font-size: 7px; color: var(--mut); padding-bottom: 26px; }
+  .dock { position: absolute; left: 50%; bottom: 9px; translate: -50% 0; display: flex; align-items: center; gap: 6px; z-index: 3; }
+  .dock__seg { display: flex; gap: 3px; padding: 3px; border-radius: 9px; background: rgba(18, 21, 16, 0.8); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+  .dock__seg i, .dock__seg b { font-style: normal; font-size: 8px; font-weight: 700; padding: 5px 10px; border-radius: 7px; color: var(--mut); }
+  .dock__seg b { background: rgba(143, 177, 91, 0.24); color: var(--green-dd); }
+  .dock__b { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: rgba(18, 21, 16, 0.8); font-size: 10px; color: var(--ink); }
+
+  /* ---- Association icone → masque ---- */
+  .gi--photos { -webkit-mask-image: var(--i-img); mask-image: var(--i-img); }
+  .gi--reports { -webkit-mask-image: var(--i-folder); mask-image: var(--i-folder); }
+  .gi--start { -webkit-mask-image: var(--i-play); mask-image: var(--i-play); }
+  .gi--profile, .ti--profile { -webkit-mask-image: var(--i-user); mask-image: var(--i-user); }
+  .ti--home { -webkit-mask-image: var(--i-home); mask-image: var(--i-home); }
+  .ti--schedule { -webkit-mask-image: var(--i-cal); mask-image: var(--i-cal); }
+  .ti--jobs { -webkit-mask-image: var(--i-build); mask-image: var(--i-build); }
+  .gi--wrench { -webkit-mask-image: var(--i-wrench); mask-image: var(--i-wrench); }
+  .gi--team { -webkit-mask-image: var(--i-user); mask-image: var(--i-user); }
+  .gi--draft { -webkit-mask-image: var(--i-folder); mask-image: var(--i-folder); }
+  .gi--alert { -webkit-mask-image: var(--i-warn); mask-image: var(--i-warn); }
+
+  /* ---- Ecrans etroits : le tableau de bord garde sa forme, en plus petit ---- */
+  @media (max-width: 640px) {
+    .kpis { grid-template-columns: repeat(2, 1fr); }
+    .bento { grid-template-columns: 1fr; }
+    .nav span, .search { display: none; }
+  }
+
+  /* Reduced-motion : les ecrans s'empilent, aucun effet de profondeur. */
+  @media (prefers-reduced-motion: reduce) {
+    .deck { display: grid; grid-template-columns: 1fr; gap: var(--space-6); min-height: 0; }
+    .deck > .card { position: static; height: auto; }
+    .card { grid-area: auto; opacity: 1 !important; transform: none !important; }
+    /* !important bat les styles inline poses par GSAP : aucun glissement, aucun voile. */
+    .card__inner { transform: none !important; opacity: 1 !important; }
+    .card__inner::after { opacity: 0 !important; }
+  }
+</style>

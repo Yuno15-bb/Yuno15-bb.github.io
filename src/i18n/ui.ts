@@ -1,0 +1,81 @@
+// Dictionnaire i18n minimal (L0). Etendu au fil des lots.
+export const languages = {
+  fr: 'Français',
+  en: 'English',
+} as const;
+
+export type Lang = keyof typeof languages;
+export const defaultLang: Lang = 'en';
+
+export const ui = {
+  fr: {
+    'site.role': 'Designer XR & créateur de solutions IA',
+    'nav.work': 'Travaux',
+    'nav.contact': 'Contact',
+    'skip': 'Aller au contenu',
+    'home.intro': 'Je conçois des interfaces et des expériences — du produit métier fiable à l’interaction spatiale.',
+    'home.lead': 'Deux terrains, une même exigence : la clarté. Des outils métier qui tiennent sur le terrain, et des interactions spatiales qui donnent envie.',
+    'home.work.title': 'Projets',
+    'home.filter.label': 'Filtrer par domaine',
+    'home.filter.all': 'Tout',
+    'home.filter.xr': 'Créatif / XR',
+    'home.filter.business': 'Produit / IA',
+    'home.empty': 'Aucun projet dans ce domaine pour l’instant — d’autres arrivent.',
+    'home.contact.title': 'Travaillons ensemble',
+    'home.contact.body': 'Un produit à concevoir, une expérience à imaginer ? Écrivez-moi.',
+    'project.role': 'Rôle',
+    'project.stack': 'Stack',
+    'project.year': 'Année',
+    'project.result': 'Résultat',
+    'project.nda': 'Client réel — visuels maquettés, aucune donnée réelle exposée.',
+    'project.mockup': 'Interface réelle du produit, reconstruite fidèlement — données volontairement fictives (confidentialité client).',
+    'project.back': '← Tous les travaux',
+    'cta.contact': 'Me contacter',
+    'contact.email': 'Écrivez-moi',
+    'contact.copy': 'Copier',
+    'contact.copied': 'Adresse copiée ✓',
+    'story.title': 'Comment ça marche',
+    'story.hint': 'Faites défiler — chaque écran de l’app se dévoile.',
+    'story.s1.t': '1 · Le terrain, dans la poche',
+    'story.s1.b': 'L’accueil du technicien : la mission en cours avec sa carte et son itinéraire, les prochaines interventions, les actions rapides. Tout s’ouvre même sans réseau — le carnet papier tient dans un téléphone.',
+    'story.s2.t': '2 · Le bureau voit tout',
+    'story.s2.b': 'Un tableau de bord unique : les équipes en direct sur la carte, les compteurs, les conclusions urgentes, les interventions récentes. Ce qui se perdait entre le chantier et le bureau devient une source de vérité.',
+  },
+  en: {
+    'site.role': 'XR designer & AI solutions maker',
+    'nav.work': 'Work',
+    'nav.contact': 'Contact',
+    'skip': 'Skip to content',
+    'home.intro': 'I design interfaces and experiences — from reliable business products to spatial interaction.',
+    'home.lead': 'Two fields, one demand: clarity. Business tools that hold up on site, and spatial interactions that spark desire.',
+    'home.work.title': 'Projects',
+    'home.filter.label': 'Filter by field',
+    'home.filter.all': 'All',
+    'home.filter.xr': 'Creative / XR',
+    'home.filter.business': 'Product / AI',
+    'home.empty': 'No project in this field yet — more coming.',
+    'home.contact.title': 'Let’s work together',
+    'home.contact.body': 'A product to design, an experience to imagine? Drop me a line.',
+    'project.role': 'Role',
+    'project.stack': 'Stack',
+    'project.year': 'Year',
+    'project.result': 'Result',
+    'project.nda': 'Real client — mocked visuals, no real data exposed.',
+    'project.mockup': 'The product’s real interface, faithfully rebuilt — data deliberately fictional (client confidentiality).',
+    'project.back': '← All work',
+    'cta.contact': 'Get in touch',
+    'contact.email': 'Write to me',
+    'contact.copy': 'Copy',
+    'contact.copied': 'Address copied ✓',
+    'story.title': 'How it works',
+    'story.hint': 'Scroll — each screen of the app reveals itself.',
+    'story.s1.t': '1 · The field, in your pocket',
+    'story.s1.b': 'The technician’s home screen: the current job with its map and route, the upcoming jobs, the quick actions. Everything opens even with no signal — the paper logbook now fits in a phone.',
+    'story.s2.t': '2 · The office sees everything',
+    'story.s2.b': 'One dashboard: live crews on the map, counters, urgent findings, recent jobs. What used to get lost between the job site and the office is now a single source of truth.',
+  },
+} as const;
+
+export function t(lang: Lang) {
+  return (key: keyof (typeof ui)['fr']) => ui[lang][key];
+}
