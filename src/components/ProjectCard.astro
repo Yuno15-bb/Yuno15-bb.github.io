@@ -76,7 +76,9 @@ const tiltAttrs = tilt > 0 ? { 'data-tilt': String(tilt), 'data-tilt-reverse': '
     }
     .card__meta { display: flex; justify-content: space-between; color: var(--c-muted); }
     .card__title {
-      font-size: clamp(var(--fs-500), 3.5vw, var(--fs-600));
+      /* Le titre de carte doit rester SOUS le titre de section : a fs-600 il
+         rivalisait avec lui et la carte se lisait comme une page entiere. */
+      font-size: clamp(var(--fs-300), 2vw, var(--fs-500));
     }
     .card__pitch { color: var(--c-muted); }
     .card__go {
