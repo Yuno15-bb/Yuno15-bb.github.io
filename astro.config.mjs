@@ -4,8 +4,8 @@ import mdx from '@astrojs/mdx';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 
-// Site public — a renseigner avant mise en ligne (L4). Placeholder pour le sitemap.
-const SITE = process.env.SITE_URL ?? 'https://portfolio-dylan.example';
+// Site public. Le workflow Pages fixe SITE_URL au build ; ce repli sert au dev local.
+const SITE = process.env.SITE_URL ?? 'https://yuno15-bb.github.io';
 
 // https://astro.build/config
 export default defineConfig({

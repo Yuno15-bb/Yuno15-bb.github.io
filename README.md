@@ -1,7 +1,6 @@
 # Portfolio Yuno15
 
 Site portfolio interactif — direction artistique **« Suisse éditorial + couche générative »**.
-Cadrage complet : [`docs/cadrage-portfolio.md`](docs/cadrage-portfolio.md).
 
 ## Stack
 - **Astro** (statique, SEO, rapide) + îlots interactifs (React/GSAP/WebGL — lots suivants).
@@ -38,7 +37,6 @@ src/
   pages/[lang]/projects/[slug]     étude de cas
   styles/tokens.css                design tokens (source de vérité)
   styles/global.css                base + grille + a11y
-docs/cadrage-portfolio.md          le design-doc (lots L0→L4)
 ```
 
 ## Feuille de route (lots)
