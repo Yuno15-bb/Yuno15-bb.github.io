@@ -1,4 +1,10 @@
 ---
+import { ui, type Lang } from '../i18n/ui';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const t = ui[lang];
+
 // DGC System — les 2 ecrans de la demonstration, refaits d'apres la maquette
 // haute-fidelite du 26/07/2026 (elle-meme relevee sur l'app en prod, SW v259) :
 // jetons de couleur reels, effet verre, fond dither, tuiles satellite reelles.
@@ -40,6 +46,11 @@ const tabs = [
   {/* ============================ 1 — TERRAIN ============================ */}
   <article class="card" data-card="0">
     <div class="card__inner">
+      <div class="cardlab">
+        <p class="cardlab__dev">{t['story.s1.dev']}</p>
+        <h3 class="cardlab__t">{t['story.s1.t']}</h3>
+        <p class="cardlab__b">{t['story.s1.b']}</p>
+      </div>
       <div class="phone">
         <div class="pscreen">
           <span class="island" aria-hidden="true"></span>
@@ -100,6 +111,11 @@ const tabs = [
   {/* ============================ 2 — BUREAU ============================= */}
   <article class="card" data-card="1">
     <div class="card__inner">
+      <div class="cardlab">
+        <p class="cardlab__dev">{t['story.s2.dev']}</p>
+        <h3 class="cardlab__t">{t['story.s2.t']}</h3>
+        <p class="cardlab__b">{t['story.s2.b']}</p>
+      </div>
       <div class="win">
         <header class="bar">
           <span class="mk2">DGC</span>
@@ -491,6 +507,34 @@ const tabs = [
   .gi--team { -webkit-mask-image: var(--i-user); mask-image: var(--i-user); }
   .gi--draft { -webkit-mask-image: var(--i-folder); mask-image: var(--i-folder); }
   .gi--alert { -webkit-mask-image: var(--i-warn); mask-image: var(--i-warn); }
+
+  /* ================= Legende portee par la carte ============================
+     Sur grand ecran c'est la colonne collante (.stack__side) qui raconte les
+     etapes ; la legende est donc masquee. Sous 1100px cette colonne disparait
+     et chaque ecran doit se presenter lui-meme — sinon le tableau de bord
+     BUREAU arrive sans titre ni explication (defaut constate le 25/08/2026). */
+  .cardlab { display: none; }
+  .cardlab__dev {
+    font-family: var(--font-mono); font-size: var(--fs-100);
+    letter-spacing: 0.22em; text-transform: uppercase; color: var(--c-ember);
+  }
+  .cardlab__t { font-size: var(--fs-300); color: var(--c-fg); margin-top: var(--space-1); }
+  .cardlab__b { color: var(--c-muted); font-size: var(--fs-200); margin-top: var(--space-2); max-width: 60ch; }
+
+  /* ---- Sous 1100px : les ecrans passent en flux, chacun sous sa legende ----
+     La pile collante est desarmee cote script ; les `!important` neutralisent
+     les transformations inline que GSAP aurait pu poser avant le redimensionnement. */
+  @media (max-width: 1100px) {
+    .cardlab { display: block; margin-bottom: var(--space-4); }
+    .deck { display: grid; grid-template-columns: 1fr; gap: var(--space-8); min-height: 0; }
+    .deck > .card { position: static; height: auto; }
+    .card { grid-area: auto; opacity: 1 !important; transform: none !important; }
+    .card__inner { transform: none !important; opacity: 1 !important; }
+    .card__inner::after { opacity: 0 !important; }
+    /* Le bureau reste un ECRAN D'ORDINATEUR, pas un second telephone :
+       il garde ses proportions larges et defile lateralement dans son cadre. */
+    .win { max-width: none; width: 100%; }
+  }
 
   /* ---- Ecrans etroits : le tableau de bord garde sa forme, en plus petit ---- */
   @media (max-width: 640px) {

@@ -39,6 +39,8 @@ export const ui = {
     'story.s1.t': '1 · Le terrain, dans la poche',
     'story.s1.b': 'L’accueil du technicien : la mission en cours avec sa carte et son itinéraire, les prochaines interventions, les actions rapides. Tout s’ouvre même sans réseau — le carnet papier tient dans un téléphone.',
     'story.s2.t': '2 · Le bureau voit tout',
+    'story.s1.dev': 'Terrain · téléphone',
+    'story.s2.dev': 'Bureau · ordinateur',
     'story.s2.b': 'Un tableau de bord unique : les équipes en direct sur la carte, les compteurs, les conclusions urgentes, les interventions récentes. Ce qui se perdait entre le chantier et le bureau devient une source de vérité.',
   },
   en: {
@@ -72,6 +74,8 @@ export const ui = {
     'story.s1.t': '1 · The field, in your pocket',
     'story.s1.b': 'The technician’s home screen: the current job with its map and route, the upcoming jobs, the quick actions. Everything opens even with no signal — the paper logbook now fits in a phone.',
     'story.s2.t': '2 · The office sees everything',
+    'story.s1.dev': 'Field · phone',
+    'story.s2.dev': 'Office · desktop',
     'story.s2.b': 'One dashboard: live crews on the map, counters, urgent findings, recent jobs. What used to get lost between the job site and the office is now a single source of truth.',
   },
 } as const;

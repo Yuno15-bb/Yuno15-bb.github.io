@@ -64,7 +64,7 @@ const slug = entry.id.split('/')[1];
             </aside>
 
             <div class="stack__cards">
-              <DgcScreens />
+              <DgcScreens lang={lang} />
             </div>
           </div>
         </div>
@@ -191,12 +191,14 @@ const slug = entry.id.split('/')[1];
     .stack__caption { color: var(--c-muted); }
 
     @media (max-width: 1100px) {
-      .stack { grid-template-columns: 1fr; gap: var(--space-4); padding-bottom: 20vh; }
+      .stack { grid-template-columns: 1fr; gap: var(--space-4); padding-bottom: var(--space-6); }
       .stack__side { grid-area: auto; position: relative; top: 0; height: auto; width: 100%; }
       .stack__cards { grid-area: auto; padding-left: 0; }
-      .stack__steps { min-height: 0; }
-      .stack__step { position: relative; inset: auto; }
-      .stack__step:not(:first-child) { display: none; }
+      /* ⚠ Regression corrigee : `.stack__step:not(:first-child) { display: none }`
+         supprimait le texte de l'etape 2 — l'ecran BUREAU arrivait sans un mot
+         d'explication sur telephone. Les etapes sont desormais portees par les
+         cartes elles-memes (.cardlab), donc la colonne entiere s'efface. */
+      .stack__side { display: none; }
     }
     /* Reduced-motion : pas de pile — texte + écrans empilés en flux, tout lisible. */
     @media (prefers-reduced-motion: reduce) {
@@ -278,6 +280,10 @@ const slug = entry.id.split('/')[1];
     import Lenis from 'lenis';
 
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // Sous 1100px la colonne de texte collante disparait : la pile n'a plus
+    // rien a raconter et masquait l'etape 2. Les ecrans passent en flux,
+    // chacun avec sa legende portee par la carte elle-meme.
+    const narrow = matchMedia('(max-width: 1100px)').matches;
 
     if (!reduce) {
       gsap.registerPlugin(ScrollTrigger);
@@ -307,7 +313,7 @@ const slug = entry.id.split('/')[1];
       const inners = gsap.utils.toArray<HTMLElement>('.card__inner');
       const bar = document.getElementById('story-bar');
 
-      if (stack && steps.length && inners.length) {
+      if (stack && steps.length && inners.length && !narrow) {
         const n = inners.length;
         // Profondeur = nombre de cartes qui viendront se poser PAR-DESSUS celle-ci.
         // La dernière carte a une profondeur 0 : elle ne rétrécit ni ne floute jamais.
