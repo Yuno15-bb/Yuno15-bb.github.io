@@ -50,6 +50,9 @@ const mail = `mailto:${email}`;
       {/* Le bloc de texte repose sur une vitre (liquid glass) : elle floute le fond WebGL
           derrière elle → lisibilité + profondeur, même langage que les cartes projet. */}
       <div class="hero__panel">
+        {/* Decision du 25/08/2026 : nom civil affiche, Yuno15 conserve comme
+            marque. Un recruteur doit pouvoir relier le site a une personne. */}
+        <p class="hero__name anim-in">Dylan Peellaert</p>
         <p class="hero__eyebrow anim-in">{t['site.role']}</p>
         <h1 class="anim-in" id="hero-title">{t['home.intro']}</h1>
         <p class="hero__lead anim-in">{t['home.lead']}</p>
@@ -155,6 +158,13 @@ const mail = `mailto:${email}`;
       height: var(--space-4);
       background: var(--c-line-ui);
       transform: translateX(-50%);
+    }
+    .hero__name {
+      font-family: var(--font-display, var(--font-serif, serif));
+      font-size: var(--fs-300);
+      color: var(--c-fg);
+      letter-spacing: -0.01em;
+      margin-bottom: var(--space-2);
     }
     .hero__eyebrow {
       font-family: var(--font-mono);
