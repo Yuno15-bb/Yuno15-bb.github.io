@@ -25,7 +25,7 @@ const slug = entry.id.split('/')[1];
       <div class="container">
         <a class="eyebrow project__back" href={`/${lang}/`}>{t['project.back']}</a>
         <header class="project__head project__head--center">
-          <p class="project__kicker">{d.audience.join(' · ')} · {d.annee}</p>
+          <p class="project__kicker">{d.contexte ?? d.audience.join(' · ')} · {d.annee}</p>
           <h1>{d.titre}</h1>
           <p class="project__pitch">{d.pitch}</p>
         </header>
@@ -46,7 +46,7 @@ const slug = entry.id.split('/')[1];
     </div>
 
     {/* Puis la démonstration : la pile de cartes, au milieu de la page. */}
-    {slug === 'dgc-system' && (
+    {slug === 'field-operations-platform' && (
       <section class="story" aria-label={t['story.title']}>
         <div class="container">
           <div class="stack" id="story-stack">
@@ -219,8 +219,7 @@ const slug = entry.id.split('/')[1];
        pannes racontées n'étaient tout simplement plus lisibles, et la page
        débordait de 138 px en largeur.
        Défaut par défaut : UNE colonne mesurée, valable pour n'importe quelle
-       longueur d'article. La grille asymétrique reste réservée à `dgc-system`,
-       la seule étude qui a la forme pour laquelle elle a été dessinée. */
+       longueur d'article — c'est desormais le seul mode de mise en page. */
     .project__body {
       margin-top: var(--space-8);
       max-width: var(--measure);
@@ -229,57 +228,15 @@ const slug = entry.id.split('/')[1];
     /* Rythme vertical de l'article : sans ça les paragraphes se touchent et les
        titres collent au texte du dessus (constaté au rendu le 25/08/2026). */
     .project__body :global(p) { margin-bottom: var(--space-3); }
-    .project__body :global(h2) { margin-top: var(--space-6); }
+    .project__body :global(h2) { margin-top: var(--space-7); margin-bottom: var(--space-2); }
     .project__body :global(h2:first-child) { margin-top: 0; }
 
-    [data-slug='dgc-system'] .project__body {
-      max-width: none;
-      display: grid;
-      grid-template-columns: repeat(12, 1fr);
-      column-gap: var(--grid-gutter);
-    }
-    .project__body :global(h2) {
-      font-size: var(--fs-400);
-      color: var(--c-ember);
-      margin-bottom: var(--space-2);
-    }
-    .project__body :global(p) { color: var(--c-muted); }
-
-    /* 1er bloc — colonnes 1-6, texte plus grand (l'accroche) */
-    [data-slug='dgc-system'] .project__body :global(h2:nth-of-type(1)),
-    [data-slug='dgc-system'] .project__body :global(h2:nth-of-type(1) ~ p:nth-of-type(1)) {
-      grid-column: 1 / span 6;
-    }
-    [data-slug='dgc-system'] .project__body :global(h2:nth-of-type(1) ~ p:nth-of-type(1)) {
-      font-size: var(--fs-300);
-      line-height: 1.55;
-      color: var(--c-fg);
-      margin-bottom: var(--space-8);
-    }
-    /* 2e bloc — décalé à droite, colonnes 6-12 */
-    [data-slug='dgc-system'] .project__body :global(h2:nth-of-type(2)),
-    [data-slug='dgc-system'] .project__body :global(h2:nth-of-type(2) ~ p:nth-of-type(2)) {
-      grid-column: 6 / span 7;
-    }
-    [data-slug='dgc-system'] .project__body :global(h2:nth-of-type(2) ~ p:nth-of-type(2)) {
-      margin-bottom: var(--space-8);
-    }
-    /* 3e bloc — ramené à gauche, étroit et resserré */
-    [data-slug='dgc-system'] .project__body :global(h2:nth-of-type(3)),
-    [data-slug='dgc-system'] .project__body :global(h2:nth-of-type(3) ~ p:nth-of-type(3)) {
-      grid-column: 2 / span 5;
-    }
-    /* La citation finale (blockquote) : discrète, calée à droite */
-    [data-slug='dgc-system'] .project__body :global(blockquote) {
-      grid-column: 8 / span 5;
-      margin-top: var(--space-4);
-      padding-left: var(--space-3);
-      border-left: 2px solid var(--c-line);
-      font-size: var(--fs-100);
-      font-family: var(--font-mono);
-      color: var(--c-muted);
-    }
-    .project__body :global(blockquote p) { font-size: inherit; }
+    /* ⚠ La composition editoriale asymetrique a ete SUPPRIMEE le 25/08/2026.
+       Elle etait ecrite en dur pour EXACTEMENT 3 titres et 3 paragraphes — la forme
+       de l'ancienne etude DGC. Les etudes suivent desormais toutes le meme plan en
+       7 sections (Probleme, Contraintes, Systeme, Architecture, Fiabilite, Resultats,
+       Limites), donc plus aucune n'a cette forme. La garder revenait a conserver un
+       piege : tout article plus long tombait dans des colonnes de 1/12 de large. */
 
     @media (max-width: 900px) {
       .project__body { display: block; }

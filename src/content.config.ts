@@ -10,6 +10,9 @@ const projects = defineCollection({
     titre: z.string(),
     pitch: z.string(), // 1 phrase
     audience: z.array(z.enum(['xr', 'business'])).min(1),
+    // Surtitre public de l'etude (ex. "Client work · anonymized"). Quand il est
+    // absent, le gabarit retombe sur `audience`.
+    contexte: z.string().optional(),
     role: z.string(),
     stack: z.array(z.string()).default([]),
     annee: z.number().int(),

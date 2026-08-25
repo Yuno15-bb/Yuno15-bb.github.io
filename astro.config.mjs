@@ -10,6 +10,13 @@ const SITE = process.env.SITE_URL ?? 'https://yuno15-bb.github.io';
 // https://astro.build/config
 export default defineConfig({
   site: SITE,
+  // L'etude « DGC System » a ete scindee en deux le 25/08/2026 : l'agent IA et
+  // l'application terrain sont deux produits distincts. On garde les anciennes
+  // adresses vivantes plutot que de les laisser tomber en 404.
+  redirects: {
+    '/en/projects/dgc-system': '/en/projects/field-operations-platform',
+    '/fr/projects/dgc-system': '/fr/projects/field-operations-platform',
+  },
   // i18n natif EN + FR. Les deux langues sont prefixees (/en, /fr).
   // ⚠ C'est CE defaultLocale qui decide de la redirection de la racine `/`,
   // pas la page src/pages/index.astro : Astro genere la redirection lui-meme.

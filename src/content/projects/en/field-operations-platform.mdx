@@ -1,0 +1,79 @@
+---
+titre: "Field Operations Platform"
+pitch: "A field app that keeps working when the network does not — offline capture, geolocated photos, PDF report in one tap."
+audience: ["business"]
+contexte: "Client work · anonymized"
+role: "Product design, field UX, full-stack development"
+stack: ["PWA", "JavaScript", "Service Worker", "Supabase", "PostgreSQL", "RLS", "GPS", "PDF"]
+annee: 2026
+resultat: "Writes are queued and replayed on reconnect — a dropped signal or a refresh loses nothing. 91 unit tests green."
+nda: true
+featured: true
+ordre: 2
+cover: "/projects/dgc-system-phone.png"
+cover2: "/projects/dgc-system-office.png"
+---
+
+## The problem
+
+Technicians logged their jobs on paper, and the office re-typed them later. Between the
+two: lost sheets, duplicated entries, days of delay before anyone at the office knew
+what had actually happened on site.
+
+## The constraints
+
+A construction site is not an office. The network drops behind a wall and comes back in
+the van. The hand holding the phone is gloved. The screen is read in direct sunlight,
+one-handed, while something else is going on.
+
+A consumer-grade app does not survive that. Neither does an app that assumes a request
+will succeed.
+
+## The system
+
+An **offline-first** progressive web app with two faces: the technician's phone, and the
+office dashboard.
+
+On site: fast capture, geolocated photos, and a questionnaire that adapts to the type of
+job rather than asking everything every time. At the office: live view of the crews,
+counters, urgent findings, and a PDF report generated from what was entered in the field.
+
+## The architecture
+
+Every write goes into a **queue** before it goes anywhere near the network. The app
+treats being offline as the normal case, not the error case — so a dropped signal, a
+refresh, or a closed tab costs nothing. The queue replays the moment the connection
+returns.
+
+Access is partitioned at the database level with **row-level security**, designed from
+the start for more than one company rather than retrofitted later.
+
+## Reliability
+
+**91 unit tests, all green, in 1.4 seconds** — plus browser tests driving the real
+interface. Together, 11 test files and 189 declared cases.
+
+The tests that matter are the ones named after a failure that would hurt: the vendor
+route cannot be walked out of, the proposals bridge is closed by default and closed
+again without a director token, sensitive routes are rate-limited, and security headers
+are present on every response.
+
+## Outcomes
+
+Version 1.0.1, 381 commits between June and August 2026.
+
+The property worth stating is the one the tests protect: **no data is lost when the
+network drops** — not as an intention, but as a queue that replays and a suite that
+proves it still does.
+
+## Limits
+
+There is no usage instrumentation, so I cannot tell you how many jobs went through it,
+and I will not invent a number.
+
+The office view was designed for a small team, not for hundreds of concurrent users.
+
+And it is one deployment, for one company — the multi-tenant partitioning is built and
+tested, but it has never carried a second tenant.
+
+> Real client — visuals rebuilt with fictional data. No client data is exposed.

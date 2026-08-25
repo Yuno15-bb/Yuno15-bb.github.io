@@ -1,0 +1,82 @@
+---
+titre: "Plateforme d'interventions terrain"
+pitch: "Une application de chantier qui continue de fonctionner quand le réseau, lui, s'arrête — saisie hors-ligne, photos géolocalisées, rapport PDF en un geste."
+audience: ["business"]
+contexte: "Mission client · anonymisée"
+role: "Conception produit, UX terrain, développement full-stack"
+stack: ["PWA", "JavaScript", "Service Worker", "Supabase", "PostgreSQL", "RLS", "GPS", "PDF"]
+annee: 2026
+resultat: "Les écritures sont mises en file et rejouées au retour du réseau — une coupure ou un rafraîchissement ne perd rien. 91 tests unitaires verts."
+nda: true
+featured: true
+ordre: 2
+cover: "/projects/dgc-system-phone.png"
+cover2: "/projects/dgc-system-office.png"
+---
+
+## Le problème
+
+Les techniciens notaient leurs interventions sur papier, et le bureau les ressaisissait
+plus tard. Entre les deux : des feuilles perdues, des doublons, et plusieurs jours avant
+que quiconque au bureau sache ce qui s'était réellement passé sur le chantier.
+
+## Les contraintes
+
+Un chantier n'est pas un bureau. Le réseau tombe derrière un mur et revient dans la
+camionnette. La main qui tient le téléphone porte un gant. L'écran se lit en plein
+soleil, d'une seule main, pendant qu'il se passe autre chose.
+
+Une application grand public ne survit pas à ça. Une application qui suppose qu'une
+requête va aboutir non plus.
+
+## Le système
+
+Une application web progressive **hors-ligne d'abord**, avec deux visages : le téléphone
+du technicien, et le tableau de bord du bureau.
+
+Sur le chantier : saisie rapide, photos géolocalisées, et un questionnaire qui s'adapte
+au type d'intervention au lieu de tout demander à chaque fois. Au bureau : les équipes
+en direct, les compteurs, les conclusions urgentes, et un rapport PDF produit à partir de
+ce qui a été saisi sur le terrain.
+
+## L'architecture
+
+Chaque écriture entre dans une **file d'attente** avant d'approcher le réseau.
+L'application traite l'absence de réseau comme le cas normal, pas comme l'erreur — donc
+une coupure, un rafraîchissement ou un onglet fermé ne coûtent rien. La file se rejoue
+dès que la connexion revient.
+
+Les accès sont cloisonnés au niveau de la base par **row-level security**, pensé dès le
+départ pour plusieurs entreprises plutôt qu'ajouté après coup.
+
+## La fiabilité
+
+**91 tests unitaires, tous verts, en 1,4 seconde** — plus des tests de navigateur qui
+pilotent l'interface réelle. Au total, 11 fichiers de test et 189 cas déclarés.
+
+Les tests qui comptent sont ceux nommés d'après une panne qui ferait mal : on ne peut pas
+sortir de la route des ressources par un chemin détourné, le pont de propositions est
+fermé par défaut et le reste sans jeton dirigeant, les routes sensibles sont limitées en
+débit, et les en-têtes de sécurité sont posés sur chaque réponse.
+
+## Les résultats
+
+Version 1.0.1, 381 commits entre juin et août 2026.
+
+La propriété qui mérite d'être énoncée est celle que les tests protègent : **aucune
+donnée n'est perdue quand le réseau tombe** — non pas comme une intention, mais comme une
+file qui se rejoue et une suite qui prouve qu'elle le fait encore.
+
+## Les limites
+
+Il n'y a aucune instrumentation d'usage : je ne peux pas dire combien d'interventions y
+sont passées, et je n'inventerai pas de chiffre.
+
+La vue bureau a été conçue pour une petite équipe, pas pour des centaines d'utilisateurs
+simultanés.
+
+Et il s'agit d'un seul déploiement, pour une seule entreprise — le cloisonnement
+multi-entreprises est construit et testé, mais il n'a jamais porté un second client.
+
+> Client réel — visuels reconstruits avec des données fictives. Aucune donnée client
+> n'est exposée.

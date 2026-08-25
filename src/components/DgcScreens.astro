@@ -5,7 +5,11 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 const t = ui[lang];
 
-// DGC System — les 2 ecrans de la demonstration, refaits d'apres la maquette
+// Plateforme d'interventions terrain — les 2 ecrans de la demonstration.
+// ⚠ Le nom affiche DANS les maquettes est neutralise (« Field Ops ») : le sigle
+//   d'origine derivait du nom du client, ce qui affaiblissait l'anonymisation
+//   annoncee par le surtitre « Client work · anonymized » (25/08/2026).
+// Les 2 ecrans de la demonstration, refaits d'apres la maquette
 // haute-fidelite du 26/07/2026 (elle-meme relevee sur l'app en prod, SW v259) :
 // jetons de couleur reels, effet verre, fond dither, tuiles satellite reelles.
 //
@@ -56,8 +60,8 @@ const tabs = [
           <span class="island" aria-hidden="true"></span>
 
           <div class="phd">
-            <span class="pmk">DGC</span>
-            <div class="phi"><b>DGC System</b><span>Job tracking</span></div>
+            <span class="pmk">FO</span>
+            <div class="phi"><b>Field Ops</b><span>Job tracking</span></div>
             <span class="av av--sm">JR</span>
           </div>
 
@@ -118,8 +122,8 @@ const tabs = [
       </div>
       <div class="win">
         <header class="bar">
-          <span class="mk2">DGC</span>
-          <div class="brand"><b>DGC System</b><span>Job tracking</span></div>
+          <span class="mk2">FO</span>
+          <div class="brand"><b>Field Ops</b><span>Job tracking</span></div>
           <nav class="nav"><b>Dashboard</b><span>Jobs</span><span>Teams</span><span>Reports</span><span>Proposals</span></nav>
           <span class="search"><i class="gl">⌕</i>Search job no., client…</span>
           <span class="iconbtn">☾</span>
@@ -173,7 +177,7 @@ const tabs = [
           </div>
         </div>
 
-        <p class="foot">DGC System · Job tracking · v259</p>
+        <p class="foot">Field Ops · Job tracking · v259</p>
         <div class="dock"><span class="dock__seg"><i>Field</i><b>Office</b></span><span class="dock__b">⟳</span></div>
       </div>
     </div>

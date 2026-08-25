@@ -1,0 +1,93 @@
+---
+titre: "Agent d'exploitation IA"
+pitch: "Un agent qui lit la boîte mail d'une entreprise, classe chaque message, extrait les données des devis et prépare la réponse — en production depuis mai 2026."
+audience: ["business"]
+contexte: "Mission client · anonymisée"
+role: "Architecture, conception de l'agent, backend, exploitation en production"
+stack: ["Python", "FastAPI", "Claude", "API Gmail", "Microsoft Graph", "Notion", "Railway", "Sentry"]
+annee: 2026
+resultat: "37 outils en production, 966 tests automatisés verts — et aucune écriture n'atteint les données réelles du client sans validation humaine."
+nda: true
+featured: true
+ordre: 1
+---
+
+## Le problème
+
+Dans une entreprise de charpente-couverture, la boîte mail **est** la liste des choses
+à faire. Les devis signés reviennent en pièce jointe PDF, les réclamations arrivent
+mêlées aux avis de paiement, et une personne ressaisit tout cela à la main dans le
+fichier client.
+
+Rien ne se perd, parce que quelqu'un surveille en permanence. C'est cette vigilance
+qui coûte.
+
+## Les contraintes
+
+Trois, et elles ont dicté tout le reste.
+
+La boîte mail est réelle, le fichier client aussi. Une mauvaise écriture ne produit pas
+un rapport de bug : elle produit une facture envoyée deux fois et un client qui le
+remarque.
+
+Le modèle ne doit jamais inventer. Un numéro de devis extrait qui *ressemble* à un
+numéro plausible est pire que pas de numéro du tout.
+
+Et l'ensemble devait tourner seul, à intervalle régulier, sans qu'un humain valide
+chaque décision.
+
+## Le système
+
+Un agent bâti sur Claude, doté de **37 outils** : rechercher des devis, lire et mettre
+à jour les fiches client et chantier, lister et rédiger des messages, interroger les
+fournisseurs et les paiements. C'est l'agent qui décide lequel appeler — ce n'est pas
+une chaîne figée sur laquelle on aurait greffé un modèle.
+
+Autour : la réception depuis Gmail et Microsoft Graph, la classification par type de
+message, l'extraction des devis PDF, et une réponse laissée en brouillon qu'un humain
+envoie.
+
+## L'architecture
+
+La décision qui compte, c'est ce que l'agent n'a **pas** le droit de faire.
+
+La base réelle du client est en **lecture seule**. Les écritures sont en `dry_run` par
+défaut. L'unique exception est étroite et écrite noir sur blanc : un champ de statut
+peut passer à « programmé », rien d'autre. Tout le reste que l'agent voudrait modifier
+atterrit dans une **file de propositions** qu'une personne valide.
+
+Ce garde-fou n'a pas été ajouté après coup pour rassurer. C'est ce qui rend possible le
+fonctionnement sans surveillance.
+
+## La fiabilité
+
+**975 tests, 966 verts en quinze secondes.** Ils couvrent la couche d'outils,
+l'extraction, l'idempotence — un même message traité deux fois ne doit pas créer deux
+fiches —, l'authentification des webhooks et le périmètre de sécurité.
+
+Sentry surveille la production. Quatre tests échouent dans un bac à sable sans jeton
+GitHub : c'est une panne d'environnement, consignée comme telle plutôt que discrètement
+retirée du compte.
+
+## Les résultats
+
+En production depuis **mai 2026**, version 4.2.0, déployé sur Railway, 255 commits
+entre mai et août.
+
+Le résultat qui mérite d'être énoncé n'est pas un gain de temps que je ne peux pas
+mesurer. C'est celui-ci : **aucune écriture n'atteint les données réelles du client
+sans qu'un humain l'ait approuvée**, et la couche d'outils est couverte par une suite
+qui tourne en quinze secondes.
+
+## Les limites
+
+Aucune instrumentation d'usage n'existe. Je ne peux pas dire combien de messages ont
+été traités, et je ne l'estimerai pas.
+
+Le chemin d'écriture est volontairement manuel, ce qui borne le niveau d'automatisation
+atteignable.
+
+Et il y a un seul client. Tout ce qui précède est prouvé sur une charge réelle — pas
+sur plusieurs.
+
+> Client réel — chiffres vérifiés, nom non divulgué. Aucune donnée client n'est exposée.
