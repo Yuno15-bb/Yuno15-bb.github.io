@@ -16,8 +16,9 @@ const projects = all
   .filter((p) => p.id.startsWith(`${lang}/`))
   .sort((a, b) => a.data.ordre - b.data.ordre);
 
-// Pastille "Créatif / XR" retirée pour l'instant (aucun projet XR publié).
-// La réactiver ici dès qu'un MDX porte `audience: [xr]`.
+// Pastille "Créatif / XR" SUPPRIMÉE le 25/08/2026 : le XR est sorti du
+// positionnement, mesure à l'appui (16 commits au total, arrêtés le 27/07
+// contre 1533 sur le système de mémoire). Ne pas la remettre sans mesure.
 const filters = [
   { key: 'all', label: t['home.filter.all'] },
   { key: 'business', label: t['home.filter.business'] },
