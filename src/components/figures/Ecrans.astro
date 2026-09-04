@@ -1,29 +1,70 @@
 ---
 /**
- * Ecrans — les deux visages du produit, cote a cote : le telephone du technicien
- * et le tableau de bord du bureau.
+ * Ecrans — les captures produit, TOUJOURS dans un vrai cadre d'appareil.
  *
- * ⚠ Ces captures viennent du MODE DEMO de l'application reelle, en production,
- *   avec la marque, les noms de lieux et le centre de carte neutralises avant la
- *   photo (le centre de carte est ecrit en dur dans l'app, il ne suit pas les
- *   donnees de demo). Elles se refont a l'identique quand l'app change — elles ne
- *   sont pas redessinees a la main, donc elles ne peuvent plus dater en silence.
+ * RÈGLE PERMANENTE (Dylan, 2026-09-04) — pour toute présentation :
+ *   · une capture de téléphone est encadrée en iPhone, avec Dynamic Island,
+ *     barre d'état, réseau, wifi et batterie ;
+ *   · une capture d'ordinateur est encadrée en fenêtre macOS ;
+ *   · l'interface montrée est TOUJOURS en anglais.
+ *
+ * Le cadre est dessiné en CSS, pas incrusté dans l'image : il reste net à toutes
+ * les tailles, il pèse zéro octet de plus, et une nouvelle capture se glisse
+ * dedans sans retouche.
+ *
+ * Les captures viennent du mode démonstration de l'app réelle, en production,
+ * marque et lieux neutralisés avant la photo.
  */
 interface Props {
   tel: string;
   telAlt: string;
   bureau: string;
   bureauAlt: string;
+  /** Titre affiché dans la barre de la fenêtre macOS. */
+  fenetre?: string;
+  /** Heure de la barre d'état iPhone. 9:41 est l'heure canonique d'Apple. */
+  heure?: string;
 }
-const { tel, telAlt, bureau, bureauAlt } = Astro.props;
+const { tel, telAlt, bureau, bureauAlt, fenetre = 'Field Ops', heure = '9:41' } = Astro.props;
 ---
 <div class="ec">
-  <figure class="ec__item ec__item--tel">
-    <img src={tel} alt={telAlt} width="554" height="1200" loading="lazy" decoding="async" />
+  {/* ---------------- iPhone ---------------- */}
+  <figure class="ec__item">
+    <div class="ip">
+      <div class="ip__ecran">
+        <div class="ip__statut" aria-hidden="true">
+          <span class="ip__heure">{heure}</span>
+          <span class="ip__ile"></span>
+          <span class="ip__icones">
+            <svg viewBox="0 0 18 12" class="ip__sig" aria-hidden="true">
+              <rect x="0"  y="8"   width="3" height="4"  rx="1"/>
+              <rect x="5"  y="5.5" width="3" height="6.5" rx="1"/>
+              <rect x="10" y="3"   width="3" height="9"  rx="1"/>
+              <rect x="15" y="0"   width="3" height="12" rx="1"/>
+            </svg>
+            <svg viewBox="0 0 16 12" class="ip__wifi" aria-hidden="true">
+              <path d="M8 11.2 5.9 8.7a3.2 3.2 0 0 1 4.2 0L8 11.2Z"/>
+              <path d="M8 6.1c1.5 0 2.9.5 4 1.5l1.5-1.8A8.4 8.4 0 0 0 8 3.7a8.4 8.4 0 0 0-5.5 2.1L4 7.6c1.1-1 2.5-1.5 4-1.5Z"/>
+              <path d="M8 1.5c2.3 0 4.5.8 6.2 2.3L15.7 2A11.3 11.3 0 0 0 8 -.8 11.3 11.3 0 0 0 .3 2l1.5 1.8A9.5 9.5 0 0 1 8 1.5Z"/>
+            </svg>
+            <span class="ip__bat"><i></i></span>
+          </span>
+        </div>
+        <img src={tel} alt={telAlt} width="554" height="1200" loading="lazy" decoding="async" />
+      </div>
+    </div>
     <figcaption class="eyebrow">{telAlt}</figcaption>
   </figure>
-  <figure class="ec__item ec__item--bur">
-    <img src={bureau} alt={bureauAlt} width="1600" height="1055" loading="lazy" decoding="async" />
+
+  {/* ---------------- Mac ---------------- */}
+  <figure class="ec__item">
+    <div class="mc">
+      <div class="mc__barre" aria-hidden="true">
+        <span class="mc__feux"><i></i><i></i><i></i></span>
+        <span class="mc__titre">{fenetre}</span>
+      </div>
+      <img src={bureau} alt={bureauAlt} width="1600" height="1055" loading="lazy" decoding="async" />
+    </div>
     <figcaption class="eyebrow">{bureauAlt}</figcaption>
   </figure>
 </div>
@@ -31,22 +72,93 @@ const { tel, telAlt, bureau, bureauAlt } = Astro.props;
 <style>
   .ec {
     display: grid;
-    grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 244px) minmax(0, 1fr);
     gap: var(--space-4);
     align-items: start;
   }
   .ec__item { margin: 0; display: grid; gap: var(--space-2); min-width: 0; }
-  .ec__item img {
-    display: block;
-    width: 100%;
-    height: auto;
-    border: 1px solid var(--c-line);
-  }
   .ec__item figcaption { color: var(--c-muted); }
-  @media (max-width: 760px) {
-    /* Le tableau de bord ne se lit plus a cette largeur : le telephone passe
-       devant, en pleine largeur, et le bureau le suit. */
-    .ec { grid-template-columns: minmax(0, 1fr); }
-    .ec__item--tel img { max-width: 320px; }
+
+  /* ---- iPhone : coque, Dynamic Island, barre d'état ---- */
+  .ip {
+    position: relative;
+    background: #0c0c0e;
+    border: 1px solid #2a2a30;
+    border-radius: 42px;
+    padding: 9px;
+    box-shadow: 0 22px 50px rgba(0, 0, 0, 0.45), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  }
+  .ip__ecran {
+    position: relative;
+    border-radius: 34px;
+    overflow: hidden;
+    background: #000;
+  }
+  .ip__ecran img { display: block; width: 100%; height: auto; }
+  .ip__statut {
+    position: relative;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 18px 6px;
+    color: #fff;
+    font: 600 11px/1 -apple-system, system-ui, sans-serif;
+    letter-spacing: 0.01em;
+  }
+  .ip__heure { min-width: 34px; }
+  /* Dynamic Island : la pilule noire, centrée, qui mange la barre d'état. */
+  .ip__ile {
+    position: absolute; left: 50%; top: 5px; transform: translateX(-50%);
+    width: 30%; height: 20px; border-radius: 999px; background: #000;
+  }
+  .ip__icones { display: inline-flex; align-items: center; gap: 5px; }
+  .ip__sig, .ip__wifi { fill: #fff; }
+  .ip__sig { width: 15px; height: 10px; }
+  .ip__wifi { width: 13px; height: 10px; }
+  /* Batterie : coque + téton + niveau. */
+  .ip__bat {
+    position: relative; display: inline-block;
+    width: 22px; height: 11px; border: 1px solid rgba(255, 255, 255, 0.45);
+    border-radius: 3px;
+  }
+  .ip__bat::after {
+    content: ''; position: absolute; right: -3px; top: 3.5px;
+    width: 2px; height: 4px; border-radius: 0 1px 1px 0;
+    background: rgba(255, 255, 255, 0.45);
+  }
+  .ip__bat i {
+    position: absolute; inset: 1.5px; width: 72%; border-radius: 1.5px; background: #fff;
+  }
+
+  /* ---- Mac : fenêtre macOS ---- */
+  .mc {
+    border: 1px solid #2a2a30;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #101014;
+    box-shadow: 0 22px 50px rgba(0, 0, 0, 0.45);
+  }
+  .mc__barre {
+    position: relative;
+    display: flex; align-items: center;
+    height: 30px; padding: 0 12px;
+    background: linear-gradient(#26262c, #1d1d22);
+    border-bottom: 1px solid #000;
+  }
+  .mc__feux { display: inline-flex; gap: 7px; }
+  .mc__feux i { width: 11px; height: 11px; border-radius: 50%; background: #3a3a42; }
+  .mc__feux i:nth-child(1) { background: #ff5f57; }
+  .mc__feux i:nth-child(2) { background: #febc2e; }
+  .mc__feux i:nth-child(3) { background: #28c840; }
+  .mc__titre {
+    position: absolute; left: 50%; transform: translateX(-50%);
+    font: 500 11.5px/1 -apple-system, system-ui, sans-serif;
+    color: rgba(255, 255, 255, 0.55);
+  }
+  .mc img { display: block; width: 100%; height: auto; }
+
+  @media (max-width: 860px) {
+    /* Le tableau de bord n'est plus lisible à cette largeur : le téléphone passe
+       devant, à taille utile, et la fenêtre le suit. */
+    .ec { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); }
+    .ip { max-width: 260px; }
   }
 </style>
