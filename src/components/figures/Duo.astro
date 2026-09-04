@@ -1,0 +1,62 @@
+---
+/**
+ * Duo — deux colonnes qui s'opposent : ce qui est permis / ce qui ne l'est pas,
+ * avant / apres, ce qu'on ecrit / ce qu'on n'ecrit pas.
+ *
+ * Le filet a gauche de chaque ligne reprend l'idiome deja pose dans le site
+ * (`.contact__inner`, `.project__nda`) : 1 px neutre, 2 px ember quand la colonne
+ * porte l'accent. Une seule des deux colonnes peut le porter — sinon plus rien
+ * ne ressort.
+ */
+interface Colonne {
+  titre: string;
+  items: string[];
+}
+interface Props {
+  a: Colonne;
+  b: Colonne;
+  /** Colonne qui porte l'accent ember. Par defaut : la seconde. */
+  accent?: 'a' | 'b';
+}
+const { a, b, accent = 'b' } = Astro.props;
+const cols: Array<[Colonne, boolean]> = [
+  [a, accent === 'a'],
+  [b, accent === 'b'],
+];
+---
+<div class="duo">
+  {cols.map(([col, fort]) => (
+    <section class:list={['duo__col', fort && 'duo__col--fort']}>
+      <h4 class="duo__titre eyebrow">{col.titre}</h4>
+      <ul role="list" class="duo__list">
+        {col.items.map((it) => <li class="duo__item">{it}</li>)}
+      </ul>
+    </section>
+  ))}
+</div>
+
+<style>
+  .duo {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
+  .duo__titre { color: var(--c-muted); margin-bottom: var(--space-3); }
+  .duo__col--fort .duo__titre { color: var(--c-ember); }
+  .duo__list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+  .duo__item {
+    border-left: 1px solid var(--c-line-ui);
+    padding-left: var(--space-2);
+    color: var(--c-muted);
+    font-size: var(--fs-200);
+    line-height: 1.5;
+  }
+  .duo__col--fort .duo__item {
+    border-left-width: 2px;
+    border-left-color: var(--c-ember);
+    color: var(--c-fg);
+  }
+  @media (max-width: 760px) {
+    .duo { grid-template-columns: 1fr; gap: var(--space-4); }
+  }
+</style>

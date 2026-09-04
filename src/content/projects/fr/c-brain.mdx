@@ -11,6 +11,11 @@ featured: true
 ordre: 3
 ---
 
+import Figure from '../../../components/Figure.astro';
+import Flow from '../../../components/figures/Flow.astro';
+import Duo from '../../../components/figures/Duo.astro';
+import Grille from '../../../components/figures/Grille.astro';
+
 ## Le problème
 
 Un agent en ligne de commande est brillant à l'intérieur d'une session et amnésique
@@ -23,6 +28,25 @@ Ce tronc contient des noms de clients, des adresses, des numéros, des chemins
 vers ma machine. Le publier tel quel, c'est publier ma vie professionnelle.
 
 La contrainte s'est donc écrite en une phrase : **livrer le moteur, jamais le vécu.**
+
+
+<Figure
+  titre="Deux dossiers qui ne se mélangent jamais"
+  legende="La séparation n'est pas une convention de rangement : une mise à jour remplace entièrement le moteur, et n'a pas le droit d'écrire dans le tronc de notes."
+>
+  <Duo
+    a={{ titre: 'Le moteur — jetable, remplacé à chaque mise à jour', items: [
+      'Le code qui range, relie et retrouve',
+      'Les contrôles et les bancs de mesure',
+      "Les outils d'installation et de migration",
+    ] }}
+    b={{ titre: 'Le tronc — il ne bouge que quand j’écris', items: [
+      'Un an de notes, de leçons et de décisions',
+      'Les noms de clients, les adresses, les chemins',
+      'Ce qu’une mise à jour ne doit jamais toucher',
+    ] }}
+  />
+</Figure>
 
 ## L'architecture qui rend ça possible
 
@@ -38,6 +62,20 @@ règles rejouables, puis un **contrôle de fuite** à 21 marqueurs qui a le droi
 bloquer la publication.
 
 Ce qui suit, ce sont trois pannes. Aucune n'a été trouvée en relisant le code.
+
+
+<Figure
+  titre="Du carnet vivant au paquet public"
+  legende="Une chaîne à sens unique : rien ne remonte du dépôt public vers le carnet. Le contrôle de fuite a le droit de bloquer la publication, et il l'a déjà fait."
+>
+  <Flow etapes={[
+    { t: 'Le carnet vivant', d: 'Un an de notes réelles : clients, adresses, chemins de ma machine.' },
+    { t: 'Copie par liste blanche', d: "Ce qui n'est pas nommé ne sort pas. Une liste noire laisserait passer l'oubli." },
+    { t: 'Dépersonnalisation', d: 'Des règles rejouables retirent les noms, les numéros, les chemins.' },
+    { t: 'Contrôle de fuite', d: '21 marqueurs. Un seul qui rougit et la publication est bloquée.', porte: true },
+    { t: 'Le paquet public', d: 'Le moteur, installable par quiconque. Jamais le vécu.' },
+  ]} />
+</Figure>
 
 ## Panne 1 — le garde-fou s'est retourné contre son propriétaire
 
@@ -81,6 +119,18 @@ Seule la branche distante restait figée — pour quiconque la clonerait ensuite
 Trouvé en contrôlant `git log origin/branche..branche`, qui doit être vide après
 une publication. Le contrôle est devenu systématique : après un push, **on vérifie
 la branche, pas le tag**.
+
+
+<Figure
+  titre="Aucune n'a été trouvée en relisant le code"
+  legende="Trois pannes muettes — aucune ne levait d'erreur, aucune n'apparaissait dans un journal. Chacune est sortie d'un geste réel : publier, regarder ce qu'un utilisateur verrait, vérifier après avoir poussé."
+>
+  <Grille prefixe="trouvée en" cases={[
+    { t: 'Tentant de publier', d: "Le garde-fou anti-fuite voyait mon nom dans le fichier de licence — que la licence Apache EXIGE — et bloquait tout." },
+    { t: 'Regardant une capture', d: "Après un renommage, la petite fenêtre des agents ne se relançait plus. Aucun plantage, aucun message : elle avait simplement disparu.", fort: true },
+    { t: 'Contrôlant après un envoi', d: "Le script poussait une branche écrite en dur. La version s'affichait, les mises à jour marchaient, et la branche distante restait figée." },
+  ]} />
+</Figure>
 
 ## Ce que ça a changé
 

@@ -12,6 +12,20 @@ featured: true
 ordre: 1
 ---
 
+import Figure from '../../../components/Figure.astro';
+import Flow from '../../../components/figures/Flow.astro';
+import Duo from '../../../components/figures/Duo.astro';
+import FicheProposition from '../../../components/figures/FicheProposition.astro';
+
+
+<Figure
+  titre="L'écran où tout se joue"
+  legende="La fiche qu'une personne relit avant que la moindre ligne soit écrite : chaque champ a été extrait du mail, chacun reste corrigeable, et c'est le bouton de droite qui déclenche l'écriture. En ambre, le seul champ retouché à la main."
+  source="Interface reconstruite — données fictives (confidentialité client)"
+>
+  <FicheProposition />
+</Figure>
+
 ## Le problème
 
 Dans une entreprise de charpente-couverture, la boîte mail **est** la liste des choses
@@ -47,6 +61,20 @@ Autour : la réception depuis Gmail et Microsoft Graph, la classification par ty
 message, l'extraction des devis PDF, et une réponse laissée en brouillon qu'un humain
 envoie.
 
+
+<Figure
+  titre="Le trajet d'un message"
+  legende="Aucune flèche ne relie l'agent au fichier client. C'est la contrainte du projet, dessinée : tout passe par la file d'attente et par le clic d'une personne."
+>
+  <Flow etapes={[
+    { t: 'La boîte mail', d: 'Devis, factures et réclamations arrivent mêlés.' },
+    { t: "L'agent lit", d: 'Il classe le message, ouvre les PDF joints, extrait les données.' },
+    { t: 'La file de propositions', d: "Chaque écriture s'arrête là et attend. Rien ne part." },
+    { t: 'Une personne valide', d: "Elle relit, corrige, et son clic déclenche l'écriture.", porte: true },
+    { t: 'Le fichier client', d: "La fiche est créée. C'est le seul chemin qui y mène." },
+  ]} />
+</Figure>
+
 ## L'architecture
 
 La décision qui compte, c'est ce que l'agent n'a **pas** le droit de faire.
@@ -63,6 +91,28 @@ Le nombre d'outils a baissé avec le temps, pas grandi. 22 ont été retirés en
 fois quand j'ai mesuré qu'ils écrivaient avec un jeton qui ne voit même pas les pages
 réelles de destination — un outil qui ne peut pas aboutir ne doit pas être proposé au
 modèle, même s'il rend le total plus impressionnant sur le papier.
+
+
+<Figure
+  titre="Le périmètre, en clair"
+  legende="L'unique exception d'écriture est étroite et écrite noir sur blanc : un champ de statut peut passer à « programmé », rien d'autre."
+>
+  <Duo
+    a={{ titre: "Ce que l'agent fait seul", items: [
+      'Lire la boîte mail et classer chaque message',
+      'Ouvrir les PDF joints et en extraire les données',
+      'Interroger la base du client — en lecture seule',
+      'Rédiger une réponse, laissée en brouillon',
+      'Faire passer un champ de statut à « programmé »',
+    ] }}
+    b={{ titre: "Ce qu'il n'a pas le droit de faire", items: [
+      'Écrire dans la base réelle du client',
+      'Envoyer un mail à sa place',
+      "Créer une fiche que personne n'a relue",
+      'Supprimer ou remplacer une donnée existante',
+    ] }}
+  />
+</Figure>
 
 ## La fiabilité
 

@@ -14,6 +14,10 @@ cover: "/projects/dgc-system-phone.png"
 cover2: "/projects/dgc-system-office.png"
 ---
 
+import Figure from '../../../components/Figure.astro';
+import Flow from '../../../components/figures/Flow.astro';
+import Duo from '../../../components/figures/Duo.astro';
+
 ## Le problème
 
 Les techniciens notaient leurs interventions sur papier, et le bureau les ressaisissait
@@ -48,6 +52,19 @@ dès que la connexion revient.
 
 Les accès sont cloisonnés au niveau de la base par **row-level security**, pensé dès le
 départ pour plusieurs entreprises plutôt qu'ajouté après coup.
+
+
+<Figure
+  titre="Une écriture quand le réseau tombe"
+  legende="La coupure n'est pas traitée comme une erreur mais comme le cas normal : l'écriture entre dans une file avant même d'approcher le réseau, et un rafraîchissement ne la perd pas."
+>
+  <Flow etapes={[
+    { t: 'Le geste du technicien', d: 'Il saisit, il photographie, il valide — sur le chantier.' },
+    { t: 'La file d’attente', d: 'L’écriture est rangée localement avant toute tentative réseau.', porte: true },
+    { t: 'Le réseau revient', d: 'La file se rejoue seule, dans l’ordre, sans doublon.' },
+    { t: 'Le bureau voit', d: 'La carte, les compteurs et le rapport PDF suivent.' },
+  ]} />
+</Figure>
 
 ## La fiabilité
 

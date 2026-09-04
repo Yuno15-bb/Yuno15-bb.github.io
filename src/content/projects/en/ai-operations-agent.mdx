@@ -12,6 +12,20 @@ featured: true
 ordre: 1
 ---
 
+import Figure from '../../../components/Figure.astro';
+import Flow from '../../../components/figures/Flow.astro';
+import Duo from '../../../components/figures/Duo.astro';
+import FicheProposition from '../../../components/figures/FicheProposition.astro';
+
+
+<Figure
+  titre="The screen where it is decided"
+  legende="The entry a person re-reads before a single line is written: every field was extracted from the email, every field stays editable, and the button on the right is what triggers the write. In amber, the one field corrected by hand."
+  source="Reconstructed interface — fictional data (client confidentiality)"
+>
+  <FicheProposition />
+</Figure>
+
 ## The problem
 
 For a carpentry and roofing company, the inbox *is* the backlog. Signed quotes come
@@ -42,6 +56,20 @@ with a model bolted on.
 Around it: ingestion from Gmail and Microsoft Graph, classification by message type,
 PDF extraction on quote attachments, and a reply left in draft for a human to send.
 
+
+<Figure
+  titre="How a message travels"
+  legende="No arrow connects the agent to the client's records. That is the project's constraint, drawn: everything goes through the queue and through one person's click."
+>
+  <Flow etapes={[
+    { t: 'The inbox', d: 'Quotes, invoices and complaints all arrive mixed together.' },
+    { t: 'The agent reads', d: 'It classifies the message, opens the PDF attachments, extracts the data.' },
+    { t: 'The proposal queue', d: 'Every write stops here and waits. Nothing leaves.' },
+    { t: 'A person approves', d: 'They re-read it, correct it, and their click triggers the write.', porte: true },
+    { t: 'The client records', d: 'The entry is created. This is the only path to it.' },
+  ]} />
+</Figure>
+
 ## The architecture
 
 The decision that matters is what the agent is **not** allowed to do.
@@ -58,6 +86,28 @@ The tool count went down over time, not up. 22 were dropped in one pass once I
 measured they were writing with a token that cannot even see the real destination
 pages — a tool that cannot succeed should not be offered to the model, even if it
 makes the total look more impressive on paper.
+
+
+<Figure
+  titre="The boundary, spelled out"
+  legende="The single write exception is narrow and written down in plain sight: one status field may move to « scheduled », nothing else."
+>
+  <Duo
+    a={{ titre: 'What the agent does on its own', items: [
+      'Read the inbox and classify every message',
+      'Open PDF attachments and extract their data',
+      "Query the client's database — read-only",
+      'Draft a reply, left unsent',
+      'Move one status field to « scheduled »',
+    ] }}
+    b={{ titre: 'What it is not allowed to do', items: [
+      "Write into the client's live database",
+      'Send an email on their behalf',
+      'Create an entry nobody has re-read',
+      'Delete or overwrite existing data',
+    ] }}
+  />
+</Figure>
 
 ## Reliability
 

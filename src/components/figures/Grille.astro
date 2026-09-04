@@ -1,0 +1,56 @@
+---
+/**
+ * Grille — N colonnes qui se lisent EN PARALLELE, sans ordre ni fleche.
+ * A utiliser quand `Flow` mentirait : trois pannes ne se suivent pas, elles
+ * coexistent. Meme grammaire que Flow (filet en tete, numero mono) pour que les
+ * deux planches se ressemblent, moins le trait qui relie.
+ */
+export interface Case {
+  t: string;
+  d?: string;
+  /** Case qui porte l'accent — une seule, sinon plus rien ne ressort. */
+  fort?: boolean;
+}
+interface Props {
+  cases: Case[];
+  /** Etiquette au-dessus de chaque case (ex. « trouvée en »). */
+  prefixe?: string;
+}
+const { cases, prefixe } = Astro.props;
+---
+<ul class="gr" role="list" style={`--gr-n:${cases.length}`}>
+  {cases.map((c) => (
+    <li class:list={['gr__case', c.fort && 'gr__case--fort']}>
+      {prefixe && <span class="gr__pre">{prefixe}</span>}
+      <span class="gr__t">{c.t}</span>
+      {c.d && <span class="gr__d">{c.d}</span>}
+    </li>
+  ))}
+</ul>
+
+<style>
+  .gr {
+    list-style: none; margin: 0; padding: 0;
+    display: grid;
+    grid-template-columns: repeat(var(--gr-n, 3), minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+  .gr__case {
+    display: grid; gap: var(--space-1); align-content: start;
+    border-top: 1px solid var(--c-line-ui);
+    padding-top: var(--space-2);
+    min-width: 0;
+  }
+  .gr__pre {
+    font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--c-muted) 80%, transparent);
+  }
+  .gr__t { font-size: var(--fs-200); color: var(--c-fg); line-height: 1.3; }
+  .gr__d { font-size: var(--fs-100); color: var(--c-muted); line-height: 1.5; }
+  .gr__case--fort { border-top-width: 2px; border-top-color: var(--c-ember); padding-top: calc(var(--space-2) - 1px); }
+  .gr__case--fort .gr__pre, .gr__case--fort .gr__t { color: var(--c-ember); }
+  @media (max-width: 760px) {
+    .gr { grid-template-columns: minmax(0, 1fr); gap: var(--space-3); }
+  }
+</style>

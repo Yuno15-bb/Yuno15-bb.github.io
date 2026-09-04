@@ -1,0 +1,189 @@
+---
+/**
+ * FicheProposition — l'ecran ou une personne relit ce que l'agent a extrait,
+ * corrige, puis valide. C'est le point de passage oblige decrit par le schema
+ * « Le trajet d'un message » : sans ce clic, rien n'est ecrit.
+ *
+ * ⚠ DONNEES NEUTRALISEES (nda: true), meme univers fictif que DgcScreens.astro
+ *   (« Field Ops », Austin TX) : client, adresses, numeros et montants sont
+ *   inventes. Ne JAMAIS y remettre de vraies donnees.
+ *
+ * Jetons repris de DgcScreens.astro : c'est le MEME produit, il doit avoir la
+ * meme famille visuelle. Une seconde palette ferait deux produits differents.
+ */
+interface Champ {
+  l: string;
+  v: string;
+  /** Champ corrige a la main par la personne : souligne a l'ambre. */
+  corrige?: boolean;
+  /** Liste deroulante (valeur choisie dans les options du client). */
+  liste?: boolean;
+}
+const champs: Champ[] = [
+  { l: 'Client', v: 'Oakwood HOA', liste: true },
+  { l: 'Quote no.', v: 'DV 2845' },
+  { l: 'Amount', v: '$5,078.50 excl. tax' },
+  { l: 'Address', v: '1420 Cedar Ridge Dr, Austin' },
+  { l: 'ZIP', v: '78701' },
+  { l: 'Unit', v: 'APT 42' },
+  { l: 'Text to copy', v: 'DV 2845 - OAK / BC-883603', corrige: true },
+];
+---
+<div class="fp" role="img" aria-label="Reconstructed screen: the review card an operator approves before anything is written">
+  <div class="fp__win">
+    <header class="fp__bar">
+      <span class="fp__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="fp__app">Field Ops — Archive</span>
+    </header>
+
+    <nav class="fp__tabs" aria-hidden="true">
+      <span class="fp__tab">Dashboard</span>
+      <span class="fp__tab">Proposals</span>
+      <span class="fp__tab fp__tab--on">Archive<b class="fp__pill">3</b></span>
+      <span class="fp__tab">Settings</span>
+    </nav>
+
+    <div class="fp__body">
+      <article class="fp__card">
+        <div class="fp__head">
+          <span class="fp__badge">To review</span>
+          <span class="fp__from">accounts@oakwood-hoa.example · Jul 27</span>
+        </div>
+        <h4 class="fp__title">Signed quote — Oakwood HOA</h4>
+
+        <dl class="fp__fields">
+          {champs.map((c) => (
+            <div class:list={['fp__field', c.corrige && 'fp__field--corr']}>
+              <dt>{c.l}</dt>
+              <dd>
+                {c.v}
+                {c.liste && <i class="fp__chev" aria-hidden="true">▾</i>}
+              </dd>
+            </div>
+          ))}
+        </dl>
+
+        <div class="fp__files">
+          <span class="fp__file"><i aria-hidden="true">▣</i>quote_2845.pdf</span>
+          <span class="fp__file"><i aria-hidden="true">▣</i>purchase_order.pdf</span>
+        </div>
+
+        <footer class="fp__foot">
+          <span class="fp__dest">Destination · <b>SIGNED JOBS</b></span>
+          <span class="fp__acts">
+            <span class="fp__btn">Reject</span>
+            <span class="fp__btn fp__btn--go">Approve &amp; file</span>
+          </span>
+        </footer>
+      </article>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Palette de l'app (identique a DgcScreens.astro) — meme produit, meme famille. */
+  .fp {
+    --green: #8fb15b;
+    --green-soft: rgba(143, 177, 91, 0.15);
+    --bg: #0e100d;
+    --surface: #181b17;
+    --ink: #ecede6;
+    --mut: #8f9088;
+    --hair: rgba(255, 255, 255, 0.09);
+    --amber: #e0bb72;
+    --amber-s: rgba(181, 131, 44, 0.2);
+    font-family: var(--font-sans);
+    container-type: inline-size;
+  }
+  .fp__win {
+    background: var(--bg);
+    border: 1px solid var(--hair);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+    overflow: hidden;
+  }
+  .fp__bar {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.6rem 0.9rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--hair);
+  }
+  .fp__dots { display: flex; gap: 0.35rem; }
+  .fp__dots i { width: 9px; height: 9px; border-radius: 50%; background: #33372f; }
+  .fp__app { font-size: 0.78rem; color: var(--mut); letter-spacing: 0.02em; }
+
+  .fp__tabs { display: flex; gap: 0.25rem; padding: 0.5rem 0.9rem 0; border-bottom: 1px solid var(--hair); }
+  .fp__tab {
+    font-size: 0.78rem; color: var(--mut);
+    padding: 0.4rem 0.7rem 0.55rem;
+    border-bottom: 2px solid transparent;
+    display: inline-flex; align-items: center; gap: 0.4rem;
+  }
+  .fp__tab--on { color: var(--ink); border-bottom-color: var(--green); }
+  .fp__pill {
+    background: var(--green-soft); color: var(--green);
+    font-size: 0.66rem; font-weight: 700;
+    padding: 0.05rem 0.35rem; border-radius: 999px;
+  }
+
+  .fp__body { padding: 1.1rem; }
+  .fp__card { background: var(--surface); border: 1px solid var(--hair); padding: 1rem; }
+  .fp__head { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; }
+  .fp__badge {
+    font-size: 0.66rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--amber); background: var(--amber-s);
+    border: 1px solid color-mix(in srgb, var(--amber) 45%, transparent);
+    padding: 0.18rem 0.5rem;
+  }
+  .fp__from { font-size: 0.72rem; color: var(--mut); }
+  .fp__title { font-family: var(--font-sans); font-size: 1rem; color: var(--ink); margin: 0.7rem 0 0.9rem; }
+
+  /* Les champs : ce sont des ZONES DE SAISIE, pas un tableau — la personne
+     corrige avant de valider. Le trait sous la valeur le dit. */
+  .fp__fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.7rem 1.1rem; margin: 0; }
+  .fp__field { min-width: 0; }
+  .fp__field dt {
+    font-size: 0.64rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--mut); margin-bottom: 0.25rem;
+  }
+  .fp__field dd {
+    margin: 0; font-size: 0.85rem; color: var(--ink);
+    border-bottom: 1px solid var(--hair);
+    padding-bottom: 0.3rem;
+    display: flex; align-items: baseline; justify-content: space-between; gap: 0.5rem;
+    /* Pas de troncature : une valeur coupee dans une maquette se lit comme un
+       bug, pas comme un choix. Elle passe a la ligne. */
+    overflow-wrap: anywhere;
+  }
+  .fp__chev { color: var(--ink); font-style: normal; font-size: 0.62rem; opacity: 0.75; }
+  /* Champ retouche a la main : c'est le seul endroit ou l'ambre apparait. */
+  .fp__field--corr { grid-column: 1 / -1; }
+  .fp__field--corr dd { border-bottom-color: var(--amber); color: var(--amber); }
+
+  .fp__files { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
+  .fp__file {
+    font-size: 0.72rem; color: var(--mut);
+    border: 1px solid var(--hair); padding: 0.25rem 0.5rem;
+    display: inline-flex; align-items: center; gap: 0.35rem;
+  }
+  .fp__file i { color: var(--green); font-style: normal; }
+
+  .fp__foot {
+    display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1rem; padding-top: 0.85rem; border-top: 1px solid var(--hair);
+  }
+  .fp__dest { font-size: 0.72rem; color: var(--mut); letter-spacing: 0.02em; }
+  .fp__dest b { color: var(--ink); font-weight: 600; }
+  .fp__acts { display: flex; gap: 0.5rem; }
+  .fp__btn {
+    font-size: 0.76rem; color: var(--mut);
+    border: 1px solid var(--hair); padding: 0.35rem 0.75rem;
+  }
+  .fp__btn--go { color: var(--bg); background: var(--green); border-color: var(--green); font-weight: 600; }
+
+  /* Sous 520 px de LARGEUR DE PLANCHE (pas de fenetre) : une colonne de champs. */
+  @container (max-width: 520px) {
+    .fp__fields { grid-template-columns: minmax(0, 1fr); }
+    .fp__tab:nth-child(1), .fp__tab:nth-child(4) { display: none; }
+  }
+</style>

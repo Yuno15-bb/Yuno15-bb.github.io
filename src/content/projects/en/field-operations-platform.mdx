@@ -14,6 +14,10 @@ cover: "/projects/dgc-system-phone.png"
 cover2: "/projects/dgc-system-office.png"
 ---
 
+import Figure from '../../../components/Figure.astro';
+import Flow from '../../../components/figures/Flow.astro';
+import Duo from '../../../components/figures/Duo.astro';
+
 ## The problem
 
 Technicians logged their jobs on paper, and the office re-typed them later. Between the
@@ -47,6 +51,19 @@ returns.
 
 Access is partitioned at the database level with **row-level security**, designed from
 the start for more than one company rather than retrofitted later.
+
+
+<Figure
+  titre="A write when the network drops"
+  legende="An outage is not treated as an error but as the normal case: the write enters a queue before it ever approaches the network, and a page refresh does not lose it."
+>
+  <Flow etapes={[
+    { t: 'The technician acts', d: 'They fill in, photograph and confirm — on site.' },
+    { t: 'The queue', d: 'The write is stored locally before any network attempt.', porte: true },
+    { t: 'The network returns', d: 'The queue replays on its own, in order, without duplicates.' },
+    { t: 'The office sees it', d: 'The map, the counters and the PDF report follow.' },
+  ]} />
+</Figure>
 
 ## Reliability
 

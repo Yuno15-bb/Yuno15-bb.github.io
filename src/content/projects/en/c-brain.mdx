@@ -11,6 +11,11 @@ featured: true
 ordre: 3
 ---
 
+import Figure from '../../../components/Figure.astro';
+import Flow from '../../../components/figures/Flow.astro';
+import Duo from '../../../components/figures/Duo.astro';
+import Grille from '../../../components/figures/Grille.astro';
+
 ## The problem
 
 A command-line agent is brilliant within a session and amnesic between two. I built
@@ -24,6 +29,25 @@ means publishing my working life.
 
 So the constraint fit in one sentence: **ship the engine, never the lived experience.**
 
+
+<Figure
+  titre="Two folders that never mix"
+  legende="The split is not a filing convention: an update replaces the engine wholesale, and is not allowed to write into the notes."
+>
+  <Duo
+    a={{ titre: 'The engine — disposable, replaced on every update', items: [
+      'The code that files, links and retrieves',
+      'The checks and the measurement benches',
+      'The install and migration tooling',
+    ] }}
+    b={{ titre: 'The trunk — it only moves when I write', items: [
+      'A year of notes, lessons and decisions',
+      'Client names, addresses, machine paths',
+      'What an update must never touch',
+    ] }}
+  />
+</Figure>
+
 ## The architecture that makes it possible
 
 Two directories that never mix. `engine` is code — disposable, replaced on every
@@ -36,6 +60,20 @@ one omission is a leak), a depersonalisation pass made of replayable rules, then
 **leak check** with 21 markers that is entitled to block a release.
 
 What follows are three failures. None of them was found by re-reading the code.
+
+
+<Figure
+  titre="From the living notebook to the public package"
+  legende="A one-way chain: nothing flows back from the public repository into the notebook. The leak check is allowed to block publication, and it already has."
+>
+  <Flow etapes={[
+    { t: 'The living notebook', d: 'A year of real notes: clients, addresses, paths on my machine.' },
+    { t: 'Allow-list copy', d: 'What is not named does not leave. A block-list would let an oversight through.' },
+    { t: 'De-identification', d: 'Replayable rules strip names, numbers and paths.' },
+    { t: 'Leak check', d: '21 markers. One of them turning red blocks the publication.', porte: true },
+    { t: 'The public package', d: 'The engine, installable by anyone. Never the lived record.' },
+  ]} />
+</Figure>
 
 ## Failure 1 — the guard turned on its own owner
 
@@ -76,6 +114,18 @@ stayed frozen — for whoever cloned it next.
 
 Found by checking that `git log origin/branch..branch` is empty after a release.
 That check is now systematic: after a push, **you verify the branch, not the tag**.
+
+
+<Figure
+  titre="None of them was found by re-reading the code"
+  legende="Three silent failures — none raised an error, none showed up in a log. Each one came out of a real action: publishing, looking at what a user would see, checking after a push."
+>
+  <Grille prefixe="found while" cases={[
+    { t: 'Trying to publish', d: 'The leak guard saw my own name in the licence file — which the Apache licence REQUIRES — and blocked everything.' },
+    { t: 'Looking at a screenshot', d: 'After a rename, the small agent window stopped relaunching. No crash, no message: it had simply vanished.', fort: true },
+    { t: 'Checking after a push', d: 'The script pushed a hard-coded branch. The version showed up, updates worked, and the remote branch stayed frozen.' },
+  ]} />
+</Figure>
 
 ## What it changed
 

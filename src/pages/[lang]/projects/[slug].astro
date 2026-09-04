@@ -220,11 +220,19 @@ const slug = entry.id.split('/')[1];
        débordait de 138 px en largeur.
        Défaut par défaut : UNE colonne mesurée, valable pour n'importe quelle
        longueur d'article — c'est desormais le seul mode de mise en page. */
+    /* Deux pistes, pas deux colonnes de texte : la prose garde sa mesure de
+       lecture a gauche, les PLANCHES debordent jusqu'au bord du conteneur.
+       C'est ce qui occupe la moitie droite restee vide, et ca ne depend jamais
+       du NOMBRE de sections — le piege du 25/08 ne peut pas revenir. */
     .project__body {
       margin-top: var(--space-8);
-      max-width: var(--measure);
+      display: grid;
+      grid-template-columns:
+        [texte-debut] min(var(--measure), 100%) [texte-fin] 1fr [planche-fin];
+      column-gap: var(--space-4);
     }
-    .project__body :global(> *) { max-width: 100%; }
+    .project__body :global(> *) { grid-column: texte-debut / texte-fin; max-width: 100%; min-width: 0; }
+    .project__body :global(> figure) { grid-column: texte-debut / planche-fin; }
     /* Rythme vertical de l'article : sans ça les paragraphes se touchent et les
        titres collent au texte du dessus (constaté au rendu le 25/08/2026). */
     .project__body :global(p) { margin-bottom: var(--space-3); }
@@ -238,8 +246,11 @@ const slug = entry.id.split('/')[1];
        Limites), donc plus aucune n'a cette forme. La garder revenait a conserver un
        piege : tout article plus long tombait dans des colonnes de 1/12 de large. */
 
-    @media (max-width: 900px) {
-      .project__body { display: block; }
+    @media (max-width: 1000px) {
+      /* Une seule piste : les planches prennent toute la largeur, le texte aussi. */
+      .project__body { grid-template-columns: minmax(0, 1fr); }
+      .project__body :global(> *) { grid-column: 1 / -1; }
+      .project__body :global(> figure) { grid-column: 1 / -1; }
       .project__body :global(h2) { margin-top: var(--space-6); }
       .project__body :global(p) { margin-bottom: var(--space-3); max-width: 62ch; }
       [data-slug='dgc-system'] .project__body :global(blockquote) { margin-top: var(--space-4); }
