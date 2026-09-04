@@ -19,6 +19,7 @@ import Flow from '../../../components/figures/Flow.astro';
 import Ecrans from '../../../components/figures/Ecrans.astro';
 
 <Figure
+  cadre={false}
   source="Captures de l'application en production, mode démonstration — marque, lieux et données neutralisés"
 >
   <Ecrans
@@ -26,6 +27,19 @@ import Ecrans from '../../../components/figures/Ecrans.astro';
     telAlt="Le téléphone du technicien — mission en cours, itinéraire, prochaines interventions"
     bureau="/projects/terrain-bureau-04-09.jpg"
     bureauAlt="Le bureau — équipes en direct sur la carte, compteurs du jour, planning du mois"
+  />
+</Figure>
+
+<Figure
+  cadre={false}
+  legende="Le même produit en thème clair — le technicien bascule selon qu'il est sur un toit en plein soleil ou dans la camionnette."
+>
+  <Ecrans
+    clair
+    tel="/projects/terrain-tel-clair-04-09.jpg"
+    telAlt="Le téléphone, thème clair"
+    bureau="/projects/terrain-bureau-clair-04-09.jpg"
+    bureauAlt="Le bureau, thème clair"
   />
 </Figure>
 

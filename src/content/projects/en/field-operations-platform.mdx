@@ -19,6 +19,7 @@ import Flow from '../../../components/figures/Flow.astro';
 import Ecrans from '../../../components/figures/Ecrans.astro';
 
 <Figure
+  cadre={false}
   source="Screenshots of the app in production, demo mode — branding, places and data neutralised"
 >
   <Ecrans
@@ -26,6 +27,19 @@ import Ecrans from '../../../components/figures/Ecrans.astro';
     telAlt="The technician's phone — current job, route, upcoming visits"
     bureau="/projects/terrain-bureau-04-09.jpg"
     bureauAlt="The office — live crews on the map, counters for the day, month planner"
+  />
+</Figure>
+
+<Figure
+  cadre={false}
+  legende="The same product in light theme — the technician switches depending on whether he is on a roof in full sun or back in the van."
+>
+  <Ecrans
+    clair
+    tel="/projects/terrain-tel-clair-04-09.jpg"
+    telAlt="The phone, light theme"
+    bureau="/projects/terrain-bureau-clair-04-09.jpg"
+    bureauAlt="The office, light theme"
   />
 </Figure>
 

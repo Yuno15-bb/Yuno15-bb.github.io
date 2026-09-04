@@ -17,12 +17,16 @@ interface Props {
   legende?: string;
   /** Mention de provenance (donnees reconstruites, capture, etc.). */
   source?: string;
+  /** Cadre autour de la planche. À mettre à false quand le contenu porte déjà
+      son propre contour — une maquette d'appareil, par exemple : sinon on voit
+      deux rectangles emboîtés. */
+  cadre?: boolean;
 }
-const { titre, legende, source } = Astro.props;
+const { titre, legende, source, cadre = true } = Astro.props;
 ---
 <figure class="fig">
   {titre && <p class="fig__kicker eyebrow">{titre}</p>}
-  <div class="fig__plate"><slot /></div>
+  <div class:list={['fig__plate', !cadre && 'fig__plate--nu']}><slot /></div>
   {(legende || source) && (
     <figcaption class="fig__cap">
       {legende}
@@ -43,6 +47,7 @@ const { titre, legende, source } = Astro.props;
     border: 1px solid var(--c-line);
     padding: var(--space-4);
   }
+  .fig__plate--nu { border: 0; padding: 0; }
   .fig__cap {
     color: var(--c-muted);
     font-size: var(--fs-100);
@@ -63,5 +68,6 @@ const { titre, legende, source } = Astro.props;
   @media (max-width: 720px) {
     .fig { margin: var(--space-6) 0; }
     .fig__plate { padding: var(--space-3); }
+    .fig__plate--nu { padding: 0; }
   }
 </style>
