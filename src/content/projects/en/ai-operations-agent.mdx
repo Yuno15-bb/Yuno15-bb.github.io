@@ -6,7 +6,7 @@ contexte: "Client work · anonymized"
 role: "Architecture, agent design, backend, production operations"
 stack: ["Python", "FastAPI", "Claude", "Gmail API", "Microsoft Graph", "Notion", "Railway", "Sentry"]
 annee: 2026
-resultat: "37 tools in production, 966 automated tests green — and no write reaches the client's live data without a human approving it."
+resultat: "15 tools in production (22 dropped for lacking a real target), 1060 automated tests green out of 1065 — and no write reaches the client's live data without a human approving it."
 nda: true
 featured: true
 ordre: 1
@@ -34,9 +34,10 @@ And it had to run unattended, on a schedule, without a human checking each decis
 
 ## The system
 
-An agent built on Claude with **37 tools**: searching quotes, reading and updating
-client and site records, listing and drafting mail, querying suppliers and payments.
-The agent decides which to call — it is not a fixed pipeline with a model bolted on.
+An agent built on Claude with **15 tools**: searching sites and client records,
+reading attached files, querying suppliers and unpaid invoices, flagging signals,
+proposing a change. The agent decides which to call — it is not a fixed pipeline
+with a model bolted on.
 
 Around it: ingestion from Gmail and Microsoft Graph, classification by message type,
 PDF extraction on quote attachments, and a reply left in draft for a human to send.
@@ -53,19 +54,24 @@ person approves.
 That guard was not added late to reassure anyone. It is the reason the system can run
 unattended at all.
 
+The tool count went down over time, not up. 22 were dropped in one pass once I
+measured they were writing with a token that cannot even see the real destination
+pages — a tool that cannot succeed should not be offered to the model, even if it
+makes the total look more impressive on paper.
+
 ## Reliability
 
-**975 tests, 966 green in fifteen seconds.** They cover the tool layer, the extraction,
+**1065 tests, 1060 green.** They cover the tool layer, the extraction,
 idempotence — the same mail processed twice must not create two records — webhook
 authentication, and the security perimeter.
 
-Sentry watches production. Four tests fail in a sandbox with no GitHub token: an
+Sentry watches production. A few tests fail in a sandbox with no GitHub token: an
 environment failure, recorded as such rather than quietly excluded from the count.
 
 ## Outcomes
 
-In production since **May 2026**, version 4.2.0, deployed on Railway, 255 commits
-between May and August.
+In production since **May 2026**, version 4.2.0, deployed on Railway, 266 commits
+between May and September.
 
 The result worth stating is not a time saving I cannot measure. It is this: **no write
 reaches the client's real data without a human approving it**, and the tool layer is

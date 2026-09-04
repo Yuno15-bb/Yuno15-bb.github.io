@@ -6,7 +6,7 @@ contexte: "Mission client · anonymisée"
 role: "Conception produit, UX terrain, développement full-stack"
 stack: ["PWA", "JavaScript", "Service Worker", "Supabase", "PostgreSQL", "RLS", "GPS", "PDF"]
 annee: 2026
-resultat: "Les écritures sont mises en file et rejouées au retour du réseau — une coupure ou un rafraîchissement ne perd rien. 91 tests unitaires verts."
+resultat: "Les écritures sont mises en file et rejouées au retour du réseau — une coupure ou un rafraîchissement ne perd rien. 262 tests verts (unitaires et navigateur)."
 nda: true
 featured: true
 ordre: 2
@@ -51,8 +51,12 @@ départ pour plusieurs entreprises plutôt qu'ajouté après coup.
 
 ## La fiabilité
 
-**91 tests unitaires, tous verts, en 1,4 seconde** — plus des tests de navigateur qui
-pilotent l'interface réelle. Au total, 11 fichiers de test et 189 cas déclarés.
+**100 tests unitaires, tous verts** — jusqu'au serveur HTTP réel, pas seulement la
+logique isolée. Plus **164 tests de navigateur** (Playwright, deux moteurs) qui
+pilotent l'interface : lisibilité, gestes tactiles, génération de PDF, saisie hors
+ligne — 162 verts, 2 volontairement ignorés selon le moteur (limite connue de
+l'émulation tactile et du mode hors ligne, pas un test qui échoue). 17 fichiers de
+test au total.
 
 Les tests qui comptent sont ceux nommés d'après une panne qui ferait mal : on ne peut pas
 sortir de la route des ressources par un chemin détourné, le pont de propositions est
@@ -61,7 +65,7 @@ débit, et les en-têtes de sécurité sont posés sur chaque réponse.
 
 ## Les résultats
 
-Version 1.0.1, 381 commits entre juin et août 2026.
+Version 1.0.1, 415 commits entre juin et septembre 2026.
 
 La propriété qui mérite d'être énoncée est celle que les tests protègent : **aucune
 donnée n'est perdue quand le réseau tombe** — non pas comme une intention, mais comme une

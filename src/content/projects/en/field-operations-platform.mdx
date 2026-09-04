@@ -6,7 +6,7 @@ contexte: "Client work · anonymized"
 role: "Product design, field UX, full-stack development"
 stack: ["PWA", "JavaScript", "Service Worker", "Supabase", "PostgreSQL", "RLS", "GPS", "PDF"]
 annee: 2026
-resultat: "Writes are queued and replayed on reconnect — a dropped signal or a refresh loses nothing. 91 unit tests green."
+resultat: "Writes are queued and replayed on reconnect — a dropped signal or a refresh loses nothing. 262 tests green (unit and browser)."
 nda: true
 featured: true
 ordre: 2
@@ -50,8 +50,11 @@ the start for more than one company rather than retrofitted later.
 
 ## Reliability
 
-**91 unit tests, all green, in 1.4 seconds** — plus browser tests driving the real
-interface. Together, 11 test files and 189 declared cases.
+**100 unit tests, all green** — up to the real HTTP server, not just isolated logic.
+Plus **164 browser tests** (Playwright, two engines) driving the real interface:
+readability, touch gestures, PDF generation, offline capture — 162 green, 2 skipped
+by design per engine (a known limit of touch/offline emulation, not a failing test).
+17 test files in total.
 
 The tests that matter are the ones named after a failure that would hurt: the vendor
 route cannot be walked out of, the proposals bridge is closed by default and closed
@@ -60,7 +63,7 @@ are present on every response.
 
 ## Outcomes
 
-Version 1.0.1, 381 commits between June and August 2026.
+Version 1.0.1, 415 commits between June and September 2026.
 
 The property worth stating is the one the tests protect: **no data is lost when the
 network drops** — not as an intention, but as a queue that replays and a suite that

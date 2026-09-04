@@ -6,7 +6,7 @@ contexte: "Mission client · anonymisée"
 role: "Architecture, conception de l'agent, backend, exploitation en production"
 stack: ["Python", "FastAPI", "Claude", "API Gmail", "Microsoft Graph", "Notion", "Railway", "Sentry"]
 annee: 2026
-resultat: "37 outils en production, 966 tests automatisés verts — et aucune écriture n'atteint les données réelles du client sans validation humaine."
+resultat: "15 outils en production (22 retirés faute de cible réelle), 1060 tests automatisés verts sur 1065 — et aucune écriture n'atteint les données réelles du client sans validation humaine."
 nda: true
 featured: true
 ordre: 1
@@ -38,10 +38,10 @@ chaque décision.
 
 ## Le système
 
-Un agent bâti sur Claude, doté de **37 outils** : rechercher des devis, lire et mettre
-à jour les fiches client et chantier, lister et rédiger des messages, interroger les
-fournisseurs et les paiements. C'est l'agent qui décide lequel appeler — ce n'est pas
-une chaîne figée sur laquelle on aurait greffé un modèle.
+Un agent bâti sur Claude, doté de **15 outils** : rechercher des chantiers et des
+fiches client, lire les fichiers joints, interroger les fournisseurs et les impayés,
+détecter des signaux, proposer une modification. C'est l'agent qui décide lequel
+appeler — ce n'est pas une chaîne figée sur laquelle on aurait greffé un modèle.
 
 Autour : la réception depuis Gmail et Microsoft Graph, la classification par type de
 message, l'extraction des devis PDF, et une réponse laissée en brouillon qu'un humain
@@ -59,20 +59,25 @@ atterrit dans une **file de propositions** qu'une personne valide.
 Ce garde-fou n'a pas été ajouté après coup pour rassurer. C'est ce qui rend possible le
 fonctionnement sans surveillance.
 
+Le nombre d'outils a baissé avec le temps, pas grandi. 22 ont été retirés en une seule
+fois quand j'ai mesuré qu'ils écrivaient avec un jeton qui ne voit même pas les pages
+réelles de destination — un outil qui ne peut pas aboutir ne doit pas être proposé au
+modèle, même s'il rend le total plus impressionnant sur le papier.
+
 ## La fiabilité
 
-**975 tests, 966 verts en quinze secondes.** Ils couvrent la couche d'outils,
-l'extraction, l'idempotence — un même message traité deux fois ne doit pas créer deux
-fiches —, l'authentification des webhooks et le périmètre de sécurité.
+**1065 tests, 1060 verts.** Ils couvrent la couche d'outils, l'extraction,
+l'idempotence — un même message traité deux fois ne doit pas créer deux fiches —,
+l'authentification des webhooks et le périmètre de sécurité.
 
-Sentry surveille la production. Quatre tests échouent dans un bac à sable sans jeton
+Sentry surveille la production. Quelques tests échouent dans un bac à sable sans jeton
 GitHub : c'est une panne d'environnement, consignée comme telle plutôt que discrètement
 retirée du compte.
 
 ## Les résultats
 
-En production depuis **mai 2026**, version 4.2.0, déployé sur Railway, 255 commits
-entre mai et août.
+En production depuis **mai 2026**, version 4.2.0, déployé sur Railway, 266 commits
+entre mai et septembre.
 
 Le résultat qui mérite d'être énoncé n'est pas un gain de temps que je ne peux pas
 mesurer. C'est celui-ci : **aucune écriture n'atteint les données réelles du client
