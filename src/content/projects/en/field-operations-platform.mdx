@@ -1,99 +1,88 @@
 ---
 titre: "Field Operations Platform"
-pitch: "A field app that keeps working when the network does not — offline capture, geolocated photos, PDF report in one tap."
+pitch: "Installable web app for a carpentry and roofing company: the technician records the job on the roof, the office sees it live, and everything works with no signal."
 audience: ["business"]
 contexte: "Client work · anonymized"
 role: "Product design, field UX, full-stack development"
 stack: ["PWA", "JavaScript", "Service Worker", "Supabase", "PostgreSQL", "RLS", "GPS", "PDF"]
 annee: 2026
-resultat: "Writes are queued and replayed on reconnect — a dropped signal or a refresh loses nothing. 262 tests green (unit and browser)."
+resultat: "Full offline capture, replayed on reconnection with no duplicates. The office sees the job the same day instead of three days later."
 nda: true
 featured: true
 ordre: 2
-cover: "/projects/dgc-system-phone.png"
-cover2: "/projects/dgc-system-office.png"
+cover: "/projects/terrain-tel-04-09.jpg"
+cover2: "/projects/terrain-bureau-04-09.jpg"
 ---
 
 import Figure from '../../../components/Figure.astro';
 import Flow from '../../../components/figures/Flow.astro';
-import Duo from '../../../components/figures/Duo.astro';
-
-## The problem
-
-Technicians logged their jobs on paper, and the office re-typed them later. Between the
-two: lost sheets, duplicated entries, days of delay before anyone at the office knew
-what had actually happened on site.
-
-## The constraints
-
-A construction site is not an office. The network drops behind a wall and comes back in
-the van. The hand holding the phone is gloved. The screen is read in direct sunlight,
-one-handed, while something else is going on.
-
-A consumer-grade app does not survive that. Neither does an app that assumes a request
-will succeed.
-
-## The system
-
-An **offline-first** progressive web app with two faces: the technician's phone, and the
-office dashboard.
-
-On site: fast capture, geolocated photos, and a questionnaire that adapts to the type of
-job rather than asking everything every time. At the office: live view of the crews,
-counters, urgent findings, and a PDF report generated from what was entered in the field.
-
-## The architecture
-
-Every write goes into a **queue** before it goes anywhere near the network. The app
-treats being offline as the normal case, not the error case — so a dropped signal, a
-refresh, or a closed tab costs nothing. The queue replays the moment the connection
-returns.
-
-Access is partitioned at the database level with **row-level security**, designed from
-the start for more than one company rather than retrofitted later.
-
+import Ecrans from '../../../components/figures/Ecrans.astro';
 
 <Figure
-  titre="A write when the network drops"
-  legende="An outage is not treated as an error but as the normal case: the write enters a queue before it ever approaches the network, and a page refresh does not lose it."
+  source="Screenshots of the app in production, demo mode — branding, places and data neutralised"
+>
+  <Ecrans
+    tel="/projects/terrain-tel-04-09.jpg"
+    telAlt="The technician's phone — current job, route, upcoming visits"
+    bureau="/projects/terrain-bureau-04-09.jpg"
+    bureauAlt="The office — live crews on the map, counters for the day, month planner"
+  />
+</Figure>
+
+## What it is for
+
+Replacing the sheet of paper a roofer fills in on the roof and somebody re-types at the
+office three days later. One application, two uses: the technician's phone, and the
+office dashboard.
+
+## On the roof — the technician's phone
+
+- **Questionnaire targeted by job type** — survey, leak detection, maintenance contract,
+  intervention. Fifteen steps at most, and only the ones relevant to that job.
+- **Multi-select findings** across the five zones of a roof — ridge, verges, covering,
+  flashing, penetrations. One point can carry several defects; "good condition"
+  automatically excludes any other.
+- **Photos taken inside the app**, one per subject, geotagged and attached to the right
+  step on their own.
+- **Annotatable roof sketch**, with an outline editor to correct a footprint.
+- **Today's job, route and upcoming visits** on the home screen.
+
+## At the office — a single page
+
+- **Live crew map**: each technician's GPS position, distinguishing a current fix from a
+  last known position, with pins coloured by job status.
+- **Counters for the day**: total jobs, technicians online, jobs in progress, urgent
+  findings.
+- **Month planner**, showing the most serious status of each day.
+- **Location directory** in three levels: managing agent, site, job.
+- **Client report as PDF**, produced in one gesture from what was entered on the roof —
+  no re-typing.
+- **Built-in assistant**: the same company runs an agent that reads its inbox and
+  prepares entries; it is reachable from this page.
+
+## Offline: an outage is the normal case
+
+<Figure
+  titre="What happens when the signal drops"
+  legende="No entry depends on the signal at the moment it is made."
 >
   <Flow etapes={[
-    { t: 'The technician acts', d: 'They fill in, photograph and confirm — on site.' },
-    { t: 'The queue', d: 'The write is stored locally before any network attempt.', porte: true },
-    { t: 'The network returns', d: 'The queue replays on its own, in order, without duplicates.' },
-    { t: 'The office sees it', d: 'The map, the counters and the PDF report follow.' },
+    { t: 'The technician confirms', d: 'He fills in, photographs, confirms.' },
+    { t: 'Written on the phone', d: 'Immediately, asking the server for nothing.', porte: true },
+    { t: 'The signal returns', d: 'The queue replays on its own, in order, no duplicates.' },
+    { t: 'The office sees it', d: 'The same job, from the other side.' },
   ]} />
 </Figure>
 
-## Reliability
+Every write is stored locally and queued before it ever approaches the network. A
+refresh, a closed tab, a basement: nothing is lost, and the same item replayed twice does
+not create two records.
 
-**100 unit tests, all green** — up to the real HTTP server, not just isolated logic.
-Plus **164 browser tests** (Playwright, two engines) driving the real interface:
-readability, touch gestures, PDF generation, offline capture — 162 green, 2 skipped
-by design per engine (a known limit of touch/offline emulation, not a failing test).
-17 test files in total.
+## Operations
 
-The tests that matter are the ones named after a failure that would hurt: the vendor
-route cannot be walked out of, the proposals bridge is closed by default and closed
-again without a director token, sensitive routes are rate-limited, and security headers
-are present on every response.
-
-## Outcomes
-
-Version 1.0.1, 415 commits between June and September 2026.
-
-The property worth stating is the one the tests protect: **no data is lost when the
-network drops** — not as an intention, but as a queue that replays and a suite that
-proves it still does.
-
-## Limits
-
-There is no usage instrumentation, so I cannot tell you how many jobs went through it,
-and I will not invent a number.
-
-The office view was designed for a small team, not for hundreds of concurrent users.
-
-And it is one deployment, for one company — the multi-tenant partitioning is built and
-tested, but it has never carried a second tenant.
-
-> Real client — visuals rebuilt with fictional data. No client data is exposed.
+- **Per-company isolation** at the database level, designed in from the start rather than
+  bolted on later.
+- **Encrypted off-machine backups**, with restoration verified byte for byte.
+- **Installable from the browser**, with no app store in the way.
+- **Keyboard operable**, contrast meeting the AA threshold — an app that has to be read
+  in full sunlight.

@@ -1,103 +1,92 @@
 ---
 titre: "Plateforme d'interventions terrain"
-pitch: "Une application de chantier qui continue de fonctionner quand le réseau, lui, s'arrête — saisie hors-ligne, photos géolocalisées, rapport PDF en un geste."
+pitch: "Application web installable pour une entreprise de charpente-couverture : le technicien saisit son intervention sur le toit, le bureau la voit en direct, et tout fonctionne sans réseau."
 audience: ["business"]
 contexte: "Mission client · anonymisée"
 role: "Conception produit, UX terrain, développement full-stack"
 stack: ["PWA", "JavaScript", "Service Worker", "Supabase", "PostgreSQL", "RLS", "GPS", "PDF"]
 annee: 2026
-resultat: "Les écritures sont mises en file et rejouées au retour du réseau — une coupure ou un rafraîchissement ne perd rien. 262 tests verts (unitaires et navigateur)."
+resultat: "Saisie complète hors réseau, rejouée au retour du signal sans doublon. Le bureau voit le chantier le jour même au lieu de trois jours plus tard."
 nda: true
 featured: true
 ordre: 2
-cover: "/projects/dgc-system-phone.png"
-cover2: "/projects/dgc-system-office.png"
+cover: "/projects/terrain-tel-04-09.jpg"
+cover2: "/projects/terrain-bureau-04-09.jpg"
 ---
 
 import Figure from '../../../components/Figure.astro';
 import Flow from '../../../components/figures/Flow.astro';
-import Duo from '../../../components/figures/Duo.astro';
-
-## Le problème
-
-Les techniciens notaient leurs interventions sur papier, et le bureau les ressaisissait
-plus tard. Entre les deux : des feuilles perdues, des doublons, et plusieurs jours avant
-que quiconque au bureau sache ce qui s'était réellement passé sur le chantier.
-
-## Les contraintes
-
-Un chantier n'est pas un bureau. Le réseau tombe derrière un mur et revient dans la
-camionnette. La main qui tient le téléphone porte un gant. L'écran se lit en plein
-soleil, d'une seule main, pendant qu'il se passe autre chose.
-
-Une application grand public ne survit pas à ça. Une application qui suppose qu'une
-requête va aboutir non plus.
-
-## Le système
-
-Une application web progressive **hors-ligne d'abord**, avec deux visages : le téléphone
-du technicien, et le tableau de bord du bureau.
-
-Sur le chantier : saisie rapide, photos géolocalisées, et un questionnaire qui s'adapte
-au type d'intervention au lieu de tout demander à chaque fois. Au bureau : les équipes
-en direct, les compteurs, les conclusions urgentes, et un rapport PDF produit à partir de
-ce qui a été saisi sur le terrain.
-
-## L'architecture
-
-Chaque écriture entre dans une **file d'attente** avant d'approcher le réseau.
-L'application traite l'absence de réseau comme le cas normal, pas comme l'erreur — donc
-une coupure, un rafraîchissement ou un onglet fermé ne coûtent rien. La file se rejoue
-dès que la connexion revient.
-
-Les accès sont cloisonnés au niveau de la base par **row-level security**, pensé dès le
-départ pour plusieurs entreprises plutôt qu'ajouté après coup.
-
+import Ecrans from '../../../components/figures/Ecrans.astro';
 
 <Figure
-  titre="Une écriture quand le réseau tombe"
-  legende="La coupure n'est pas traitée comme une erreur mais comme le cas normal : l'écriture entre dans une file avant même d'approcher le réseau, et un rafraîchissement ne la perd pas."
+  source="Captures de l'application en production, mode démonstration — marque, lieux et données neutralisés"
+>
+  <Ecrans
+    tel="/projects/terrain-tel-04-09.jpg"
+    telAlt="Le téléphone du technicien — mission en cours, itinéraire, prochaines interventions"
+    bureau="/projects/terrain-bureau-04-09.jpg"
+    bureauAlt="Le bureau — équipes en direct sur la carte, compteurs du jour, planning du mois"
+  />
+</Figure>
+
+## À quoi ça sert
+
+Remplacer la feuille de papier que le couvreur remplit sur le toit et que quelqu'un
+retape au bureau trois jours plus tard. Une seule application, deux usages : le
+téléphone du technicien, et le tableau de bord du bureau.
+
+## Sur le toit — le téléphone du technicien
+
+- **Questionnaire ciblé par type d'intervention** — diagnostic, recherche de fuite,
+  contrat d'entretien, intervention. Quinze étapes au maximum, et seulement celles qui
+  concernent le chantier du jour.
+- **Constats à choix multiple** sur les cinq zones d'une toiture — faîtage, rives,
+  couverture, zinguerie, émergences. Un même point peut porter plusieurs défauts ;
+  « bon état » en exclut automatiquement tout autre.
+- **Photos prises depuis l'application**, une par sujet, géolocalisées et rattachées
+  toutes seules à la bonne étape.
+- **Croquis de toiture annotable**, avec éditeur de tracé pour corriger une emprise.
+- **Mission du jour, itinéraire et prochaines interventions** sur l'écran d'accueil.
+
+## Au bureau — une seule page
+
+- **Carte des équipes en direct** : position GPS de chaque technicien, avec distinction
+  entre position en cours et dernière position connue, et pins colorés par statut
+  d'intervention.
+- **Compteurs du jour** : interventions au total, techniciens connectés, interventions
+  en cours, conclusions urgentes.
+- **Planning du mois**, avec l'état le plus grave de chaque journée.
+- **Répertoire des lieux** organisé en trois niveaux : gestionnaire, lieu, intervention.
+- **Rapport client en PDF**, produit en un geste à partir de ce qui a été saisi sur le
+  toit — sans ressaisie.
+- **Assistant intégré** : la même entreprise dispose d'un agent qui lit sa boîte mail et
+  prépare les fiches ; il est accessible depuis cette page.
+
+## Hors-ligne : la coupure est le cas normal
+
+<Figure
+  titre="Ce qui se passe quand le réseau tombe"
+  legende="Aucune saisie ne dépend du signal au moment où elle est faite."
 >
   <Flow etapes={[
-    { t: 'Le geste du technicien', d: 'Il saisit, il photographie, il valide — sur le chantier.' },
-    { t: 'La file d’attente', d: 'L’écriture est rangée localement avant toute tentative réseau.', porte: true },
+    { t: 'Le technicien valide', d: 'Il saisit, il photographie, il confirme.' },
+    { t: "Écrit dans le téléphone", d: 'Immédiatement, sans rien demander au serveur.', porte: true },
     { t: 'Le réseau revient', d: 'La file se rejoue seule, dans l’ordre, sans doublon.' },
-    { t: 'Le bureau voit', d: 'La carte, les compteurs et le rapport PDF suivent.' },
+    { t: 'Le bureau voit', d: 'La même intervention, vue de l’autre côté.' },
   ]} />
 </Figure>
 
-## La fiabilité
+Toute écriture est enregistrée localement puis mise en file d'attente avant d'approcher
+le réseau. Un rafraîchissement, un onglet fermé, un sous-sol : rien n'est perdu, et un
+même envoi rejoué deux fois ne crée pas deux fiches.
 
-**100 tests unitaires, tous verts** — jusqu'au serveur HTTP réel, pas seulement la
-logique isolée. Plus **164 tests de navigateur** (Playwright, deux moteurs) qui
-pilotent l'interface : lisibilité, gestes tactiles, génération de PDF, saisie hors
-ligne — 162 verts, 2 volontairement ignorés selon le moteur (limite connue de
-l'émulation tactile et du mode hors ligne, pas un test qui échoue). 17 fichiers de
-test au total.
+## Exploitation
 
-Les tests qui comptent sont ceux nommés d'après une panne qui ferait mal : on ne peut pas
-sortir de la route des ressources par un chemin détourné, le pont de propositions est
-fermé par défaut et le reste sans jeton dirigeant, les routes sensibles sont limitées en
-débit, et les en-têtes de sécurité sont posés sur chaque réponse.
-
-## Les résultats
-
-Version 1.0.1, 415 commits entre juin et septembre 2026.
-
-La propriété qui mérite d'être énoncée est celle que les tests protègent : **aucune
-donnée n'est perdue quand le réseau tombe** — non pas comme une intention, mais comme une
-file qui se rejoue et une suite qui prouve qu'elle le fait encore.
-
-## Les limites
-
-Il n'y a aucune instrumentation d'usage : je ne peux pas dire combien d'interventions y
-sont passées, et je n'inventerai pas de chiffre.
-
-La vue bureau a été conçue pour une petite équipe, pas pour des centaines d'utilisateurs
-simultanés.
-
-Et il s'agit d'un seul déploiement, pour une seule entreprise — le cloisonnement
-multi-entreprises est construit et testé, mais il n'a jamais porté un second client.
-
-> Client réel — visuels reconstruits avec des données fictives. Aucune donnée client
-> n'est exposée.
+- **Cloisonnement par entreprise** au niveau de la base de données, pensé dès le départ
+  pour plusieurs clients plutôt qu'ajouté après coup.
+- **Sauvegardes chiffrées hors de la machine**, avec restauration vérifiée octet pour
+  octet.
+- **Application installable** depuis le navigateur, sans passer par un magasin
+  d'applications.
+- **Pilotable au clavier**, contrastes conformes au seuil AA — une application qui se
+  lit en plein soleil.

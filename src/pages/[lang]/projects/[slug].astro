@@ -1,7 +1,6 @@
 ---
 import { getCollection, render } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
-import DgcScreens from '../../../components/DgcScreens.astro';
 import { ui, type Lang } from '../../../i18n/ui';
 
 export async function getStaticPaths() {
@@ -45,31 +44,6 @@ const slug = entry.id.split('/')[1];
       </div>
     </div>
 
-    {/* Puis la démonstration : la pile de cartes, au milieu de la page. */}
-    {slug === 'field-operations-platform' && (
-      <section class="story" aria-label={t['story.title']}>
-        <div class="container">
-          <div class="stack" id="story-stack">
-            <aside class="stack__side">
-              <ol class="stack__steps" role="list">
-                {[1, 2].map((n) => (
-                  <li class="stack__step" data-step={n - 1}>
-                    <h3>{t[`story.s${n}.t` as keyof typeof t]}</h3>
-                    <p>{t[`story.s${n}.b` as keyof typeof t]}</p>
-                  </li>
-                ))}
-              </ol>
-              <div class="stack__progress" aria-hidden="true"><span class="stack__bar" id="story-bar"></span></div>
-              <p class="stack__caption eyebrow">{t['project.mockup']}</p>
-            </aside>
-
-            <div class="stack__cards">
-              <DgcScreens lang={lang} />
-            </div>
-          </div>
-        </div>
-      </section>
-    )}
   </article>
 
   <style>
@@ -128,9 +102,11 @@ const slug = entry.id.split('/')[1];
 
     /* ---- Scrollytelling : la démo occupe le milieu de la page ---- */
     .story {
-      margin-top: var(--space-8);
-      padding-block: var(--space-8);
-      border-top: 1px solid var(--c-line);
+      /* En tete de page : plus de marge haute, et le filet passe EN BAS — il
+         separe desormais le visuel du recit, au lieu de l'en detacher. */
+      margin-top: var(--space-4);
+      padding-block: 0 var(--space-8);
+      border-bottom: 1px solid var(--c-line);
       background:
         none;   /* direction « champ spatial » : rien ne recouvre le champ */
     }
@@ -238,6 +214,37 @@ const slug = entry.id.split('/')[1];
     .project__body :global(p) { margin-bottom: var(--space-3); }
     .project__body :global(h2) { margin-top: var(--space-7); margin-bottom: var(--space-2); }
     .project__body :global(h2:first-child) { margin-top: 0; }
+    /* Listes de la fiche : puces discretes, une ligne d'air entre les entrees.
+       Le corps de page etait jusqu'ici de la prose seule — sans ces regles, une
+       liste MDX arrivait sans puce ni retrait. */
+    .project__body :global(ul) {
+      list-style: none;
+      margin: 0 0 var(--space-3);
+      padding: 0;
+      display: grid;
+      gap: var(--space-2);
+    }
+    .project__body :global(li) {
+      position: relative;
+      padding-left: var(--space-3);
+      color: var(--c-muted);
+      line-height: var(--lh-body);
+    }
+    .project__body :global(li)::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.62em;
+      width: 6px;
+      height: 1px;
+      background: var(--c-line-ui);
+    }
+    .project__body :global(li strong) { color: var(--c-fg); font-weight: 600; }
+    .project__body :global(h3) {
+      font-size: var(--fs-300);
+      margin-top: var(--space-4);
+      margin-bottom: var(--space-2);
+    }
 
     /* ⚠ La composition editoriale asymetrique a ete SUPPRIMEE le 25/08/2026.
        Elle etait ecrite en dur pour EXACTEMENT 3 titres et 3 paragraphes — la forme

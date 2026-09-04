@@ -1,0 +1,52 @@
+---
+/**
+ * Ecrans — les deux visages du produit, cote a cote : le telephone du technicien
+ * et le tableau de bord du bureau.
+ *
+ * ⚠ Ces captures viennent du MODE DEMO de l'application reelle, en production,
+ *   avec la marque, les noms de lieux et le centre de carte neutralises avant la
+ *   photo (le centre de carte est ecrit en dur dans l'app, il ne suit pas les
+ *   donnees de demo). Elles se refont a l'identique quand l'app change — elles ne
+ *   sont pas redessinees a la main, donc elles ne peuvent plus dater en silence.
+ */
+interface Props {
+  tel: string;
+  telAlt: string;
+  bureau: string;
+  bureauAlt: string;
+}
+const { tel, telAlt, bureau, bureauAlt } = Astro.props;
+---
+<div class="ec">
+  <figure class="ec__item ec__item--tel">
+    <img src={tel} alt={telAlt} width="554" height="1200" loading="lazy" decoding="async" />
+    <figcaption class="eyebrow">{telAlt}</figcaption>
+  </figure>
+  <figure class="ec__item ec__item--bur">
+    <img src={bureau} alt={bureauAlt} width="1600" height="1055" loading="lazy" decoding="async" />
+    <figcaption class="eyebrow">{bureauAlt}</figcaption>
+  </figure>
+</div>
+
+<style>
+  .ec {
+    display: grid;
+    grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
+    gap: var(--space-4);
+    align-items: start;
+  }
+  .ec__item { margin: 0; display: grid; gap: var(--space-2); min-width: 0; }
+  .ec__item img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--c-line);
+  }
+  .ec__item figcaption { color: var(--c-muted); }
+  @media (max-width: 760px) {
+    /* Le tableau de bord ne se lit plus a cette largeur : le telephone passe
+       devant, en pleine largeur, et le bureau le suit. */
+    .ec { grid-template-columns: minmax(0, 1fr); }
+    .ec__item--tel img { max-width: 320px; }
+  }
+</style>
