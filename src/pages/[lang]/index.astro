@@ -23,6 +23,13 @@ const filters = [
   { key: 'all', label: t['home.filter.all'] },
   { key: 'business', label: t['home.filter.business'] },
 ] as const;
+// Un filtre qui ne filtre RIEN est une promesse cassee : depuis le retrait de la
+// pastille XR (25/08), les trois projets portent la meme etiquette, donc les deux
+// boutons montraient exactement les memes cartes. On ne les affiche que si les
+// projets se repartissent vraiment sur plusieurs publics — le jour ou un second
+// public revient, le filtre revient tout seul.
+const publics = new Set(projects.flatMap((p) => p.data.audience));
+const filtreUtile = publics.size > 1;
 const email = 'sashapeellaertjuan@outlook.com';
 const mail = `mailto:${email}`;
 ---
@@ -64,13 +71,15 @@ const mail = `mailto:${email}`;
   <section class="container work" aria-labelledby="work-title">
     <div class="work__head">
       <h2 id="work-title">{t['home.work.title']}</h2>
-      <div class="filter" role="group" aria-label={t['home.filter.label']}>
-        {filters.map((f, i) => (
-          <button class="filter__btn" type="button" data-filter={f.key} aria-pressed={i === 0 ? 'true' : 'false'}>
-            {f.label}
-          </button>
-        ))}
-      </div>
+      {filtreUtile && (
+        <div class="filter" role="group" aria-label={t['home.filter.label']}>
+          {filters.map((f, i) => (
+            <button class="filter__btn" type="button" data-filter={f.key} aria-pressed={i === 0 ? 'true' : 'false'}>
+              {f.label}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
 
     <ul role="list" class="grid work__grid" id="project-grid">
@@ -226,7 +235,10 @@ const mail = `mailto:${email}`;
     }
     .work__grid { row-gap: var(--space-4); }
     /* span en CSS (pas inline) : Flip clearProps ne doit rien casser au layout */
-    .work__item { grid-column: span 6; }
+    /* `display: grid` sur l'element de liste : sans lui, la carte garde sa
+       hauteur de contenu et ne remplit pas la rangee — la fleche ne peut donc
+       pas se caler en bas. */
+    .work__item { grid-column: span 6; display: grid; }
 
     /* Section contact resserrée : elle ne doit pas peser autant qu'une section de projets. */
     .contact {

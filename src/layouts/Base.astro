@@ -73,6 +73,14 @@ const contactHref = `/${lang}/#contact`;
         align-items: baseline;
         justify-content: space-between;
         padding-block: var(--space-4);
+        /* ⚠ Mesure du 04/09 sur telephone (390 px) : le bord droit du mot-marque
+           et le bord gauche de la pastille GitHub tombaient tous les deux a
+           136 px — zero espace entre les deux, le nom semblait colle a l'avatar.
+           `space-between` ne garantit rien quand la ligne est pleine : il faut un
+           ecart minimum, et une nav plus serree pour que tout tienne SUR UNE
+           ligne — la faire passer a la ligne rendait l'en-tete deux fois plus
+           haut sur un telephone, pour un probleme de 16 px. */
+        gap: var(--space-3);
       }
       .wordmark {
         font-family: var(--font-display);
@@ -81,6 +89,7 @@ const contactHref = `/${lang}/#contact`;
         letter-spacing: var(--tracking-tight);
       }
       .site-nav { display: flex; align-items: center; gap: var(--space-4); }
+      @media (max-width: 460px) { .site-nav { gap: var(--space-2); } }
 
       /* Photo de profil ronde liée au logo GitHub — vitre légère assortie au reste. */
       .gh {

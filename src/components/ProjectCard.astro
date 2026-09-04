@@ -23,8 +23,18 @@ const tiltAttrs = tilt > 0 ? { 'data-tilt': String(tilt), 'data-tilt-reverse': '
 >
   {cover && (
     <div class="card__cover">
-      <img class="shot shot--phone" src={cover} alt="" loading="lazy" decoding="async" width="300" height="627" />
-      {cover2 && <img class="shot shot--office" src={cover2} alt="" loading="lazy" decoding="async" width="720" height="608" />}
+      {/* Deux cas, deux cadrages. Un DIPTYQUE (telephone + bureau) garde les
+          rognages d'origine ; une couverture SEULE est un ecran large qui prend
+          toute la carte — sans ce cas, elle heritait du rognage portrait du
+          telephone et se retrouvait ecrasee. */}
+      {cover2 ? (
+        <>
+          <img class="shot shot--phone" src={cover} alt="" loading="lazy" decoding="async" width="300" height="627" />
+          <img class="shot shot--office" src={cover2} alt="" loading="lazy" decoding="async" width="720" height="608" />
+        </>
+      ) : (
+        <img class="shot shot--seul" src={cover} alt="" loading="lazy" decoding="async" width="1100" height="464" />
+      )}
     </div>
   )}
   <div class="card__meta eyebrow">
@@ -83,6 +93,11 @@ const tiltAttrs = tilt > 0 ? { 'data-tilt': String(tilt), 'data-tilt-reverse': '
     .card__pitch { color: var(--c-muted); }
     .card__go {
       justify-self: end;
+      /* Colle la fleche EN BAS de la carte. Mesure du 04/09 : une carte sans
+         couverture s'arretait 192 px au-dessus de sa voisine et laissait un trou
+         noir dans la grille. La carte occupe maintenant toute la hauteur de sa
+         rangee et toutes les fleches se posent sur la meme ligne. */
+      margin-top: auto;
       font-size: var(--fs-400);
       color: var(--c-ember);
       transition: transform var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
@@ -128,6 +143,9 @@ const tiltAttrs = tilt > 0 ? { 'data-tilt': String(tilt), 'data-tilt-reverse': '
     /* Bureau : paysage, moitie haute aussi (2160/911) — les deux maquettes
        partagent donc la meme hauteur et la rangee s'aligne toute seule. */
     .shot--office { width: clamp(266px, 26vw, 346px); aspect-ratio: 720 / 304; }
+    /* Couverture seule : l'ecran occupe la largeur de la carte. Meme voile bas
+       que les autres pour que la coupe reste un choix, pas une image cassee. */
+    .shot--seul { width: 100%; aspect-ratio: 1100 / 464; }
     @media (max-width: 700px) {
       /* Sous 700px la rangee etoufferait : on ne garde que le telephone. */
       .shot--office { display: none; }
