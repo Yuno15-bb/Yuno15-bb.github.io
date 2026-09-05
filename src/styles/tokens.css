@@ -37,11 +37,16 @@
   --fs-200: 1rem;
   --fs-300: 1.25rem;
   --fs-400: 1.563rem;
-  --fs-500: 1.953rem;
-  --fs-600: 2.441rem;
-  --fs-700: 3.5rem;
-  --fs-800: 4.6rem;
-  --fs-900: 6rem;
+  /* ⚠ ÉCHELLE D'AFFICHAGE ABAISSÉE (Dylan, 05/09 : « un rendu dézoomé, c'est plus
+     propre »). Seuls les corps de TITRE bougent — le texte courant reste à 16 px,
+     sous lesquels il devient dur à lire. Un titre plus petit dans un canevas plus
+     large, c'est exactement l'effet « dézoomé » : la page respire au lieu de
+     crier. */
+  --fs-500: 1.75rem;
+  --fs-600: 2.1rem;
+  --fs-700: 2.9rem;
+  --fs-800: 3.8rem;
+  --fs-900: 4.9rem;
   --lh-tight: 1.02;
   --lh-body: 1.6;
   --tracking-tight: -0.01em;
@@ -57,7 +62,8 @@
   --grid-cols: 12;
   --grid-gutter: var(--space-3);
   --measure: 68ch;
-  --container: 76rem;
+  /* Canevas elargi dans le meme mouvement : plus d'air autour du contenu. */
+  --container: 84rem;
 
   --radius: 0px;
 
