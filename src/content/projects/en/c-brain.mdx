@@ -1,34 +1,56 @@
 ---
 titre: "C Brain"
-pitch: "Extracting a personal memory system into installable software — without letting a single line of lived experience escape."
+pitch: "Persistent memory for command-line agents: an installable engine, kept separate from your notes, that updates itself. Published as open source."
 audience: ["business"]
-role: "Design, architecture, extraction, open-source release"
+contexte: "Personal project · open source"
+role: "Design, architecture, extraction, publication"
 stack: ["Python", "Bash", "Electron", "WebGL", "GitHub Actions", "Apache 2.0"]
 annee: 2026
-resultat: "Published under Apache 2.0, 46 releases, installable as a plugin — and a 21-marker leak check entitled to block any release."
-nda: false
-featured: true
+resultat: "46 releases published under Apache 2.0, installable in one command — and a leak check that is allowed to block any publication."
+cover: "/projects/cbrain-repo-05-09.jpg"
+featured: false
 ordre: 3
 ---
 
 import Figure from '../../../components/Figure.astro';
 import Flow from '../../../components/figures/Flow.astro';
 import Duo from '../../../components/figures/Duo.astro';
-import Grille from '../../../components/figures/Grille.astro';
+import Mac from '../../../components/figures/Mac.astro';
 
-## The problem
+<Figure
+  cadre={false}
+  legende="The public repository as it stands today: 169 commits, 46 releases, Apache 2.0 licence."
+  source="github.com/Yuno15-bb/c-brain"
+>
+  <Mac titre="c-brain — GitHub">
+    <img
+      src="/projects/cbrain-repo-05-09.jpg"
+      alt="The public c-brain repository on GitHub"
+      width="1600" height="1000" loading="lazy" decoding="async"
+      style="display:block;width:100%;height:auto"
+    />
+  </Mac>
+</Figure>
 
-A command-line agent is brilliant within a session and amnesic between two. I built
-myself a **knowledge trunk**: what I work out once gets distilled into a note, filed,
-linked, and surfaced automatically next time. After a year it was worth more than
-any single project it had helped write.
+## What it is for
 
-Making it installable by someone else was not a packaging job. That trunk holds
-client names, addresses, phone numbers, paths into my machine. Publishing it as-is
-means publishing my working life.
+A command-line agent is brilliant inside a session and amnesiac between two. C Brain
+gives it memory that lasts: whatever is solved once is distilled into a note, filed,
+linked, and resurfaces on its own in the next session.
 
-So the constraint fit in one sentence: **ship the engine, never the lived experience.**
+## What the engine does
 
+- **Distillation**: a working session becomes clean notes — one fact per note, with its
+  provenance and its degree of certainty.
+- **Automatic recall**: on every question asked, the relevant notes come back on their
+  own, with nothing to look up.
+- **Knowledge tree**: notes link to each other; a lesson learned on one project is
+  findable from every other.
+- **Gardening agents**: eight specialised roles file, de-duplicate, challenge stale notes
+  and repair broken links.
+- **3D planet**: the whole graph is visualised in real time, one continent per domain.
+
+## What makes publication possible
 
 <Figure
   titre="Two folders that never mix"
@@ -48,94 +70,26 @@ So the constraint fit in one sentence: **ship the engine, never the lived experi
   />
 </Figure>
 
-## The architecture that makes it possible
-
-Two directories that never mix. `engine` is code — disposable, replaced on every
-update. `trunk` is the notes — it moves only when the user writes. An update cannot
-touch anyone's work, because it has no business writing there.
-
-Between my living Brain and the public repository runs a one-way chain: a copy by
-**whitelist** (what is not named does not ship — a blocklist passes by default, and
-one omission is a leak), a depersonalisation pass made of replayable rules, then a
-**leak check** with 21 markers that is entitled to block a release.
-
-What follows are three failures. None of them was found by re-reading the code.
-
+## The chain that protects the lived record
 
 <Figure
   titre="From the living notebook to the public package"
   legende="A one-way chain: nothing flows back from the public repository into the notebook. The leak check is allowed to block publication, and it already has."
 >
   <Flow etapes={[
-    { t: 'The living notebook', d: 'A year of real notes: clients, addresses, paths on my machine.' },
-    { t: 'Allow-list copy', d: 'What is not named does not leave. A block-list would let an oversight through.' },
+    { t: 'The living notebook', d: 'A year of real notes: clients, addresses, machine paths.' },
+    { t: 'Allow-list copy', d: 'What is not named does not leave.' },
     { t: 'De-identification', d: 'Replayable rules strip names, numbers and paths.' },
     { t: 'Leak check', d: '21 markers. One of them turning red blocks the publication.', porte: true },
     { t: 'The public package', d: 'The engine, installable by anyone. Never the lived record.' },
   ]} />
 </Figure>
 
-## Failure 1 — the guard turned on its own owner
+## How it installs and stays alive
 
-Moving to Apache 2.0, nothing could be published any more. Apache **requires** the
-copyright holder's name in `LICENSE` and `NOTICE`: that is what makes a licence a
-licence. The leak check saw my name and did exactly what it was written to do — it
-blocked.
+- **One command**: the package installs as an extension to a command-line agent.
+- **Every release is replayed** by continuous integration: full install, uninstall, and
+  every past migration run **twice** — with the requirement that it has eaten no note.
+- **46 releases published**, under the Apache 2.0 licence, on a public repository.
 
-Found by trying to publish, not by auditing. The tempting move was to loosen the
-pattern. That was the wrong one: a guard blunted to unblock yourself protects
-nothing. So the exemption is **targeted** — the owner's name is tolerated in those
-two files and on a copyright line, nowhere else. Verified afterwards: the same name
-in prose, a client name, a key in plain text all still turn red.
-
-## Failure 2 — a window that went invisible, without a single error
-
-The package ships a small window that shows the agents at work. Renaming the user
-directory, I replaced every path. Except one: the pattern used to **detect whether
-the window is already running** — it did not start with `~`, so it appeared in no
-path search.
-
-The result: the window became invisible to the two processes responsible for
-restarting it and counting it. No crash, no message. Simply never relaunched again.
-
-Found while preparing a screenshot for the README — that is, by looking at what a
-user would see. It became a rule: after a rename, also hunt for the paths **that do
-not look like paths**.
-
-## Failure 3 — a tag that hid a frozen branch
-
-The release script pushed a **hardcoded** branch instead of the current one.
-Publishing from the French branch therefore pushed the tag… and an already
-up-to-date English branch. The French commits never left.
-
-And nothing flagged it, because a **tag carries the objects**: updates worked for
-users, the version existed, the release page looked right. Only the remote branch
-stayed frozen — for whoever cloned it next.
-
-Found by checking that `git log origin/branch..branch` is empty after a release.
-That check is now systematic: after a push, **you verify the branch, not the tag**.
-
-
-<Figure
-  titre="None of them was found by re-reading the code"
-  legende="Three silent failures — none raised an error, none showed up in a log. Each one came out of a real action: publishing, looking at what a user would see, checking after a push."
->
-  <Grille prefixe="found while" cases={[
-    { t: 'Trying to publish', d: 'The leak guard saw my own name in the licence file — which the Apache licence REQUIRES — and blocked everything.' },
-    { t: 'Looking at a screenshot', d: 'After a rename, the small agent window stopped relaunching. No crash, no message: it had simply vanished.', fort: true },
-    { t: 'Checking after a push', d: 'The script pushed a hard-coded branch. The version showed up, updates worked, and the remote branch stayed frozen.' },
-  ]} />
-</Figure>
-
-## What it changed
-
-The project is public under **Apache 2.0**, 46 releases out, installable as a Claude
-Code plugin, with continuous integration that replays on every commit the full
-install, the uninstall, and every migration **twice** — while demanding proof that
-it ate no note.
-
-The number that matters is not the release count. It is that a personal system, fed
-on real data for a year, became software anyone can install — without one line of
-that lived experience leaving the machine.
-
-> Source code: [github.com/Yuno15-bb/c-brain](https://github.com/Yuno15-bb/c-brain)
+Source code: [github.com/Yuno15-bb/c-brain](https://github.com/Yuno15-bb/c-brain)

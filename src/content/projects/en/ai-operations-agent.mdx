@@ -1,12 +1,12 @@
 ---
 titre: "AI Operations Agent"
-pitch: "An agent that reads a company's inbox, classifies every message, extracts quote data and prepares the reply — in production since May 2026."
+pitch: "An agent that reads a company's inbox, classifies every message, extracts the data from quotes and invoices, and prepares the record — which a person approves before anything is written."
 audience: ["business"]
 contexte: "Client work · anonymized"
 role: "Architecture, agent design, backend, production operations"
 stack: ["Python", "FastAPI", "Claude", "Gmail API", "Microsoft Graph", "Notion", "Railway", "Sentry"]
 annee: 2026
-resultat: "15 tools in production (22 dropped for lacking a real target), 1060 automated tests green out of 1065 — and no write reaches the client's live data without a human approving it."
+resultat: "No write reaches the client's live data without a person approving it. In production since May 2026."
 cover: "/projects/agent-fiche.png"
 nda: true
 featured: true
@@ -16,78 +16,39 @@ ordre: 1
 import Figure from '../../../components/Figure.astro';
 import Flow from '../../../components/figures/Flow.astro';
 import Duo from '../../../components/figures/Duo.astro';
+import Mac from '../../../components/figures/Mac.astro';
 import FicheProposition from '../../../components/figures/FicheProposition.astro';
 
-
 <Figure
-  titre="The screen where it is decided"
-  legende="The entry a person re-reads before a single line is written: every field was extracted from the email, every field stays editable, and the button on the right is what triggers the write. In amber, the one field corrected by hand."
+  cadre={false}
+  legende="The review screen: every field was extracted from the email, every field stays editable, and the button on the right is what triggers the write. In amber, the one field corrected by hand."
   source="Reconstructed interface — fictional data (client confidentiality)"
 >
-  <FicheProposition />
+  <Mac titre="Field Ops — Filing">
+    <FicheProposition />
+  </Mac>
 </Figure>
 
-## The problem
+## What it is for
 
-For a carpentry and roofing company, the inbox *is* the backlog. Signed quotes come
-back as PDF attachments, complaints arrive mixed in with payment notices, and one
-person re-types all of it into the CRM by hand.
+A company receives its signed quotes, invoices and complaints by email. Someone reads
+them, re-types them by hand into the client records, files the attachments, replies. The
+agent does the reading, the extraction and the preparation; the person keeps the decision.
 
-Nothing gets lost, because somebody is always watching. That vigilance is the cost.
+## What it reads out of a message
 
-## The constraints
+- **Two inboxes** — Gmail and Microsoft Graph, polled every minute.
+- **Classification by type**: signed quote, client invoice, subcontractor invoice,
+  complaint, payment notice, spam. Four keywords at the start of a subject line force the
+  classification when the sender knows them.
+- **PDF attachment extraction**: client, quote number, invoice number, amounts excluding
+  and including tax, address, due date, occupant of the property.
+- **Scanned invoices**: a PDF with no text layer goes through character recognition — the
+  same one already used for purchase orders.
+- **Several documents per message** — one email may carry both the signed quote and the
+  purchase order; both follow the record all the way through.
 
-Three, and they shaped every decision that followed.
-
-The mailbox is real and so is the CRM. A wrong write does not produce a bug report —
-it produces an invoice sent twice and a client who notices.
-
-The model must never invent. An extracted quote number that merely *looks* plausible
-is worse than no number at all.
-
-And it had to run unattended, on a schedule, without a human checking each decision.
-
-## The system
-
-An agent built on Claude with **15 tools**: searching sites and client records,
-reading attached files, querying suppliers and unpaid invoices, flagging signals,
-proposing a change. The agent decides which to call — it is not a fixed pipeline
-with a model bolted on.
-
-Around it: ingestion from Gmail and Microsoft Graph, classification by message type,
-PDF extraction on quote attachments, and a reply left in draft for a human to send.
-
-
-<Figure
-  titre="How a message travels"
-  legende="No arrow connects the agent to the client's records. That is the project's constraint, drawn: everything goes through the queue and through one person's click."
->
-  <Flow etapes={[
-    { t: 'The inbox', d: 'Quotes, invoices and complaints all arrive mixed together.' },
-    { t: 'The agent reads', d: 'It classifies the message, opens the PDF attachments, extracts the data.' },
-    { t: 'The proposal queue', d: 'Every write stops here and waits. Nothing leaves.' },
-    { t: 'A person approves', d: 'They re-read it, correct it, and their click triggers the write.', porte: true },
-    { t: 'The client records', d: 'The entry is created. This is the only path to it.' },
-  ]} />
-</Figure>
-
-## The architecture
-
-The decision that matters is what the agent is **not** allowed to do.
-
-The client's live database is **read-only**. Writes default to `dry_run`. The single
-exception is narrow and written down — a status field may move to "scheduled", nothing
-else. Everything else the agent would change lands in a **proposal queue** that a
-person approves.
-
-That guard was not added late to reassure anyone. It is the reason the system can run
-unattended at all.
-
-The tool count went down over time, not up. 22 were dropped in one pass once I
-measured they were writing with a token that cannot even see the real destination
-pages — a tool that cannot succeed should not be offered to the model, even if it
-makes the total look more impressive on paper.
-
+## What it is not allowed to do
 
 <Figure
   titre="The boundary, spelled out"
@@ -95,7 +56,7 @@ makes the total look more impressive on paper.
 >
   <Duo
     a={{ titre: 'What the agent does on its own', items: [
-      'Read the inbox and classify every message',
+      'Read the inboxes and classify every message',
       'Open PDF attachments and extract their data',
       "Query the client's database — read-only",
       'Draft a reply, left unsent',
@@ -104,38 +65,43 @@ makes the total look more impressive on paper.
     b={{ titre: 'What it is not allowed to do', items: [
       "Write into the client's live database",
       'Send an email on their behalf',
-      'Create an entry nobody has re-read',
+      'Create a record nobody has re-read',
       'Delete or overwrite existing data',
     ] }}
   />
 </Figure>
 
-## Reliability
+The client database is read-only. Every write defaults to a dry run. Anything the agent
+would change lands in a proposal queue, and nothing leaves it without a human click.
 
-**1065 tests, 1060 green.** They cover the tool layer, the extraction,
-idempotence — the same mail processed twice must not create two records — webhook
-authentication, and the security perimeter.
+## How a message travels
 
-Sentry watches production. A few tests fail in a sandbox with no GitHub token: an
-environment failure, recorded as such rather than quietly excluded from the count.
+<Figure
+  titre="From inbox to filed record"
+  legende="No arrow connects the agent to the client's records: everything goes through the queue and through one person's click."
+>
+  <Flow etapes={[
+    { t: 'The inbox', d: 'Quotes, invoices and complaints arrive mixed together.' },
+    { t: 'The agent reads', d: 'It classifies, opens the PDFs, extracts the data.' },
+    { t: 'The proposal queue', d: 'Every write stops here and waits.' },
+    { t: 'A person approves', d: 'They re-read it, correct it, and their click triggers the write.', porte: true },
+    { t: 'The client records', d: 'The record is created, its PDFs attached. This is the only path.' },
+  ]} />
+</Figure>
 
-## Outcomes
+## What protects the data
 
-In production since **May 2026**, version 4.2.0, deployed on Railway, 266 commits
-between May and September.
+- **Nothing ambiguous is written.** Two amounts in one field, a date that does not exist
+  on a calendar, a client missing from the recipient's own list: the value is not
+  invented, it is copied verbatim into the free-text column of the record.
+- **An empty cell cannot mean two things.** Whatever is not written is always stated
+  somewhere.
+- **The same message processed twice** does not create two records.
+- **A read-only pre-flight** checks, before every release, that the target columns still
+  exist on the client's side and that nothing has been renamed behind our back.
 
-The result worth stating is not a time saving I cannot measure. It is this: **no write
-reaches the client's real data without a human approving it**, and the tool layer is
-covered by a suite that runs in fifteen seconds.
+## What it fills in
 
-## Limits
-
-No usage instrumentation exists. I cannot tell you how many messages were processed,
-and I will not estimate it.
-
-The write path is deliberately manual, which caps how far the automation can go.
-
-And there is one client. Everything here is proven against one real workload — not
-against many.
-
-> Real client — figures verified, name withheld. No client data is exposed.
+Three destination pages, fifty-five columns. Thirty-five are filled automatically. Of the
+twenty left: three are out of reach of the service's interface, sixteen belong to the
+human work that happens after the email, and one was dropped at the client's request.

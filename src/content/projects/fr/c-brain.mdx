@@ -1,38 +1,60 @@
 ---
 titre: "C Brain"
-pitch: "Extraire un système de mémoire personnel en logiciel installable — sans en laisser fuir une ligne de vécu."
+pitch: "Une mémoire persistante pour agents en ligne de commande : un moteur installable, tenu séparé des notes, qui se met à jour tout seul. Publié en open source."
 audience: ["business"]
-role: "Conception, architecture, extraction, publication open source"
+contexte: "Projet personnel · open source"
+role: "Conception, architecture, extraction, publication"
 stack: ["Python", "Bash", "Electron", "WebGL", "GitHub Actions", "Apache 2.0"]
 annee: 2026
-resultat: "Publié sous Apache 2.0, 46 versions, installable en plugin — et un contrôle de fuite à 21 marqueurs qui a le droit de bloquer toute publication."
-nda: false
-featured: true
+resultat: "46 versions publiées sous Apache 2.0, installable en une commande — et un contrôle de fuite qui a le droit de bloquer toute publication."
+cover: "/projects/cbrain-repo-05-09.jpg"
+featured: false
 ordre: 3
 ---
 
 import Figure from '../../../components/Figure.astro';
 import Flow from '../../../components/figures/Flow.astro';
 import Duo from '../../../components/figures/Duo.astro';
-import Grille from '../../../components/figures/Grille.astro';
+import Mac from '../../../components/figures/Mac.astro';
 
-## Le problème
+<Figure
+  cadre={false}
+  legende="Le dépôt public, tel qu'il est aujourd'hui : 169 enregistrements, 46 versions, licence Apache 2.0."
+  source="github.com/Yuno15-bb/c-brain"
+>
+  <Mac titre="c-brain — GitHub">
+    <img
+      src="/projects/cbrain-repo-05-09.jpg"
+      alt="Le dépôt public c-brain sur GitHub"
+      width="1600" height="1000" loading="lazy" decoding="async"
+      style="display:block;width:100%;height:auto"
+    />
+  </Mac>
+</Figure>
+
+## À quoi ça sert
 
 Un agent en ligne de commande est brillant à l'intérieur d'une session et amnésique
-entre deux. J'ai construit pour moi un **tronc de connaissance** : ce que je résous une
-fois est distillé en fiche, rangé, relié, et resurgit tout seul la fois suivante.
-Après un an, il valait plus que n'importe quel projet qu'il avait aidé à écrire.
+entre deux. C Brain lui donne une mémoire qui dure : ce qu'on résout une fois est
+distillé en fiche, rangé, relié, et resurgit tout seul à la session suivante.
 
-Le rendre installable par quelqu'un d'autre n'était pas un travail d'emballage.
-Ce tronc contient des noms de clients, des adresses, des numéros, des chemins
-vers ma machine. Le publier tel quel, c'est publier ma vie professionnelle.
+## Ce que le moteur fait
 
-La contrainte s'est donc écrite en une phrase : **livrer le moteur, jamais le vécu.**
+- **Distillation** : une session de travail devient des fiches propres — un fait par
+  fiche, avec sa provenance et son degré de certitude.
+- **Rappel automatique** : à chaque question posée, les fiches pertinentes remontent
+  seules, sans qu'on ait à les chercher.
+- **Arbre de connaissance** : les fiches se relient entre elles ; une leçon apprise sur
+  un projet est trouvable depuis tous les autres.
+- **Agents de jardinage** : huit rôles spécialisés rangent, dédupliquent, contestent les
+  fiches périmées et réparent les liens cassés.
+- **Planète 3D** : le graphe complet se visualise en temps réel, continent par domaine.
 
+## Ce qui rend la publication possible
 
 <Figure
   titre="Deux dossiers qui ne se mélangent jamais"
-  legende="La séparation n'est pas une convention de rangement : une mise à jour remplace entièrement le moteur, et n'a pas le droit d'écrire dans le tronc de notes."
+  legende="La séparation n'est pas une convention de rangement : une mise à jour remplace entièrement le moteur, et n'a pas le droit d'écrire dans les notes."
 >
   <Duo
     a={{ titre: 'Le moteur — jetable, remplacé à chaque mise à jour', items: [
@@ -40,107 +62,35 @@ La contrainte s'est donc écrite en une phrase : **livrer le moteur, jamais le v
       'Les contrôles et les bancs de mesure',
       "Les outils d'installation et de migration",
     ] }}
-    b={{ titre: 'Le tronc — il ne bouge que quand j’écris', items: [
+    b={{ titre: "Le tronc — il ne bouge que quand j'écris", items: [
       'Un an de notes, de leçons et de décisions',
       'Les noms de clients, les adresses, les chemins',
-      'Ce qu’une mise à jour ne doit jamais toucher',
+      "Ce qu'une mise à jour ne doit jamais toucher",
     ] }}
   />
 </Figure>
 
-## L'architecture qui rend ça possible
-
-Deux dossiers qui ne se mélangent jamais. `engine` est du code — jetable, remplacé
-à chaque mise à jour. `trunk` est le tronc de notes — il ne bouge que quand
-l'utilisateur écrit. Une mise à jour ne peut pas toucher au travail de quelqu'un,
-parce qu'elle n'a pas le droit d'écrire là.
-
-Entre mon Brain vivant et le dépôt public, une chaîne à sens unique : une copie par
-**liste blanche** (ce qui n'est pas nommé ne sort pas — une liste noire laisse
-passer par défaut, et un seul oubli est une fuite), une dépersonnalisation par
-règles rejouables, puis un **contrôle de fuite** à 21 marqueurs qui a le droit de
-bloquer la publication.
-
-Ce qui suit, ce sont trois pannes. Aucune n'a été trouvée en relisant le code.
-
+## La chaîne qui protège le vécu
 
 <Figure
   titre="Du carnet vivant au paquet public"
   legende="Une chaîne à sens unique : rien ne remonte du dépôt public vers le carnet. Le contrôle de fuite a le droit de bloquer la publication, et il l'a déjà fait."
 >
   <Flow etapes={[
-    { t: 'Le carnet vivant', d: 'Un an de notes réelles : clients, adresses, chemins de ma machine.' },
-    { t: 'Copie par liste blanche', d: "Ce qui n'est pas nommé ne sort pas. Une liste noire laisserait passer l'oubli." },
-    { t: 'Dépersonnalisation', d: 'Des règles rejouables retirent les noms, les numéros, les chemins.' },
+    { t: 'Le carnet vivant', d: 'Un an de notes réelles : clients, adresses, chemins de machine.' },
+    { t: 'Copie par liste blanche', d: "Ce qui n'est pas nommé ne sort pas." },
+    { t: 'Dépersonnalisation', d: 'Des règles rejouables retirent noms, numéros et chemins.' },
     { t: 'Contrôle de fuite', d: '21 marqueurs. Un seul qui rougit et la publication est bloquée.', porte: true },
     { t: 'Le paquet public', d: 'Le moteur, installable par quiconque. Jamais le vécu.' },
   ]} />
 </Figure>
 
-## Panne 1 — le garde-fou s'est retourné contre son propriétaire
+## Comment il s'installe et se maintient
 
-En passant la licence en Apache 2.0, plus rien ne pouvait être publié. Apache
-**exige** le nom du titulaire du copyright dans les fichiers `LICENSE` et `NOTICE` :
-c'est ce qui fait une licence. Le contrôle de fuite, lui, voyait mon nom et faisait
-ce pour quoi il avait été écrit — il bloquait.
+- **Une commande** : le paquet s'installe comme extension d'un agent en ligne de commande.
+- **Chaque version est rejouée** par une intégration continue : installation complète,
+  désinstallation, et chaque migration passée **deux fois** — en exigeant qu'elle n'ait
+  mangé aucune fiche.
+- **46 versions publiées**, sous licence Apache 2.0, sur un dépôt public.
 
-Trouvé en tentant de publier, pas en auditant. La tentation était d'assouplir le
-motif. C'était le mauvais geste : un garde-fou qu'on émousse pour se débloquer ne
-protège plus rien. L'exemption est donc **ciblée** — le nom du propriétaire est
-toléré dans ces deux fichiers et sur une ligne de copyright, et nulle part ailleurs.
-Vérifié après coup : le même nom en prose, un nom de client, une clé en clair
-déclenchent toujours le rouge.
-
-## Panne 2 — une capsule devenue invisible, sans une seule erreur
-
-Le paquet a une petite fenêtre qui montre les agents travailler. En renommant le
-dossier utilisateur, j'ai remplacé tous les chemins. Sauf un : le motif qui sert à
-**détecter si la fenêtre tourne déjà** — il ne commençait pas par `~`, donc il
-n'apparaissait dans aucune recherche de chemin.
-
-Résultat : la capsule devenait invisible pour les deux processus chargés de la
-relancer et de la compter. Aucun plantage, aucun message. Simplement plus jamais
-relancée.
-
-Trouvé en préparant une capture pour le README — donc en regardant ce qu'un
-utilisateur verrait. C'est devenu une règle : après un renommage, chercher aussi
-les chemins **qui ne ressemblent pas à des chemins**.
-
-## Panne 3 — un tag qui masquait une branche figée
-
-Le script de publication poussait une branche **écrite en dur** au lieu de la
-branche courante. Publier depuis la branche française poussait donc le tag… et une
-branche anglaise déjà à jour. Les commits français ne partaient jamais.
-
-Et rien ne le signalait, parce qu'un **tag transporte les objets** : la mise à jour
-fonctionnait chez les utilisateurs, la version existait, la release s'affichait.
-Seule la branche distante restait figée — pour quiconque la clonerait ensuite.
-
-Trouvé en contrôlant `git log origin/branche..branche`, qui doit être vide après
-une publication. Le contrôle est devenu systématique : après un push, **on vérifie
-la branche, pas le tag**.
-
-
-<Figure
-  titre="Aucune n'a été trouvée en relisant le code"
-  legende="Trois pannes muettes — aucune ne levait d'erreur, aucune n'apparaissait dans un journal. Chacune est sortie d'un geste réel : publier, regarder ce qu'un utilisateur verrait, vérifier après avoir poussé."
->
-  <Grille prefixe="trouvée en" cases={[
-    { t: 'Tentant de publier', d: "Le garde-fou anti-fuite voyait mon nom dans le fichier de licence — que la licence Apache EXIGE — et bloquait tout." },
-    { t: 'Regardant une capture', d: "Après un renommage, la petite fenêtre des agents ne se relançait plus. Aucun plantage, aucun message : elle avait simplement disparu.", fort: true },
-    { t: 'Contrôlant après un envoi', d: "Le script poussait une branche écrite en dur. La version s'affichait, les mises à jour marchaient, et la branche distante restait figée." },
-  ]} />
-</Figure>
-
-## Ce que ça a changé
-
-Le projet est public sous **Apache 2.0**, 46 versions publiées, installable en
-plugin Claude Code, avec une intégration continue qui rejoue à chaque commit
-l'installation complète, la désinstallation, et chaque migration **deux fois** —
-en exigeant qu'elle n'ait mangé aucune fiche.
-
-Le résultat qui compte n'est pas le nombre de versions. C'est qu'un système
-personnel, nourri de données réelles pendant un an, soit devenu un logiciel que
-n'importe qui peut installer — sans qu'une seule ligne de ce vécu ne soit sortie.
-
-> Code source : [github.com/Yuno15-bb/c-brain](https://github.com/Yuno15-bb/c-brain)
+Code source : [github.com/Yuno15-bb/c-brain](https://github.com/Yuno15-bb/c-brain)

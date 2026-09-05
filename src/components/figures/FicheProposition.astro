@@ -31,11 +31,6 @@ const champs: Champ[] = [
 ---
 <div class="fp" role="img" aria-label="Reconstructed screen: the review card an operator approves before anything is written">
   <div class="fp__win">
-    <header class="fp__bar">
-      <span class="fp__dots" aria-hidden="true"><i></i><i></i><i></i></span>
-      <span class="fp__app">Field Ops — Archive</span>
-    </header>
-
     <nav class="fp__tabs" aria-hidden="true">
       <span class="fp__tab">Dashboard</span>
       <span class="fp__tab">Proposals</span>
@@ -95,12 +90,8 @@ const champs: Champ[] = [
     font-family: var(--font-sans);
     container-type: inline-size;
   }
-  .fp__win {
-    background: var(--bg);
-    border: 1px solid var(--hair);
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
-    overflow: hidden;
-  }
+  /* Le chrome de fenetre est porte par Mac.astro : ici, seulement l'ecran. */
+  .fp__win { background: var(--bg); overflow: hidden; }
   .fp__bar {
     display: flex; align-items: center; gap: 0.75rem;
     padding: 0.6rem 0.9rem;

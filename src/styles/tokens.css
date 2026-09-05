@@ -16,8 +16,10 @@
    rendu est meilleur »). Baisser la racine réduit d'un coup TOUT ce qui est en
    rem — titres, espacements, largeurs : c'est exactement ce que fait le zoom du
    navigateur. Le corps de texte, lui, est remonté d'autant (--fs-200) pour
-   rester à ~15 px : la page se dézoome, la lecture non. */
-html { font-size: 81.25%; }
+   rester lisible : la page se dézoome, la lecture non.
+   ⚠ 05/09 — 81.25 % était un cran trop loin (Dylan : « Cmd + une fois »).
+   Valeur retenue : 90 %, soit le cran juste au-dessus. */
+html { font-size: 90%; }
 
 :root {
   /* --- Couleur : nuit + un seul accent chaud --- */
@@ -40,8 +42,8 @@ html { font-size: 81.25%; }
   --font-sans: 'Inter Variable', 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
 
-  --fs-100: 0.92rem;   /* ~12 px : legendes et mono */
-  --fs-200: 1.15rem;   /* ~15 px malgre la racine a 81.25 % */
+  --fs-100: 0.88rem;   /* ~12.7 px : legendes et mono */
+  --fs-200: 1.1rem;    /* ~15.8 px malgre la racine a 90 % */
   --fs-300: 1.25rem;
   --fs-400: 1.563rem;
   /* ⚠ ÉCHELLE D'AFFICHAGE ABAISSÉE (Dylan, 05/09 : « un rendu dézoomé, c'est plus

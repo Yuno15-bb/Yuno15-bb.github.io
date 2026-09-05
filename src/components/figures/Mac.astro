@@ -1,0 +1,53 @@
+---
+/**
+ * Mac — la fenêtre macOS, autour de n'importe quel contenu.
+ *
+ * Extrait d'Ecrans.astro pour pouvoir encadrer autre chose qu'une image : une
+ * maquette d'interface reconstruite, par exemple. Applique la règle permanente
+ * du 04/09 — une capture ou une maquette de présentation se montre TOUJOURS dans
+ * un vrai cadre d'appareil.
+ */
+interface Props {
+  titre?: string;
+  clair?: boolean;
+}
+const { titre = 'Field Ops', clair = false } = Astro.props;
+---
+<div class:list={['mcw', clair && 'mcw--clair']}>
+  <div class="mcw__barre" aria-hidden="true">
+    <span class="mcw__feux"><i></i><i></i><i></i></span>
+    <span class="mcw__titre">{titre}</span>
+  </div>
+  <div class="mcw__corps"><slot /></div>
+</div>
+
+<style>
+  .mcw {
+    border: 1px solid #2a2a30;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #101014;
+    box-shadow: 0 22px 50px rgba(0, 0, 0, 0.45);
+  }
+  .mcw__barre {
+    position: relative;
+    display: flex; align-items: center;
+    height: 30px; padding: 0 12px;
+    background: linear-gradient(#26262c, #1d1d22);
+    border-bottom: 1px solid #000;
+  }
+  .mcw__feux { display: inline-flex; gap: 7px; }
+  .mcw__feux i { width: 11px; height: 11px; border-radius: 50%; }
+  .mcw__feux i:nth-child(1) { background: #ff5f57; }
+  .mcw__feux i:nth-child(2) { background: #febc2e; }
+  .mcw__feux i:nth-child(3) { background: #28c840; }
+  .mcw__titre {
+    position: absolute; left: 50%; transform: translateX(-50%);
+    font: 500 11.5px/1 -apple-system, system-ui, sans-serif;
+    color: rgba(255, 255, 255, 0.55);
+  }
+  .mcw__corps { display: block; }
+  .mcw--clair { background: #fff; border-color: #d2d2d8; }
+  .mcw--clair .mcw__barre { background: linear-gradient(#f0f0f3, #e3e3e8); border-bottom-color: #cfcfd6; }
+  .mcw--clair .mcw__titre { color: rgba(0, 0, 0, 0.6); }
+</style>
