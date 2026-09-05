@@ -82,54 +82,69 @@ const { tel, telAlt, bureau, bureauAlt, fenetre = 'Field Ops', heure = '9:41', c
   .ec__item { margin: 0; display: grid; gap: var(--space-2); min-width: 0; }
   .ec__item figcaption { color: var(--c-muted); }
 
-  /* ---- iPhone : coque, Dynamic Island, barre d'état ---- */
+  /* ---- iPhone : coque, Dynamic Island, barre d'état ----
+     ⚠ Refait le 05/09 : la premiere version etait en pixels fixes, donc les
+       proportions se decalaient des que la vignette changeait de taille — coque
+       trop epaisse, ile trop haute, rayons qui ne s'emboitaient pas.
+       Tout est desormais en `cqw` (pourcentage de la LARGEUR DE L'ECRAN), avec
+       les mesures reelles d'un iPhone (ecran 393 pt de large) :
+         · barre d'etat  54 pt -> 13.7 %
+         · Dynamic Island 125 x 36 pt -> 31.8 % x 9.2 %, a 2.8 % du haut
+         · heure          17 pt -> 4.3 %
+       Et la coque reste NOIRE en theme clair : sur un vrai telephone, le contour
+       de l'ecran est noir quelle que soit l'application. */
   .ip {
     position: relative;
-    background: #0c0c0e;
-    border: 1px solid #2a2a30;
-    border-radius: 42px;
-    padding: 9px;
-    box-shadow: 0 22px 50px rgba(0, 0, 0, 0.45), inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+    background: #08080a;
+    /* Rayon exterieur = rayon interieur + epaisseur de coque, sinon les deux
+       arrondis ne sont pas concentriques et le cadre parait de travers. */
+    padding: 2.6%;
+    border-radius: 13.4%/6.4%;
+    box-shadow:
+      0 22px 50px rgba(0, 0, 0, 0.45),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.09);
   }
   .ip__ecran {
     position: relative;
-    border-radius: 34px;
+    container-type: inline-size;
+    border-radius: 11.4%/5.4%;
     overflow: hidden;
     background: #000;
   }
   .ip__ecran img { display: block; width: 100%; height: auto; }
   .ip__statut {
     position: relative;
+    /* ⚠ La barre d'etat prend le fond de l'APP, pas du noir pur : sinon l'ile
+       (noire) est invisible sur un fond noir, et le telephone perd le seul
+       detail qui le rend reconnaissable. */
+    background: #0e100d;
+    height: 13.7cqw;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 9px 18px 6px;
+    padding: 0 8cqw;
     color: #fff;
-    font: 600 11px/1 -apple-system, system-ui, sans-serif;
+    font: 600 4.3cqw/1 -apple-system, system-ui, sans-serif;
     letter-spacing: 0.01em;
   }
-  .ip__heure { min-width: 34px; }
-  /* Dynamic Island : la pilule noire, centrée, qui mange la barre d'état. */
+  .ip__heure { padding-top: 1cqw; }
   .ip__ile {
-    position: absolute; left: 50%; top: 5px; transform: translateX(-50%);
-    width: 30%; height: 20px; border-radius: 999px; background: #000;
+    position: absolute; left: 50%; top: 2.8cqw; transform: translateX(-50%);
+    width: 31.8cqw; height: 9.2cqw; border-radius: 999px; background: #000;
   }
-  .ip__icones { display: inline-flex; align-items: center; gap: 5px; }
+  .ip__icones { display: inline-flex; align-items: center; gap: 1.5cqw; padding-top: 1cqw; }
   .ip__sig, .ip__wifi { fill: #fff; }
-  .ip__sig { width: 15px; height: 10px; }
-  .ip__wifi { width: 13px; height: 10px; }
-  /* Batterie : coque + téton + niveau. */
+  .ip__sig { width: 4.4cqw; height: 3cqw; }
+  .ip__wifi { width: 4.2cqw; height: 3.2cqw; }
   .ip__bat {
     position: relative; display: inline-block;
-    width: 22px; height: 11px; border: 1px solid rgba(255, 255, 255, 0.45);
-    border-radius: 3px;
+    width: 6.6cqw; height: 3.2cqw;
+    border: 0.26cqw solid rgba(255, 255, 255, 0.45); border-radius: 0.9cqw;
   }
   .ip__bat::after {
-    content: ''; position: absolute; right: -3px; top: 3.5px;
-    width: 2px; height: 4px; border-radius: 0 1px 1px 0;
+    content: ''; position: absolute; right: -0.9cqw; top: 0.9cqw;
+    width: 0.6cqw; height: 1.2cqw; border-radius: 0 0.3cqw 0.3cqw 0;
     background: rgba(255, 255, 255, 0.45);
   }
-  .ip__bat i {
-    position: absolute; inset: 1.5px; width: 72%; border-radius: 1.5px; background: #fff;
-  }
+  .ip__bat i { position: absolute; inset: 0.45cqw; width: 72%; border-radius: 0.45cqw; background: #fff; }
 
   /* ---- Mac : fenêtre macOS ---- */
   .mc {
@@ -158,11 +173,13 @@ const { tel, telAlt, bureau, bureauAlt, fenetre = 'Field Ops', heure = '9:41', c
   }
   .mc img { display: block; width: 100%; height: auto; }
 
-  /* ---- Variante claire ---- */
-  .ec--clair .ip { background: #e9e9ee; border-color: #cfcfd6; }
+  /* ---- Variante claire ----
+     La coque NE CHANGE PAS : sur un vrai telephone le contour est noir. Seuls
+     la barre d'etat (texte noir sur le fond clair de l'app) et la fenetre macOS
+     passent en clair. */
   .ec--clair .ip__ecran { background: #fff; }
-  .ec--clair .ip__statut { color: #000; }
-  .ec--clair .ip__ile { background: #111; }
+  .ec--clair .ip__statut { color: #000; background: #fff; }
+  .ec--clair .ip__ile { background: #000; }
   .ec--clair .ip__sig, .ec--clair .ip__wifi { fill: #000; }
   .ec--clair .ip__bat { border-color: rgba(0, 0, 0, 0.45); }
   .ec--clair .ip__bat::after { background: rgba(0, 0, 0, 0.45); }
