@@ -111,7 +111,15 @@ const tiltAttrs = tilt > 0 ? { 'data-tilt': String(tilt), 'data-tilt-reverse': '
     .card__cover {
       position: relative; z-index: 1;
       display: flex;
-      align-items: flex-start;
+      /* HAUTEUR IDENTIQUE POUR TOUTES LES CARTES. Sans elle, chaque carte prend la
+         hauteur de son image : une couverture pleine largeur descend plus bas qu'un
+         diptyque, et les titres de la rangée ne commencent pas à la même ligne —
+         constaté par Dylan sur l'accueil le 2026-09-06. Le rapport est celui de la
+         couverture seule, la plus grande des deux mises en page. */
+      aspect-ratio: 1100 / 464;
+      /* Les maquettes plus courtes que la boîte se posent au MILIEU, pas en haut :
+         collées en haut elles laissaient un trou sous elles. */
+      align-items: center;
       /* Les deux maquettes doivent respirer : a --space-2 elles se lisaient comme
          une seule image coupee. --space-4 en fait deux objets distincts. */
       gap: var(--space-4);
@@ -145,7 +153,7 @@ const tiltAttrs = tilt > 0 ? { 'data-tilt': String(tilt), 'data-tilt-reverse': '
     .shot--office { width: clamp(266px, 26vw, 346px); aspect-ratio: 720 / 304; }
     /* Couverture seule : l'ecran occupe la largeur de la carte. Meme voile bas
        que les autres pour que la coupe reste un choix, pas une image cassee. */
-    .shot--seul { width: 100%; aspect-ratio: 1100 / 464; }
+    .shot--seul { width: 100%; height: 100%; aspect-ratio: auto; }
     @media (max-width: 700px) {
       /* Sous 700px la rangee etoufferait : on ne garde que le telephone. */
       .shot--office { display: none; }
