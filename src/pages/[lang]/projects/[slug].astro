@@ -269,7 +269,13 @@ const slug = entry.id.split('/')[1];
     /* Listes de la fiche : puces discretes, une ligne d'air entre les entrees.
        Le corps de page etait jusqu'ici de la prose seule — sans ces regles, une
        liste MDX arrivait sans puce ni retrait. */
-    .project__body :global(ul) {
+    /* ⚠ `> ul`, PAS `ul`. Ces règles habillent les listes de PROSE du corps de
+       page. Sans le chevron elles atteignaient aussi les listes des composants —
+       la chaîne d'étapes est un <ol>, la carte du système une suite de <ul> — et
+       leur collaient une puce tiret et un retrait de 1,5rem dont personne ne
+       voulait : un tiret fantôme apparaissait devant chaque flèche. Le défaut
+       existait avant la refonte des flèches, il se voyait juste moins. */
+    .project__body :global(> ul) {
       list-style: none;
       /* La marge HAUTE était absente : mesuré le 2026-09-07, une liste commençait
          2 px au-dessus du bas du paragraphe qui l'introduit, et 10 px au-dessus du
@@ -279,13 +285,13 @@ const slug = entry.id.split('/')[1];
       display: grid;
       gap: var(--space-2);
     }
-    .project__body :global(li) {
+    .project__body :global(> ul > li) {
       position: relative;
       padding-left: var(--space-3);
       color: var(--c-muted);
       line-height: var(--lh-body);
     }
-    .project__body :global(li)::before {
+    .project__body :global(> ul > li)::before {
       content: '';
       position: absolute;
       left: 0;
@@ -294,7 +300,7 @@ const slug = entry.id.split('/')[1];
       height: 1px;
       background: var(--c-line-ui);
     }
-    .project__body :global(li strong) { color: var(--c-fg); font-weight: 600; }
+    .project__body :global(> ul > li strong) { color: var(--c-fg); font-weight: 600; }
     /* ⚠ CETTE RÈGLE DOUBLONNAIT celle du rythme, plus haut, et l'écrasait : même
        spécificité, donc la dernière écrite gagne. Le sous-titre restait collé à 2rem
        du bloc précédent alors que le rythme lui en donne 3. Elle ne garde plus que
