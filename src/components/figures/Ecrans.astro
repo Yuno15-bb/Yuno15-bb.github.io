@@ -75,9 +75,19 @@ const { tel, telAlt, bureau, bureauAlt, fenetre = 'Field Ops', heure = '9:41', c
 <style>
   .ec {
     display: grid;
-    grid-template-columns: minmax(0, 244px) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 200px) minmax(0, 1fr);
     gap: var(--space-4);
     align-items: start;
+    /* PAS TOUTE LA LARGEUR (Dylan, 2026-09-07 : « les visuels ne devraient pas
+       prendre tout l'écran »). À 1210 px la planche faisait 651 px de haut : sur un
+       portable, elle occupait l'écran entier et poussait le premier mot du texte
+       hors du champ. Une capture produit est une PORTE D'ENTRÉE vers le système,
+       pas une page d'accueil — on doit voir en même temps l'écran et le début de ce
+       qu'il raconte. 62rem la ramène à ~890 px, soit un quart de moins.
+       Le cadre du téléphone est dessiné en unités de conteneur (cqw) : île, heure,
+       réseau et batterie se remettent à l'échelle tout seuls, la colonne peut donc
+       maigrir sans déformer l'appareil. */
+    max-width: 62rem;
   }
   .ec__item { margin: 0; display: grid; gap: var(--space-2); min-width: 0; }
   .ec__item figcaption { color: var(--c-muted); }
