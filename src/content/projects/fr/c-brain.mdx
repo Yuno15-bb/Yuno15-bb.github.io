@@ -7,31 +7,50 @@ role: "Conception, architecture, extraction, publication"
 stack: ["Python", "Bash", "Electron", "WebGL", "GitHub Actions", "Apache 2.0"]
 annee: 2026
 resultat: "46 versions publiées sous Apache 2.0, installable en une commande — et un contrôle de fuite qui a le droit de bloquer toute publication."
-cover: "/projects/cbrain-repo-05-09.jpg"
+cover: "/projects/cbrain-carte-vignette-06-09.webp"
 featured: false
-ordre: 3
+ordre: 2
 ---
 
 import Figure from '../../../components/Figure.astro';
 import Flow from '../../../components/figures/Flow.astro';
 import Duo from '../../../components/figures/Duo.astro';
 import Mac from '../../../components/figures/Mac.astro';
+import Anim from '../../../components/figures/Anim.astro';
+import Cote from '../../../components/figures/Cote.astro';
 
 <Figure
   cadre={false}
-  legende="Le dépôt public, tel qu'il est aujourd'hui : 169 enregistrements, 46 versions, licence Apache 2.0."
-  source="github.com/Yuno15-bb/c-brain"
+  legende="Chaque point est une fiche, la distance dit la ressemblance. On survole : la fiche s'ouvre avec sa région, son résumé et ses liens. On demande le rangement : la carte se réorganise. On entre dans une famille : elle devient un globe."
+  source="Filmé sur un tronc de démonstration à la vraie densité — 612 fiches, 2 578 liens, tous les textes régénérés"
 >
-  <Mac titre="c-brain — GitHub">
-    <img
-      src="/projects/cbrain-repo-05-09.jpg"
-      alt="Le dépôt public c-brain sur GitHub"
-      width="1600" height="1000" loading="lazy" decoding="async"
-      style="display:block;width:100%;height:auto"
-    />
-  </Mac>
+  <Cote>
+    <Fragment slot="large">
+      <Mac titre="c-brain — trunk map">
+        <Anim
+          src="/projects/cbrain-planete-06-09.mp4"
+          srcWebm="/projects/cbrain-planete-06-09.webm"
+          poster="/projects/cbrain-planete-06-09.webp"
+          largeur={1500}
+          hauteur={966}
+          description="La carte du tronc en 3D, en phosphore orange sur noir : des centaines de fiches placées par ressemblance. Le curseur atteint une fiche et un panneau donne sa région, son titre et son résumé ; puis la carte se réorganise en rangement ; puis une famille s'ouvre en globe."
+        />
+      </Mac>
+    </Fragment>
+    <Fragment slot="etroit">
+      <Anim
+        src="/projects/cbrain-capsule-05-09.mp4"
+        poster="/projects/cbrain-capsule-05-09.webp"
+        largeur={336}
+        hauteur={336}
+        largeurMax={190}
+        fondu
+        description="Une bille de verre posée sur le bureau, dont la matière et la teinte changent selon l'agent au travail — au repos, jardinage, contestation, archivage, commit — avec les lignes en train d'être écrites qui défilent à l'intérieur et la tâche en cours nommée dessous."
+      />
+      <p>La capsule se pose dans un coin de l'écran et ne demande rien. La ligne du dessous nomme la tâche en cours. C'est la seule interface du moteur : tout le reste est du texte.</p>
+    </Fragment>
+  </Cote>
 </Figure>
-
 ## À quoi ça sert
 
 Un agent en ligne de commande est brillant à l'intérieur d'une session et amnésique
@@ -49,6 +68,20 @@ distillé en fiche, rangé, relié, et resurgit tout seul à la session suivante
 - **Agents de jardinage** : huit rôles spécialisés rangent, dédupliquent, contestent les
   fiches périmées et réparent les liens cassés.
 - **Planète 3D** : le graphe complet se visualise en temps réel, continent par domaine.
+
+## Comment une session devient de la mémoire
+
+<Figure
+  titre="Tout tourne sur la machine — rien ici n'est un service auquel on se connecte"
+  legende="Il n'y a pas de chef d'orchestre : chaque étape est accrochée à un moment de la session. C'est ce qui rend la mémoire gratuite à l'usage — on n'a jamais à penser à l'alimenter."
+>
+  <Flow etapes={[
+    { t: 'Le tronc', d: 'Des fichiers Markdown sur la machine : les fiches, la carte, l’état.' },
+    { t: 'À chaque question', d: 'Une recherche lexicale choisit les quelques fiches qui répondent et les glisse dans la question.' },
+    { t: 'Pendant la session', d: 'Ce qui est écrit et ce qui est lu sont notés — la matière réelle du travail.' },
+    { t: 'À la fermeture', d: 'La session est archivée, puis les agents se réveillent : deux toujours, un troisième seulement si son capteur passe un seuil.', porte: true },
+  ]} />
+</Figure>
 
 ## Ce qui rend la publication possible
 
@@ -92,5 +125,20 @@ distillé en fiche, rangé, relié, et resurgit tout seul à la session suivante
   désinstallation, et chaque migration passée **deux fois** — en exigeant qu'elle n'ait
   mangé aucune fiche.
 - **46 versions publiées**, sous licence Apache 2.0, sur un dépôt public.
+
+<Figure
+  cadre={false}
+  legende="Le dépôt public, tel qu'il est aujourd'hui : 169 enregistrements, 46 versions, licence Apache 2.0."
+  source="github.com/Yuno15-bb/c-brain"
+>
+  <Mac titre="c-brain — GitHub">
+    <img
+      src="/projects/cbrain-repo-05-09.jpg"
+      alt="Le dépôt public c-brain sur GitHub"
+      width="1600" height="1000" loading="lazy" decoding="async"
+      style="display:block;width:100%;height:auto"
+    />
+  </Mac>
+</Figure>
 
 Code source : [github.com/Yuno15-bb/c-brain](https://github.com/Yuno15-bb/c-brain)

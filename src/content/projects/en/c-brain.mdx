@@ -7,31 +7,50 @@ role: "Design, architecture, extraction, publication"
 stack: ["Python", "Bash", "Electron", "WebGL", "GitHub Actions", "Apache 2.0"]
 annee: 2026
 resultat: "46 releases published under Apache 2.0, installable in one command — and a leak check that is allowed to block any publication."
-cover: "/projects/cbrain-repo-05-09.jpg"
+cover: "/projects/cbrain-carte-vignette-06-09.webp"
 featured: false
-ordre: 3
+ordre: 2
 ---
 
 import Figure from '../../../components/Figure.astro';
 import Flow from '../../../components/figures/Flow.astro';
 import Duo from '../../../components/figures/Duo.astro';
 import Mac from '../../../components/figures/Mac.astro';
+import Anim from '../../../components/figures/Anim.astro';
+import Cote from '../../../components/figures/Cote.astro';
 
 <Figure
   cadre={false}
-  legende="The public repository as it stands today: 169 commits, 46 releases, Apache 2.0 licence."
-  source="github.com/Yuno15-bb/c-brain"
+  legende="Every dot is a note, and distance means resemblance. Hover one: it opens with its region, its summary and its links. Ask for the filing: the map reorganises. Enter a family: it becomes a globe."
+  source="Filmed on a demonstration trunk at true density — 612 notes, 2,578 links, every text regenerated"
 >
-  <Mac titre="c-brain — GitHub">
-    <img
-      src="/projects/cbrain-repo-05-09.jpg"
-      alt="The public c-brain repository on GitHub"
-      width="1600" height="1000" loading="lazy" decoding="async"
-      style="display:block;width:100%;height:auto"
-    />
-  </Mac>
+  <Cote>
+    <Fragment slot="large">
+      <Mac titre="c-brain — trunk map">
+        <Anim
+          src="/projects/cbrain-planete-06-09.mp4"
+          srcWebm="/projects/cbrain-planete-06-09.webm"
+          poster="/projects/cbrain-planete-06-09.webp"
+          largeur={1500}
+          hauteur={966}
+          description="The knowledge map turning, in phosphor orange on black: hundreds of notes arranged by resemblance. The cursor lands on a note and a panel gives its region, title and summary; then the map reorganises into the filing; then a family opens as a sphere of its own."
+        />
+      </Mac>
+    </Fragment>
+    <Fragment slot="etroit">
+      <Anim
+        src="/projects/cbrain-capsule-05-09.mp4"
+        poster="/projects/cbrain-capsule-05-09.webp"
+        largeur={336}
+        hauteur={336}
+        largeurMax={190}
+        fondu
+        description="A glass orb sitting on the desktop, its material and hue changing as each agent works — idle, gardening, challenging, archiving, committing — with the lines being written scrolling inside it and the current task named underneath."
+      />
+      <p>The capsule sits in a corner of the screen and asks for nothing. The line underneath names the task in hand. It is the engine's only interface: everything else is text.</p>
+    </Fragment>
+  </Cote>
 </Figure>
-
 ## What it is for
 
 A command-line agent is brilliant inside a session and amnesiac between two. C Brain
@@ -49,6 +68,20 @@ linked, and resurfaces on its own in the next session.
 - **Gardening agents**: eight specialised roles file, de-duplicate, challenge stale notes
   and repair broken links.
 - **3D planet**: the whole graph is visualised in real time, one continent per domain.
+
+## How a session becomes memory
+
+<Figure
+  titre="Everything runs on the machine — nothing here is a service you log into"
+  legende="There is no orchestrator: each stage hangs off a moment in the session. That is what makes the memory free to use — you never have to remember to feed it."
+>
+  <Flow etapes={[
+    { t: 'The trunk', d: 'Plain Markdown files on the machine: the notes, the map, the state.' },
+    { t: 'On every prompt', d: 'A lexical search picks the few notes that answer, and pastes them into the question.' },
+    { t: 'During the session', d: 'What is written and what is read are recorded — the real material of the work.' },
+    { t: 'At session end', d: 'The session is archived, then the agents wake: two always, a third only if its sensor crosses a threshold.', porte: true },
+  ]} />
+</Figure>
 
 ## What makes publication possible
 
@@ -91,5 +124,20 @@ linked, and resurfaces on its own in the next session.
 - **Every release is replayed** by continuous integration: full install, uninstall, and
   every past migration run **twice** — with the requirement that it has eaten no note.
 - **46 releases published**, under the Apache 2.0 licence, on a public repository.
+
+<Figure
+  cadre={false}
+  legende="The public repository as it stands today: 169 records, 46 releases, Apache 2.0 licence."
+  source="github.com/Yuno15-bb/c-brain"
+>
+  <Mac titre="c-brain — GitHub">
+    <img
+      src="/projects/cbrain-repo-05-09.jpg"
+      alt="The public c-brain repository on GitHub"
+      width="1600" height="1000" loading="lazy" decoding="async"
+      style="display:block;width:100%;height:auto"
+    />
+  </Mac>
+</Figure>
 
 Source code: [github.com/Yuno15-bb/c-brain](https://github.com/Yuno15-bb/c-brain)

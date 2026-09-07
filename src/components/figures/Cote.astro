@@ -1,0 +1,71 @@
+---
+/**
+ * Cote — deux colonnes côte à côte, une large et une étroite.
+ *
+ * POURQUOI. Une capture de bureau et un petit objet de bureau ne se lisent pas
+ * l'un SOUS l'autre : la page s'étire, et le petit objet, seul sur toute la
+ * largeur, a l'air perdu. Posés côte à côte ils se répondent — l'écran d'un côté,
+ * ce qui se pose par-dessus de l'autre, avec son explication dessous.
+ *
+ * Sous 900 px il n'y a plus de « à côté » : les colonnes s'empilent, la large
+ * d'abord. Une grille à deux colonnes tenue de force sur un téléphone donne deux
+ * colonnes illisibles au lieu d'une lisible.
+ */
+interface Props {
+  /** Part de la colonne large. 1.75 : l'écran domine sans manger la planche —
+      à 2.2 la carte était trop grande et l'objet d'à côté paraissait accessoire. */
+  poids?: number;
+}
+const { poids = 1.6 } = Astro.props;
+---
+<div class="cote" style={`--cote-poids:${poids}fr`}>
+  <div class="cote__large"><slot name="large" /></div>
+  <div class="cote__etroit"><slot name="etroit" /></div>
+</div>
+
+<style>
+  .cote {
+    display: grid;
+    grid-template-columns: minmax(0, var(--cote-poids, 1.75fr)) minmax(0, 1fr);
+    gap: var(--space-5);
+    align-items: stretch;
+  }
+  .cote__etroit {
+    display: grid;
+    /* TROIS RANGÉES, dont deux vides et ÉGALES : l'objet occupe celle du milieu,
+       donc son centre tombe exactement sur le centre de l'écran d'à côté. Centrer
+       tout le groupe (objet + texte) ne marche pas : le texte pèse dans le calcul
+       et remonte l'objet — mesuré à 59 px trop haut. */
+    grid-template-rows: 1fr auto 1fr;
+    gap: var(--space-3);
+    /* UN SEUL BLOC, centré dans la colonne. L'objet et son texte partagent la même
+       largeur : l'objet se centre dedans, le texte s'aligne à gauche dedans, donc
+       les deux ont exactement le même axe. Sans cette largeur commune, l'objet
+       (centré par ses marges automatiques) dérivait à droite du texte — 250 px
+       d'écart, vus par Dylan le 2026-09-07. */
+    justify-items: center;
+    height: 100%;
+  }
+  /* L'objet au milieu, son explication juste en dessous. */
+  .cote__etroit :global(> *) { width: 100%; max-width: 34ch; }
+  .cote__etroit :global(> *:first-child) { grid-row: 2; }
+  .cote__etroit :global(> * ~ *) { grid-row: 3; align-self: start; }
+  /* Le texte de la colonne étroite est une légende, pas du corps de texte :
+     même traitement que la légende d'une planche, sinon il se lit comme un
+     paragraphe de l'article et vole la vedette à l'écran d'à côté. */
+  .cote__etroit :global(p) {
+    margin: 0;
+    color: var(--c-muted);
+    font-size: var(--fs-100);
+    line-height: 1.5;
+    text-align: left;
+  }
+  @media (max-width: 900px) {
+    .cote { grid-template-columns: 1fr; gap: var(--space-4); }
+    /* Empilé, « au milieu de la carte » n'a plus de sens : l'objet reprend sa
+       place normale, en tête de sa propre rangée. */
+    .cote__etroit { grid-template-rows: none; justify-items: start; height: auto; }
+    .cote__etroit :global(> *:first-child),
+    .cote__etroit :global(> * ~ *) { grid-row: auto; }
+  }
+</style>

@@ -1,0 +1,114 @@
+---
+/**
+ * Anim — une capture ANIMÉE du produit, en vidéo silencieuse.
+ *
+ * POURQUOI PAS LE WEBP ANIMÉ du dépôt public. Sur GitHub on n'a le droit qu'à une
+ * image : le README montre donc des webp animés de 3,6 et 4,3 Mo. Ici on peut faire
+ * mieux sur les trois points qui comptent :
+ *   · le poids — les mêmes séquences en h264 pèsent 342 Ko et 929 Ko, soit 79 à 91 %
+ *     de moins, et rien ne se télécharge tant que la planche n'est pas approchée ;
+ *   · le mouvement — un webp animé démarre tout seul, tourne hors de l'écran et ne
+ *     s'arrête jamais. Ici la lecture ne commence QUE lorsque la planche entre dans
+ *     le champ, et s'arrête quand elle en sort ;
+ *   · l'accessibilité — un webp animé ignore « réduire les animations ». Ici ce
+ *     réglage est respecté : on montre l'image fixe, avec les contrôles pour lire
+ *     la séquence à la demande.
+ *
+ * Aucun son, jamais : ces captures sont muettes par nature, et une vidéo qui parle
+ * dans une page qu'on parcourt est une agression.
+ */
+interface Props {
+  /** Fichier .mp4, dans /public. Sert de repli : Safari ne lit pas le VP9 en webm. */
+  src: string;
+  /** Même séquence en .webm (VP9), plus légère d'un tiers. Servie en premier aux
+      navigateurs qui la lisent ; les autres tombent sur le mp4 sans rien voir. */
+  srcWebm?: string;
+  /** Image fixe montrée avant lecture — et À LA PLACE si l'animation est refusée. */
+  poster: string;
+  /** Dimensions natives : elles réservent la place et évitent que la page saute. */
+  largeur: number;
+  hauteur: number;
+  /** Ce que la séquence montre, pour qui ne la voit pas. Une phrase, pas un mot. */
+  description: string;
+  /** Largeur d'affichage maximale, en px. À renseigner quand la capture est un
+      PETIT objet — la capsule fait 336 px de côté : étalée sur toute la colonne
+      elle devient une bouillie de 950 px. Sans cette borne, la vidéo remplit. */
+  largeurMax?: number;
+  /** Capture d'un objet LUMINEUX sur fond noir — la capsule est une bille de verre
+      qui brille dans le vide. Sans cette option, le fond noir de la vidéo pose un
+      rectangle opaque sur le champ de particules, ce que la direction du site
+      interdit (« RIEN ne recouvre le champ », tokens.css). En fondu, le noir
+      disparaît et il ne reste que la lueur. Ne convient QU'AUX fonds noirs. */
+  fondu?: boolean;
+}
+const { src, srcWebm, poster, largeur, hauteur, description, largeurMax, fondu = false } = Astro.props;
+---
+<video
+  class:list={['anim', fondu && 'anim--fondu']}
+  poster={poster}
+  width={largeur}
+  height={hauteur}
+  style={largeurMax ? `max-width:${largeurMax}px;margin-inline:auto` : undefined}
+  aria-label={description}
+  muted
+  loop
+  playsinline
+  preload="none"
+>
+  {srcWebm && <source src={srcWebm} type="video/webm" />}
+  <source src={src} type="video/mp4" />
+</video>
+
+<style>
+  .anim {
+    display: block;
+    width: 100%;
+    height: auto;
+    /* Le rapport natif tient la place avant que la vidéo soit chargée. */
+    aspect-ratio: var(--anim-ratio, auto);
+    background: #000;
+  }
+  .anim--fondu {
+    /* Le noir du fond s'efface, la lueur reste. */
+    mix-blend-mode: screen;
+    background: transparent;
+  }
+</style>
+
+<script>
+  /* La lecture suit le regard : elle démarre quand la planche entre dans le champ,
+     elle s'arrête quand elle en sort. Une animation qui tourne derrière soi ne sert
+     personne et vide la batterie. */
+  const reduit = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const anims = document.querySelectorAll<HTMLVideoElement>('video.anim');
+
+  anims.forEach((v) => {
+    if (v.width && v.height) v.style.setProperty('--anim-ratio', `${v.width} / ${v.height}`);
+
+    if (reduit) {
+      /* Animation refusée : on garde l'image fixe et on rend la séquence
+         atteignable à la main. Refuser le mouvement n'est pas refuser le contenu. */
+      v.controls = true;
+      v.preload = 'metadata';
+      return;
+    }
+
+    const io = new IntersectionObserver(
+      (entrees) => {
+        entrees.forEach((e) => {
+          if (e.isIntersecting) {
+            v.play().catch(() => {
+              /* Lecture automatique refusée par le navigateur (économie d'énergie,
+                 réglage utilisateur) : on ne force pas, on rend la main. */
+              v.controls = true;
+            });
+          } else {
+            v.pause();
+          }
+        });
+      },
+      { threshold: 0.25 },
+    );
+    io.observe(v);
+  });
+</script>
