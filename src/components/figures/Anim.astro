@@ -16,6 +16,14 @@
  *
  * Aucun son, jamais : ces captures sont muettes par nature, et une vidéo qui parle
  * dans une page qu'on parcourt est une agression.
+ *
+ * PAS DE FONDU (option retirée le 2026-09-07). Un objet lumineux sur fond noir — la
+ * capsule — était fondu au « screen » pour que son rectangle noir ne couvre pas le
+ * fond. Depuis que le fond du site est le dégradé animé, ce fondu lave l'objet : le
+ * bleu passe au travers et la bille disparaît (vu par Dylan). La réponse est le
+ * cadre d'appareil, pas le mélange : dans un <Mac>, la vidéo garde son vrai noir et
+ * l'objet reste lisible. C'est aussi la règle permanente du 04/09 — une capture de
+ * présentation se montre TOUJOURS dans un cadre d'appareil.
  */
 interface Props {
   /** Fichier .mp4, dans /public. Sert de repli : Safari ne lit pas le VP9 en webm. */
@@ -30,25 +38,15 @@ interface Props {
   hauteur: number;
   /** Ce que la séquence montre, pour qui ne la voit pas. Une phrase, pas un mot. */
   description: string;
-  /** Largeur d'affichage maximale, en px. À renseigner quand la capture est un
-      PETIT objet — la capsule fait 336 px de côté : étalée sur toute la colonne
-      elle devient une bouillie de 950 px. Sans cette borne, la vidéo remplit. */
-  largeurMax?: number;
-  /** Capture d'un objet LUMINEUX sur fond noir — la capsule est une bille de verre
-      qui brille dans le vide. Sans cette option, le fond noir de la vidéo pose un
-      rectangle opaque sur le champ de particules, ce que la direction du site
-      interdit (« RIEN ne recouvre le champ », tokens.css). En fondu, le noir
-      disparaît et il ne reste que la lueur. Ne convient QU'AUX fonds noirs. */
-  fondu?: boolean;
 }
-const { src, srcWebm, poster, largeur, hauteur, description, largeurMax, fondu = false } = Astro.props;
+const { src, srcWebm, poster, largeur, hauteur, description } = Astro.props;
 ---
 <video
-  class:list={['anim', fondu && 'anim--fondu']}
+  class="anim"
   poster={poster}
   width={largeur}
   height={hauteur}
-  style={largeurMax ? `max-width:${largeurMax}px;margin-inline:auto` : undefined}
+  style={`max-width:${largeur}px`}
   aria-label={description}
   muted
   loop
@@ -64,14 +62,14 @@ const { src, srcWebm, poster, largeur, hauteur, description, largeurMax, fondu =
     display: block;
     width: 100%;
     height: auto;
+    /* JAMAIS AGRANDIE AU-DELÀ DE SA TAILLE RÉELLE (voir le max-width en ligne, posé
+       depuis les dimensions natives). Étirée, une capture devient floue et l'objet
+       filmé perd son échelle : la capsule fait 336 px sur le bureau, elle doit en
+       faire 336 à l'écran. Plus étroite que sa place, elle se centre. */
+    margin-inline: auto;
     /* Le rapport natif tient la place avant que la vidéo soit chargée. */
     aspect-ratio: var(--anim-ratio, auto);
     background: #000;
-  }
-  .anim--fondu {
-    /* Le noir du fond s'efface, la lueur reste. */
-    mix-blend-mode: screen;
-    background: transparent;
   }
 </style>
 

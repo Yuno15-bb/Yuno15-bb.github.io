@@ -10,15 +10,22 @@
 interface Props {
   titre?: string;
   clair?: boolean;
+  /** Marge noire autour du contenu, en % de la largeur de la fenêtre. Pour un PETIT
+      objet filmé — la capsule — dont la capture est cadrée serrée : collé aux bords,
+      il remplit la fenêtre comme une capture plein écran alors que c'est une bille
+      posée dans le vide. La marge lui redonne son échelle. Une capture d'écran, elle,
+      n'en prend jamais : elle EST l'écran. En %, donc la respiration reste la même
+      quelle que soit la taille d'affichage. */
+  marge?: number;
 }
-const { titre = 'Field Ops', clair = false } = Astro.props;
+const { titre = 'Field Ops', clair = false, marge = 0 } = Astro.props;
 ---
 <div class:list={['mcw', clair && 'mcw--clair']}>
   <div class="mcw__barre" aria-hidden="true">
     <span class="mcw__feux"><i></i><i></i><i></i></span>
     <span class="mcw__titre">{titre}</span>
   </div>
-  <div class="mcw__corps"><slot /></div>
+  <div class:list={['mcw__corps', marge && 'mcw__corps--marge']} style={marge ? `padding:${marge}%` : undefined}><slot /></div>
 </div>
 
 <style>
@@ -47,6 +54,10 @@ const { titre = 'Field Ops', clair = false } = Astro.props;
     color: rgba(255, 255, 255, 0.55);
   }
   .mcw__corps { display: block; }
+  /* Le noir de la fenêtre (#101014) n'est PAS celui de la vidéo (#000) : avec une
+     marge, la différence dessine un rectangle et la capture a l'air collée dans la
+     fenêtre au lieu d'y vivre. Même noir des deux côtés, la couture disparaît. */
+  .mcw__corps--marge { background: #000; }
   .mcw--clair { background: #fff; border-color: #d2d2d8; }
   .mcw--clair .mcw__barre { background: linear-gradient(#f0f0f3, #e3e3e8); border-bottom-color: #cfcfd6; }
   .mcw--clair .mcw__titre { color: rgba(0, 0, 0, 0.6); }
