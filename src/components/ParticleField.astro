@@ -25,8 +25,11 @@
     display: block;
     z-index: -2;
     pointer-events: none;
-    /* Le fond de page reste la nuit du token ; le canvas ne peint QUE les points. */
-    background: var(--c-bg);
+    /* Le canvas ne peint QUE les points — il efface en transparent
+       (clearColor 0,0,0,0). Son aplat de fond a été RETIRÉ le 2026-09-07 : il
+       masquait la matière animée posée dessous (FondPulse). La nuit du site
+       reste peinte par ce fond-là, et par <html> en dernier recours. */
+    background: transparent;
   }
 </style>
 

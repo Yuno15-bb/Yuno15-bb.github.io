@@ -1,0 +1,134 @@
+---
+/**
+ * FondAnime — le fond animé du site. Il REMPLACE le champ d'étoiles.
+ *
+ * C'est l'ambiance « Prism » du catalogue de Dylan
+ * (Desktop/UI Components/ASSETS/Gradient Background Animation) : un shader WebGL2
+ * — le shader `warp` de @paper-design/shaders, licence MIT — que Framer emballait
+ * dans un composant. Le moteur est celui du catalogue, recopié tel quel dans
+ * `public/vendor/` : le corriger ici et là-bas ferait diverger deux copies.
+ *
+ * DEUX ÉCARTS AVEC L'AMBIANCE D'ORIGINE, demandés le 2026-09-07 :
+ *   · PLUS LENTE — vitesse 30 → 10. Un fond qui bouge vite attire l'œil et vole la
+ *     lecture ; à 10 la matière respire sans jamais réclamer l'attention.
+ *   · PLUS INTENSE — bords plus nets (softness 47 → 30) et tourbillon poussé
+ *     (50 → 62). Les couleurs restent celles de l'ambiance.
+ *
+ * TROIS CHOIX DE PERFORMANCE, pris après mesure et pas par principe :
+ *   · le champ d'étoiles est retiré (deux boucles WebGL se disputaient la carte) ;
+ *   · les couches de tourbillon passent de 16 à 8 — c'est le réglage qui coûte le
+ *     plus cher, chaque couche étant une passe de bruit PAR PIXEL ;
+ *   · la densité de pixels est plafonnée à 1 : sur un dégradé mou, le 2× d'un écran
+ *     retina quadruple le travail sans que l'œil y gagne quoi que ce soit.
+ *
+ * ET L'INTENSITÉ EST DANS LES COULEURS, PAS DANS UNE OPACITÉ. Un voile en `opacity`
+ * sur un plein écran force le navigateur à composer deux couches à chaque image.
+ * Assombrir directement les couleurs données au shader donne le même rendu sans
+ * cette couche de plus. cf. Brain : webgl-shader-wallpaper-gpu-overheating.
+ *
+ * LE VOILE N'EST PAS DE LA TIMIDITÉ. Le corps de texte du site se lit DIRECTEMENT
+ * sur ce fond — pas de carte opaque, c'est la règle de la direction artistique. Un
+ * vert vif plein écran ferait tomber le contraste du texte sous le seuil lisible.
+ * Le voile sombre garde l'intensité de la matière tout en rendant le texte lisible.
+ */
+interface Props {
+  /** Force de la matière, 0 à 1 : elle assombrit les couleurs du shader plutôt que
+      de poser un voile par-dessus. */
+  intensite?: number;
+}
+const { intensite = 0.72 } = Astro.props;
+
+/** Assombrit une couleur au prorata — l'intensité entre DANS le shader. */
+const teinte = (hex: string, k: number) => {
+  const n = parseInt(hex.slice(1), 16);
+  const c = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => Math.round(v * k));
+  return '#' + c.map((v) => v.toString(16).padStart(2, '0')).join('');
+};
+const couleurs = {
+  color1: teinte('#050505', 1),
+  color2: teinte('#66B3FF', intensite),
+  /* Le blanc de l'ambiance est le vrai danger pour la lecture : c'est lui qui fait
+     monter les bandes jusqu'à 236 sur 255, là où un titre blanc disparaît. Il est
+     tenu bas — la bande reste lumineuse, elle cesse d'être un mur blanc. */
+  color3: teinte('#FFFFFF', intensite * 0.42),
+};
+---
+<div class="fond-anime" aria-hidden="true" data-couleurs={JSON.stringify(couleurs)}>
+  <div class="fond-anime__gbg"></div>
+</div>
+
+<style>
+  .fond-anime {
+    position: fixed;
+    inset: 0;
+    /* Sous le champ d'étoiles (-2) et sous tout le contenu. */
+    z-index: -3;
+    pointer-events: none;
+    background: var(--c-bg);
+  }
+  .fond-anime__gbg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+  /* LE MOTEUR CRÉE SA PROPRE BOÎTE. `create()` insère un `<div class="gbg">` dans
+     le point de montage et c'est LUI qu'il mesure — pas mon conteneur. Sans règle
+     de taille (la feuille du catalogue n'est pas chargée ici), cette boîte prend la
+     hauteur de son contenu : le canevas est sorti à 720 px pour une fenêtre de 900,
+     et le bas de la page restait uni. Mesuré, pas supposé. */
+  .fond-anime__gbg :global(.gbg) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    background: transparent;
+  }
+  .fond-anime__gbg :global(.gbg__canvas) { display: block; width: 100%; height: 100%; }
+</style>
+
+<script>
+  const hote = document.querySelector<HTMLElement>('.fond-anime');
+  const cible = hote?.querySelector<HTMLElement>('.fond-anime__gbg');
+  if (hote && cible) {
+    const charger = (src: string) =>
+      new Promise<void>((ok, ko) => {
+        const s = document.createElement('script');
+        s.src = src;
+        s.onload = () => ok();
+        s.onerror = () => ko(new Error(src));
+        document.head.appendChild(s);
+      });
+
+    /* Le shader d'abord, le moteur ensuite : sans `window.WARP_GLSL` le moteur
+       lève une erreur claire plutôt que de peindre du noir. */
+    charger('/vendor/gradient-background/warp-shader.js')
+      .then(() => charger('/vendor/gradient-background/gradient-background.js'))
+      .then(() => {
+        const G = (window as any).GradientBackground;
+        if (!G) return;
+        const couleurs = JSON.parse(hote.dataset.couleurs || '{}');
+        const api = G.create(cible, {
+          preset: 'Prism',
+          ...couleurs,
+          speed: 10,           // 30 dans l'ambiance d'origine
+          softness: 30,        // 47 — des bords plus nets, donc plus de présence
+          swirl: 62,           // 50
+          swirlIterations: 8,  // 16 — le réglage le plus cher du shader
+          /* Un shader plein écran en 2× sur un portable retina coûte cher pour un
+             dégradé mou : à 1,5 on divise le travail par presque deux sans que ça
+             se voie. cf. Brain : webgl-shader-wallpaper-gpu-overheating. */
+          maxPixelRatio: 1,
+        });
+        /* « Réduire les animations » : la matière reste, elle cesse de bouger.
+           Un fond qui coule en continu est exactement ce que ce réglage refuse. */
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          setTimeout(() => api.stop && api.stop(), 120);
+        }
+      })
+      .catch(() => { /* pas de WebGL2, ou fichier absent : la nuit du site reste. */ });
+  }
+</script>

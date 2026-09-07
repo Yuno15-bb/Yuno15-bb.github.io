@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 import { languages, ui, type Lang } from '../i18n/ui';
-import ParticleField from '../components/ParticleField.astro';
+import FondAnime from "../components/FondAnime.astro";
 
 interface Props {
   title: string;
@@ -38,7 +38,11 @@ const contactHref = `/${lang}/#contact`;
     <meta property="og:type" content="website" />
   </head>
   <body>
-    <ParticleField />
+    {/* Le champ d'étoiles a été RETIRÉ le 2026-09-07 : le fond animé le remplace,
+        il ne se pose pas dessus. Deux fonds WebGL en même temps, c'étaient aussi
+        deux boucles d'animation qui se disputaient la carte graphique. Le composant
+        reste dans le dépôt — le remettre tient en une ligne. */}
+    <FondAnime />
     <a class="skip-link" href="#main">{t['skip']}</a>
     <header class="container site-head">
       <a href={`/${lang}/`} class="wordmark" aria-label="Accueil / Home">Yuno<span class="accent">15</span></a>
