@@ -3,13 +3,13 @@ titre: "Plateforme d'interventions terrain"
 pitch: "Application web installable pour une entreprise de charpente-couverture : le technicien saisit son intervention sur le toit, le bureau la voit en direct, et tout fonctionne sans réseau."
 audience: ["business"]
 contexte: "Mission client · anonymisée"
-role: "Conception produit, UX terrain, développement full-stack"
-stack: ["PWA", "JavaScript", "Service Worker", "Supabase", "PostgreSQL", "RLS", "GPS", "PDF"]
+role: "Conception produit, UX terrain, agent IA, développement full-stack"
+stack: ["PWA", "JavaScript", "Service Worker", "Supabase", "PostgreSQL", "RLS", "GPS", "PDF", "Python", "FastAPI", "Claude", "Gmail", "Microsoft Graph"]
 annee: 2026
-resultat: "Saisie complète hors réseau, rejouée au retour du signal sans doublon. Le bureau voit le chantier le jour même au lieu de trois jours plus tard."
+resultat: "Saisie complète hors réseau, rejouée au retour du signal sans doublon. Le bureau voit le chantier le jour même, et aucune écriture de l'agent n'atteint les données du client sans qu'une personne l'ait approuvée."
 nda: true
 featured: true
-ordre: 2
+ordre: 1
 cover: "/projects/terrain-tel-04-09.jpg"
 cover2: "/projects/terrain-bureau-04-09.jpg"
 ---
@@ -17,6 +17,9 @@ cover2: "/projects/terrain-bureau-04-09.jpg"
 import Figure from '../../../components/Figure.astro';
 import Flow from '../../../components/figures/Flow.astro';
 import Ecrans from '../../../components/figures/Ecrans.astro';
+import Duo from '../../../components/figures/Duo.astro';
+import Mac from '../../../components/figures/Mac.astro';
+import FicheProposition from '../../../components/figures/FicheProposition.astro';
 
 <Figure
   cadre={false}
@@ -75,6 +78,65 @@ téléphone du technicien, et le tableau de bord du bureau.
   toit — sans ressaisie.
 - **Assistant intégré** : la même entreprise dispose d'un agent qui lit sa boîte mail et
   prépare les fiches ; il est accessible depuis cette page.
+
+## L'agent qui prépare les fiches
+
+Le bureau ne reçoit pas que la saisie du terrain. Les devis signés, les factures et les
+réclamations arrivent par mail, et quelqu'un les recopiait à la main dans le fichier client.
+Un agent lit ces boîtes, ouvre les pièces jointes et prépare la fiche ; la personne garde
+la décision.
+
+<Figure
+  cadre={false}
+  legende="L'écran de relecture : chaque champ a été extrait du mail, chacun reste corrigeable, et c'est le bouton de droite qui déclenche l'écriture. En ambre, le seul champ retouché à la main."
+  source="Interface reconstruite — données fictives (confidentialité client)"
+>
+  <Mac titre="Field Ops — Filing">
+    <FicheProposition />
+  </Mac>
+</Figure>
+
+- **Deux boîtes relevées chaque minute** — Gmail et Microsoft Graph.
+- **Classement par type** : devis signé, facture client, facture de sous-traitant,
+  réclamation, avis de paiement, publicité.
+- **Extraction des PDF joints** : client, numéro de devis, numéro de facture, montants HT
+  et TTC, adresse, échéance, occupant du logement.
+- **Une facture scannée** passe par la reconnaissance de caractères ; un même mail peut
+  porter le devis et le bon de commande, les deux suivent la fiche jusqu'au bout.
+- **Trois pages de destination, cinquante-cinq colonnes, trente-cinq remplies seules.**
+
+<Figure
+  titre="Le périmètre, en clair"
+  legende="L'unique exception d'écriture est étroite et écrite noir sur blanc : un champ de statut peut passer à « programmé », rien d'autre."
+>
+  <Duo
+    a={{ titre: "Ce que l'agent fait seul", items: [
+      'Lire les boîtes mail et classer chaque message',
+      'Ouvrir les PDF joints et en extraire les données',
+      'Interroger la base du client — en lecture seule',
+      'Rédiger une réponse, laissée en brouillon',
+    ] }}
+    b={{ titre: "Ce qu'il n'a pas le droit de faire", items: [
+      'Écrire dans la base réelle du client',
+      'Envoyer un mail à sa place',
+      "Créer une fiche que personne n'a relue",
+      'Supprimer ou remplacer une donnée existante',
+    ] }}
+  />
+</Figure>
+
+<Figure
+  titre="Du mail reçu à la fiche rangée"
+  legende="Aucune flèche ne relie l'agent au fichier client : tout passe par la file d'attente et par le clic d'une personne."
+>
+  <Flow etapes={[
+    { t: 'La boîte mail', d: 'Devis, factures et réclamations arrivent mêlés.' },
+    { t: "L'agent lit", d: 'Il classe, ouvre les PDF, extrait les données.' },
+    { t: 'La file de propositions', d: "Chaque écriture s'arrête là et attend." },
+    { t: 'Une personne valide', d: "Elle relit, corrige, et son clic déclenche l'écriture.", porte: true },
+    { t: 'Le fichier client', d: "La fiche est créée, ses PDF joints. C'est le seul chemin." },
+  ]} />
+</Figure>
 
 ## Hors-ligne : la coupure est le cas normal
 
