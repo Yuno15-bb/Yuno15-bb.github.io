@@ -1,12 +1,12 @@
 ---
 titre: "Plateforme d'interventions terrain"
-pitch: "Application web installable pour une entreprise de charpente-couverture : le technicien saisit son intervention sur le toit, le bureau la voit en direct, et tout fonctionne sans réseau."
+pitch: "Un système d'exploitation terrain pour une entreprise de charpente-couverture — construit pour des toits sans réseau, puis cassé par eux. Chaque panne rencontrée est devenue une règle qu'une machine revérifie."
 audience: ["business"]
-contexte: "Mission client · anonymisée"
-role: "Conception produit, UX terrain, agent IA, développement full-stack"
+contexte: "Projet client · anonymisé"
+role: "Conception produit, UX terrain, développement full-stack"
 stack: ["PWA", "JavaScript", "Service Worker", "Supabase", "PostgreSQL", "RLS", "GPS", "PDF", "Python", "FastAPI", "Claude", "Gmail", "Microsoft Graph"]
 annee: 2026
-resultat: "Saisie complète hors réseau, rejouée au retour du signal sans doublon. Le bureau voit le chantier le jour même, et aucune écriture de l'agent n'atteint les données du client sans qu'une personne l'ait approuvée."
+resultat: "69 tests d'invariants, chacun né d'un bug de production. Le bureau voit l'intervention le jour même au lieu de trois jours plus tard."
 nda: true
 featured: true
 ordre: 1
@@ -19,150 +19,232 @@ import Flow from '../../../components/figures/Flow.astro';
 import Ecrans from '../../../components/figures/Ecrans.astro';
 import Duo from '../../../components/figures/Duo.astro';
 import Mac from '../../../components/figures/Mac.astro';
+import Incident from '../../../components/figures/Incident.astro';
 import FicheProposition from '../../../components/figures/FicheProposition.astro';
 
 <Figure
   cadre={false}
-  source="Captures de l'application en production, mode démonstration — marque, lieux et données neutralisés"
+  source="Captures de l'app en production, mode démonstration — marque, lieux et données neutralisés"
 >
   <Ecrans
     tel="/projects/terrain-tel-04-09.jpg"
-    telAlt="Le téléphone du technicien — mission en cours, itinéraire, prochaines interventions"
+    telAlt="Le téléphone du technicien — intervention du jour, itinéraire, visites à venir"
     bureau="/projects/terrain-bureau-04-09.jpg"
     bureauAlt="Le bureau — équipes en direct sur la carte, compteurs du jour, planning du mois"
   />
 </Figure>
 
+## Le métier, avant que tout ça existe
+
+Un couvreur monte sur un toit, ouvre une feuille de papier, et note ce qu'il trouve : l'état
+du faîtage, des rives, de la couverture, des solins, de chaque conduit qui traverse. Il
+photographie ce qui compte. Il redescend. Trois jours plus tard, quelqu'un au bureau ressaisit
+la feuille dans un ordinateur, le rappelle pour lui demander ce qu'un mot voulait dire, et en
+fait un rapport que le client va lire.
+
+Tout le problème est là, et ce n'est pas un problème de saisie. **L'information naît au seul
+endroit où il n'y a pas de réseau**, sous des gants, sur un écran illisible en plein soleil, et
+elle doit survivre au trajet du retour — parce qu'au bout, un client reçoit un document, et ce
+document doit dire ce que le couvreur a réellement vu.
+
+Une application de saisie ordinaire ne survit pas à ce trajet. Elle suppose que le réseau est
+là au moment où on enregistre, que personne d'autre ne modifie la même fiche, et qu'une réponse
+verte veut dire que la donnée est arrivée. Sur un toit, les trois sont faux.
+
+## Les quatre conditions qui ont tout décidé
+
+Ce ne sont pas toutes les contraintes. Ce sont celles qui ont chacune imposé une décision de
+structure — le reste n'était que du détail.
+
 <Figure
-  cadre={false}
-  legende="Le même produit en thème clair — le technicien bascule selon qu'il est sur un toit en plein soleil ou dans la camionnette."
+  titre="Contrainte → décision"
+  legende="À lire comme une chaîne : chaque ligne de gauche rend la ligne de droite non négociable."
 >
-  <Ecrans
-    clair
-    tel="/projects/terrain-tel-clair-04-09.jpg"
-    telAlt="Le téléphone, thème clair"
-    bureau="/projects/terrain-bureau-clair-04-09.jpg"
-    bureauAlt="Le bureau, thème clair"
+  <Duo
+    accent="b"
+    a={{ titre: 'Ce que le terrain impose', items: [
+      "L'absence de réseau est le cas NORMAL, pas l'exception — caves, toits, chantiers isolés",
+      "Des téléphones Android durcis de plusieurs années, dont l'appareil photo refuse souvent de s'ouvrir depuis un navigateur",
+      "Deux personnes modifient la même fiche en même temps : le technicien hors-ligne sur le toit, le bureau en direct",
+      "Ce qui sort est un document que lit un client — ce qui entre doit ressortir",
+    ] }}
+    b={{ titre: "Ce que ça force dans l'architecture", items: [
+      "Toute saisie se pose d'abord sur le téléphone et rejoint une file ; le réseau n'est jamais sur le chemin critique",
+      "La prise de vue vit DANS l'application, par le navigateur, jamais déléguée au téléphone",
+      "Fusionner champ par champ, avec une règle écrite de qui gagne — et un conflit jamais silencieux",
+      "Un test qui vérifie la FORME de la sortie ne suffit pas : il doit vérifier que l'entrée en ressort",
+    ] }}
   />
 </Figure>
 
-## À quoi ça sert
+## Le trajet d'un relevé
 
-Remplacer la feuille de papier que le couvreur remplit sur le toit et que quelqu'un
-retape au bureau trois jours plus tard. Une seule application, deux usages : le
-téléphone du technicien, et le tableau de bord du bureau.
+<Figure
+  titre="Du toit au rapport du client"
+  legende="La seule étape qui touche au réseau est la quatrième. Tout ce qui précède fonctionne téléphone en mode avion."
+>
+  <Flow etapes={[
+    { t: 'Sur le toit', d: "Le technicien remplit, photographie, valide. Quinze étapes au maximum, et seulement celles qui concernent ce type d'intervention." },
+    { t: 'Écrit sur le téléphone', d: "Immédiatement — la fiche dans le stockage local, les photos dans une base locale à elles.", porte: true },
+    { t: 'La file', d: "La modification attend son tour, avec un numéro de révision qui change à chaque retouche." },
+    { t: 'Le réseau revient', d: "La file se rejoue dans l'ordre. Avant chaque écriture, elle relit la ligne du serveur et fusionne champ par champ." },
+    { t: 'Le bureau', d: "Carte en direct, compteurs du jour, planning du mois — et le rapport client en PDF, en un geste." },
+  ]} />
+</Figure>
 
-## Sur le toit — le téléphone du technicien
-
-- **Questionnaire ciblé par type d'intervention** — diagnostic, recherche de fuite,
-  contrat d'entretien, intervention. Quinze étapes au maximum, et seulement celles qui
-  concernent le chantier du jour.
-- **Constats à choix multiple** sur les cinq zones d'une toiture — faîtage, rives,
-  couverture, zinguerie, émergences. Un même point peut porter plusieurs défauts ;
-  « bon état » en exclut automatiquement tout autre.
-- **Photos prises depuis l'application**, une par sujet, géolocalisées et rattachées
-  toutes seules à la bonne étape.
-- **Croquis de toiture annotable**, avec éditeur de tracé pour corriger une emprise.
-- **Mission du jour, itinéraire et prochaines interventions** sur l'écran d'accueil.
-
-## Au bureau — une seule page
-
-- **Carte des équipes en direct** : position GPS de chaque technicien, avec distinction
-  entre position en cours et dernière position connue, et pins colorés par statut
-  d'intervention.
-- **Compteurs du jour** : interventions au total, techniciens connectés, interventions
-  en cours, conclusions urgentes.
-- **Planning du mois**, avec l'état le plus grave de chaque journée.
-- **Répertoire des lieux** organisé en trois niveaux : gestionnaire, lieu, intervention.
-- **Rapport client en PDF**, produit en un geste à partir de ce qui a été saisi sur le
-  toit — sans ressaisie.
-- **Assistant intégré** : la même entreprise dispose d'un agent qui lit sa boîte mail et
-  prépare les fiches ; il est accessible depuis cette page.
-
-## L'agent qui prépare les fiches
-
-Le bureau ne reçoit pas que la saisie du terrain. Les devis signés, les factures et les
-réclamations arrivent par mail, et quelqu'un les recopiait à la main dans le fichier client.
-Un agent lit ces boîtes, ouvre les pièces jointes et prépare la fiche ; la personne garde
-la décision.
+À côté, un agent surveille deux boîtes mail : devis signés, factures et réclamations étaient
+jusque-là ressaisis à la main dans les fiches clients. Il les lit, ouvre les PDF, en extrait les
+chiffres — et s'arrête. **Il n'écrit jamais dans la base vivante.** Tout ce qu'il produit
+atterrit dans une file où une personne relit et clique.
 
 <Figure
   cadre={false}
-  legende="L'écran de relecture : chaque champ a été extrait du mail, chacun reste corrigeable, et c'est le bouton de droite qui déclenche l'écriture. En ambre, le seul champ retouché à la main."
-  source="Interface reconstruite — données fictives (confidentialité client)"
+  legende="L'écran de relecture : chaque champ a été extrait du mail, chaque champ reste modifiable, et c'est le bouton de droite qui déclenche l'écriture. En ambre, le seul champ corrigé à la main."
+  source="Interface reconstituée — données fictives (confidentialité client)"
 >
   <Mac titre="Field Ops — Filing">
     <FicheProposition />
   </Mac>
 </Figure>
 
-- **Deux boîtes relevées chaque minute** — Gmail et Microsoft Graph.
-- **Classement par type** : devis signé, facture client, facture de sous-traitant,
-  réclamation, avis de paiement, publicité.
-- **Extraction des PDF joints** : client, numéro de devis, numéro de facture, montants HT
-  et TTC, adresse, échéance, occupant du logement.
-- **Une facture scannée** passe par la reconnaissance de caractères ; un même mail peut
-  porter le devis et le bon de commande, les deux suivent la fiche jusqu'au bout.
-- **Trois pages de destination, cinquante-cinq colonnes, trente-cinq remplies seules.**
+## Là où ça a cassé
+
+Ce qui est intéressant dans ce projet, ce n'est pas qu'il ait été construit. C'est qu'il est
+passé entre les mains de gens sur des toits, qu'il a cassé d'une manière que la conception
+n'avait pas imaginée, et que chaque casse a laissé une règle derrière elle. Ce qui suit n'est pas
+une liste de bugs : ces quatre-là sont ceux qui ont changé la façon dont le système est bâti.
 
 <Figure
-  titre="Le périmètre, en clair"
-  legende="L'unique exception d'écriture est étroite et écrite noir sur blanc : un champ de statut peut passer à « programmé », rien d'autre."
+  titre="1 — « je suis revenu et tout était reparti au début »"
+  legende="Le premier vrai retour du terrain, et celui qui a fixé le niveau d'exigence pour tous les autres : perdre du travail fait sur un toit n'est pas une panne acceptable."
 >
-  <Duo
-    a={{ titre: "Ce que l'agent fait seul", items: [
-      'Lire les boîtes mail et classer chaque message',
-      'Ouvrir les PDF joints et en extraire les données',
-      'Interroger la base du client — en lecture seule',
-      'Rédiger une réponse, laissée en brouillon',
-    ] }}
-    b={{ titre: "Ce qu'il n'a pas le droit de faire", items: [
-      'Écrire dans la base réelle du client',
-      'Envoyer un mail à sa place',
-      "Créer une fiche que personne n'a relue",
-      'Supprimer ou remplacer une donnée existante',
-    ] }}
+  <Incident
+    titre="Un technicien a perdu un rapport déjà rempli"
+    quand="Remonté d'un chantier, en juillet"
+    hypothese="Le brouillon était sauvé à chaque saisie et à chaque photo. Le travail était donc à l'abri : revenir dans l'application allait forcément le retrouver."
+    panne="Il est sorti de l'application pendant un rapport. En revenant, il était sur l'accueil, au début, et les photos du brouillon avaient disparu aussi."
+    cause="Cinq défauts, dont aucun n'était inacceptable pris seul, se sont enchaînés : un cache qui servait une version périmée, un stockage de photos devenu privé, une course entre deux opérations, des adresses d'images expirées, et une synchronisation fragile. Le brouillon existait bien — mais le rouvrir demandait de taper un bouton qu'il n'a jamais vu, et la photo était encore en train de s'écrire dans la base locale quand il a quitté l'app."
+    correctif="Rouvrir l'application sur un brouillon actif rouvre maintenant le rapport à l'étape sauvée, sans bouton à trouver. La photo est écrite dans le stockage local ET attendue avant que le brouillon qui la référence soit sauvé. Et le brouillon est sauvé à la SORTIE de l'application, plus seulement à l'entrée."
+    preuve="La chaîne est désormais couverte par des tests d'invariants qui lisent la source elle-même, et la version en ligne se vérifie en allant chercher le service worker déployé plutôt qu'en faisant confiance au déploiement."
   />
 </Figure>
 
 <Figure
-  titre="Du mail reçu à la fiche rangée"
-  legende="Aucune flèche ne relie l'agent au fichier client : tout passe par la file d'attente et par le clic d'une personne."
+  titre="2 — toutes les photos, d'un coup, pour tout le monde"
+  legende="L'incident qui a séparé « la donnée est perdue » de « l'écran n'arrive pas à la dessiner » — deux mots d'écart, et une réparation complètement différente."
 >
-  <Flow etapes={[
-    { t: 'La boîte mail', d: 'Devis, factures et réclamations arrivent mêlés.' },
-    { t: "L'agent lit", d: 'Il classe, ouvre les PDF, extrait les données.' },
-    { t: 'La file de propositions', d: "Chaque écriture s'arrête là et attend." },
-    { t: 'Une personne valide', d: "Elle relit, corrige, et son clic déclenche l'écriture.", porte: true },
-    { t: 'Le fichier client', d: "La fiche est créée, ses PDF joints. C'est le seul chemin." },
-  ]} />
+  <Incident
+    titre="Toutes les photos ont disparu, et rien n'était perdu"
+    quand="Signalé comme « pas de photos sur une intervention », en juillet"
+    hypothese="Le stockage des photos est privé, donc l'app signe des adresses temporaires pour les afficher — et une adresse publique était gardée à côté, en repli, au cas où."
+    panne="Toutes les photos ont disparu d'un coup, pour tous les utilisateurs. Pas une intervention : toutes, sans aucune erreur à l'écran."
+    cause="Sur un stockage privé, une adresse publique répond par une erreur — le repli était mort, et l'était depuis le début. Toutes les adresses étaient signées en un seul appel groupé dont l'échec était avalé. Un seul hoquet passager suffisait donc à vider l'affichage entier, sans recours — alors que chaque fichier et chaque ligne étaient intacts."
+    correctif="Les adresses signées valides sont conservées pour survivre à un rechargement, l'affichage se reconstruit à partir d'elles au démarrage, et la signature se fait par petits lots isolés : un lot qui échoue ne prive plus que de lui-même."
+    preuve="Un diagnostic en trois couches, écrit et rejouable : la ligne existe-t-elle, le fichier existe-t-il, la signature fonctionne-t-elle. Si les trois répondent oui, rien n'est perdu — et la réponse est dans l'affichage, pas dans la donnée."
+  />
 </Figure>
-
-## Hors-ligne : la coupure est le cas normal
 
 <Figure
-  titre="Ce qui se passe quand le réseau tombe"
-  legende="Aucune saisie ne dépend du signal au moment où elle est faite."
+  titre="3 — la file qui mangeait ce qu'on venait de taper"
+  legende="Aucun plantage, aucune erreur, rien de rouge nulle part. C'est le mode de panne contre lequel une application hors-ligne doit être conçue, et la raison pour laquelle la file porte un numéro de révision."
 >
-  <Flow etapes={[
-    { t: 'Le technicien valide', d: 'Il saisit, il photographie, il confirme.' },
-    { t: "Écrit dans le téléphone", d: 'Immédiatement, sans rien demander au serveur.', porte: true },
-    { t: 'Le réseau revient', d: 'La file se rejoue seule, dans l’ordre, sans doublon.' },
-    { t: 'Le bureau voit', d: 'La même intervention, vue de l’autre côté.' },
-  ]} />
+  <Incident
+    titre="Une saisie faite pendant une synchronisation disparaissait sans trace"
+    quand="Trouvé par un audit adverse, en juillet"
+    hypothese="Envoyer les fiches en attente une par une, puis réécrire ce qui reste. Simple, et ça marchait depuis des mois."
+    panne="Tout ce qui était tapé pendant une synchronisation pouvait s'évaporer. Le serveur avait une version, l'écran en affichait une autre, et plus aucune tentative n'existait pour rattraper."
+    cause="Lire la file, envoyer sur le réseau et réécrire la file ne sont pas un seul instant : le réseau est au milieu. Réécrire le reste écrase une file qui a bougé entre-temps. Pire : le moyen évident de le détecter, l'horodatage existant, était volontairement préservé au ré-enfilage pour permettre la détection de conflit. Il ne pouvait pas voir un changement de contenu."
+    correctif="La vidange n'écrase plus, elle réconcilie. Chaque entrée porte un compteur de révision qui change à CHAQUE retouche ; à l'acquittement, la file est relue et une issue n'est appliquée que si la révision correspond encore. Ce qui a été enfilé pendant la vidange est préservé tel quel."
+    preuve="La règle de fusion vit entre deux marqueurs dans la source, et un script teste exactement cette zone — déplacer le code sans déplacer le test se voit."
+  />
 </Figure>
 
-Toute écriture est enregistrée localement puis mise en file d'attente avant d'approcher
-le réseau. Un rafraîchissement, un onglet fermé, un sous-sol : rien n'est perdu, et un
-même envoi rejoué deux fois ne crée pas deux fiches.
+<Figure
+  titre="4 — une réponse verte qui ne faisait rien"
+  legende="La raison la plus nette pour laquelle ce projet a cessé de faire confiance au vert : un contrôle incapable de rougir ne prouve absolument rien."
+>
+  <Incident
+    titre="Un bouton qui répondait « c'est fait » depuis des semaines, et ne supprimait rien"
+    quand="Trouvé en écrivant un test contre la vraie base"
+    hypothese="La base isole les données entreprise par entreprise, ligne par ligne. Les règles étaient écrites et relues, donc elles s'appliquaient."
+    panne="Un bouton de remise à zéro annonçait la réussite à chaque fois et ne retirait rien. Pendant des semaines. Personne ne l'a vu, parce que rien n'échouait."
+    cause="Quand une suppression ne correspond à aucune règle de sécurité, la base ne refuse pas : elle répond « pas de contenu, tout va bien » et ne retire aucune ligne. Le succès et l'interdiction silencieuse se ressemblent parfaitement vus de l'extérieur."
+    correctif="L'isolation ne se vérifie plus en relisant les règles. Un contrôle se connecte avec un vrai compte de technicien sur la vraie base, crée une fiche jetable, et vérifie ce que ce compte peut atteindre et ce qu'il ne peut pas."
+    preuve="Le contrôle tourne avec les droits d'un technicien, jamais d'un dirigeant, et rougirait sur une règle manquante — c'est-à-dire exactement le cas pour lequel il a été écrit."
+  />
+</Figure>
+
+## Ce que « ça marche » veut dire ici
+
+<Figure
+  titre="La règle que le fichier de tests énonce sur lui-même"
+  legende="Reprise mot pour mot de l'en-tête du fichier d'invariants — c'est la phrase qui décrit comment ce système est entretenu."
+>
+  <Duo
+    accent="a"
+    a={{ titre: 'À quoi servent les invariants', items: [
+      "Chaque bug de production trouvé à la main gagne un invariant ici, pour ne jamais revenir",
+      "69 aujourd'hui — aucun ne teste un plantage",
+      "Ils testent des CONTRADICTIONS : deux endroits du code qui doivent rester d'accord, et ne l'étaient plus",
+      "Ils lisent la source livrée elle-même, pas une copie qui peut dériver",
+    ] }}
+    b={{ titre: 'Ce que les tests d’avant ne voyaient pas', items: [
+      "Ils ne couvraient que le démarrage, le service worker et le mode hors-ligne",
+      "Ils ont laissé passer, pendant des semaines, un blocage TOTAL à l'étape 5",
+      "Et un relevé qui ne quittait jamais le téléphone",
+      "Rien ne plantait — on vérifiait une sortie bien formée, jamais que l'entrée en ressortait",
+    ] }}
+  />
+</Figure>
+
+Trois habitudes sont sorties de ces quatre incidents, et elles s'appliquent maintenant à tout ce
+qu'on ajoute au système.
+
+- **Un contrôle incapable de rougir ne prouve rien.** Quand un garde-fou est écrit, on le casse
+  exprès pour vérifier qu'il réagit — la deuxième fuite trouvée dans le jeu de démonstration a
+  été fermée avec quatre capteurs, chacun saboté puis gardé.
+- **Des tests verts ne prouvent pas que la donnée a survécu.** Vérifier qu'une sortie est bien
+  formée n'est pas vérifier que ce qui a été saisi en ressort ; ce seul contrôle manquant,
+  ajouté une fois, a fait tomber cinq défauts vivants en une passe.
+- **Regarder en amont avant d'accuser le code.** Une vague de doublons d'interventions
+  ressemblait à une déduplication cassée. Mesuré : zéro identifiant en double sur 55, zéro même
+  client le même jour, zéro identifiant partagé sur 181 événements d'agenda. Les doublons
+  venaient de gens qui supprimaient puis recréaient un rendez-vous dans leur agenda, ce qui
+  attribue un identifiant neuf à chaque fois. Le correctif était en amont, pas dans la fusion.
+
+## Ce que l'agent a le droit de faire
+
+<Figure
+  titre="La frontière, écrite noir sur blanc"
+  legende="L'unique exception en écriture est étroite et affichée : un champ de statut peut passer à « planifié », rien d'autre."
+>
+  <Duo
+    a={{ titre: "Ce que l'agent fait tout seul", items: [
+      'Lire deux boîtes mail, toutes les minutes, et classer chaque message',
+      'Ouvrir les PDF joints et en extraire client, références, montants, dates',
+      'Interroger la base du client — en lecture seule',
+      'Rédiger une réponse, laissée non envoyée',
+    ] }}
+    b={{ titre: "Ce qu'il n'a pas le droit de faire", items: [
+      'Écrire dans la base vivante du client',
+      'Envoyer un mail en son nom',
+      'Créer une fiche que personne n’a relue',
+      'Supprimer ou écraser une donnée existante',
+    ] }}
+  />
+</Figure>
+
+Cette frontière n'est pas de la prudence de principe. Une version antérieure de ce pipeline
+recréait toutes les propositions qu'elle avait déjà traitées, parce que son seul vrai garde-fou
+contre le double traitement était de savoir si un mail semblait encore non lu — un indicateur
+externe qui peut se remettre à zéro, et dont la mise à jour pouvait échouer en silence. Le
+correctif durable a été un registre persistant de ce qui a été traité, écrit à chaque succès et
+consulté avant chaque passage.
 
 ## Exploitation
 
-- **Cloisonnement par entreprise** au niveau de la base de données, pensé dès le départ
-  pour plusieurs clients plutôt qu'ajouté après coup.
-- **Sauvegardes chiffrées hors de la machine**, avec restauration vérifiée octet pour
-  octet.
-- **Application installable** depuis le navigateur, sans passer par un magasin
-  d'applications.
-- **Pilotable au clavier**, contrastes conformes au seuil AA — une application qui se
-  lit en plein soleil.
+- **Cloisonnement par entreprise** au niveau de la base, prévu dès le départ plutôt que rajouté
+  après — et vérifié contre la vraie base, pas contre les règles sur le papier.
+- **Sauvegardes chiffrées hors machine**, avec restauration vérifiée octet par octet.
+- **Installable depuis le navigateur**, sans magasin d'applications en travers.
+- **Utilisable au clavier**, contraste au seuil AA — une app qui doit se lire en plein soleil.

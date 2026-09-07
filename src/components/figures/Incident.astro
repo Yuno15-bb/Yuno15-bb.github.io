@@ -1,0 +1,93 @@
+---
+/**
+ * Incident — une panne racontée dans l'ordre où on la comprend.
+ *
+ * POURQUOI CE COMPOSANT EXISTE. Une étude de cas qui ne montre que le résultat ne
+ * prouve rien : n'importe qui peut lister des fonctionnalités. Ce qui se démontre,
+ * c'est le chemin — ce qu'on croyait, ce qui est arrivé, pourquoi, ce qu'on a changé,
+ * et comment on sait que ça ne reviendra pas. Les cinq lignes sont TOUJOURS les
+ * mêmes et TOUJOURS dans cet ordre : c'est ce qui permet de comparer deux incidents
+ * d'un coup d'œil au lieu de relire deux récits.
+ *
+ * Le dessin reprend l'idiome déjà posé (Duo.astro) : pas de boîte, un filet à
+ * gauche, une étiquette en eyebrow. Seule la PREUVE porte l'accent ember — c'est
+ * la ligne qui distingue un correctif d'une anecdote, donc la seule qui a le droit
+ * de ressortir.
+ */
+interface Props {
+  /** Le symptôme, dit avec les mots de celui qui l'a vécu. Pas le diagnostic. */
+  titre: string;
+  /** Quand, et où on l'a vu. Court. */
+  quand?: string;
+  hypothese: string;
+  panne: string;
+  cause: string;
+  correctif: string;
+  preuve: string;
+  /** Libellés, pour la version anglaise. */
+  labels?: [string, string, string, string, string];
+}
+const {
+  titre, quand, hypothese, panne, cause, correctif, preuve,
+  labels = ['Ce qu’on croyait', 'Ce qui s’est passé', 'Pourquoi', 'Ce qu’on a changé', 'La preuve'],
+} = Astro.props;
+const lignes: Array<[string, string, boolean]> = [
+  [labels[0], hypothese, false],
+  [labels[1], panne, false],
+  [labels[2], cause, false],
+  [labels[3], correctif, false],
+  [labels[4], preuve, true],
+];
+---
+<section class="inc">
+  <header class="inc__head">
+    <h4 class="inc__titre">{titre}</h4>
+    {quand && <p class="inc__quand eyebrow">{quand}</p>}
+  </header>
+  <dl class="inc__corps">
+    {lignes.map(([label, texte, fort]) => (
+      <div class:list={['inc__ligne', fort && 'inc__ligne--fort']}>
+        <dt class="inc__label eyebrow">{label}</dt>
+        <dd class="inc__texte">{texte}</dd>
+      </div>
+    ))}
+  </dl>
+</section>
+
+<style>
+  .inc { display: grid; gap: var(--space-3); }
+  .inc__head { display: grid; gap: var(--space-1); }
+  .inc__titre {
+    font-family: var(--font-display);
+    font-size: var(--fs-400);
+    line-height: var(--lh-tight);
+    color: var(--c-fg);
+    margin: 0;
+  }
+  .inc__quand { color: var(--c-muted); margin: 0; }
+  .inc__corps { display: grid; gap: var(--space-2); margin: 0; }
+  /* L'étiquette à gauche, le texte à droite : on lit la colonne d'étiquettes en
+     diagonale pour retrouver « la preuve » sans relire le récit. Sous 640 px il n'y
+     a plus de place pour deux colonnes — l'étiquette passe au-dessus. */
+  .inc__ligne {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    gap: var(--space-3);
+    border-left: 1px solid var(--c-line-ui);
+    padding-left: var(--space-3);
+  }
+  .inc__ligne--fort { border-left-width: 2px; border-left-color: var(--c-ember); }
+  .inc__label { color: var(--c-muted); margin: 0; padding-top: 0.25em; }
+  .inc__ligne--fort .inc__label { color: var(--c-ember); }
+  .inc__texte {
+    margin: 0;
+    color: var(--c-muted);
+    font-size: var(--fs-200);
+    line-height: 1.6;
+    max-width: var(--measure);
+  }
+  .inc__ligne--fort .inc__texte { color: var(--c-fg); }
+  @media (max-width: 640px) {
+    .inc__ligne { grid-template-columns: 1fr; gap: var(--space-1); padding-left: var(--space-2); }
+  }
+</style>
