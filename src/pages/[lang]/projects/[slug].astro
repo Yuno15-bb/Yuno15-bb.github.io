@@ -220,17 +220,61 @@ const slug = entry.id.split('/')[1];
     }
     .project__body :global(> *) { grid-column: texte-debut / texte-fin; max-width: 100%; min-width: 0; }
     .project__body :global(> figure) { grid-column: texte-debut / planche-fin; }
-    /* Rythme vertical de l'article : sans ça les paragraphes se touchent et les
-       titres collent au texte du dessus (constaté au rendu le 25/08/2026). */
+    /* ══ RYTHME VERTICAL ══ Mesuré le 2026-09-07, et il était faux.
+       Un changement de SECTION valait 22 px — exactement l'écart entre deux
+       paragraphes — pendant que deux planches voisines en faisaient 115. La
+       hiérarchie était donc inversée : on séparait plus deux figures d'une même
+       section que deux sections entières.
+
+       LA CAUSE ÉTAIT UN JETON QUI N'EXISTE PAS. `--space-7` n'est défini nulle
+       part : l'échelle va 1, 2, 3, 4, 6, 8, 12. Une valeur absente rend la
+       déclaration invalide, le navigateur la jette, et `margin-top` retombe à
+       zéro — sans erreur, sans avertissement. Le titre de section n'avait donc
+       AUCUNE marge haute depuis le premier jour.
+
+       ⚠ `.project__body` est une grille : les marges des enfants NE SE REPLIENT
+       PAS, elles s'ADDITIONNENT. Chaque écart ci-dessous est donc la somme de la
+       marge basse de l'un et de la marge haute de l'autre — c'est ce qui permet de
+       les régler un par un.
+
+       L'échelle obtenue, du plus serré au plus large :
+         titre → son contenu   ~24 px
+         paragraphe → suivant  ~22
+         planche → texte       ~43
+         texte → planche       ~65
+         planche → planche     ~72
+         n'importe quoi → h2  ~108 à 130   ← la coupure la plus large de la page */
     .project__body :global(p) { margin-bottom: var(--space-3); }
-    .project__body :global(h2) { margin-top: var(--space-7); margin-bottom: var(--space-2); }
+    .project__body :global(h2) { margin-top: var(--space-12); margin-bottom: var(--space-2); }
     .project__body :global(h2:first-child) { margin-top: 0; }
+    .project__body :global(h3) { margin-top: var(--space-6); margin-bottom: var(--space-2); }
+    /* Une planche respire, mais MOINS que deux sections ne se séparent. */
+    .project__body :global(> figure) { margin-block: var(--space-6); }
+    /* Un titre appartient à ce qu'il annonce : il s'en approche. */
+    .project__body :global(h2 + figure),
+    .project__body :global(h3 + figure) { margin-top: var(--space-3); }
+    /* Deux planches de suite restent DANS la même section : leur écart doit rester
+       inférieur à celui qui ouvre une section. */
+    .project__body :global(figure + figure) { margin-top: var(--space-4); }
+    /* ══ TROIS LARGEURS, ET PAS UNE DE PLUS ══
+       679 px la prose (la mesure de lecture) · 893 px les documents — captures
+       produit et récits d'incident · 1150 px les schémas, qui gagnent vraiment à
+       s'étaler. Le cadre d'une planche doit suivre SON contenu : borner le bloc
+       sans borner le cadre laissait une bande vide de 250 px à l'intérieur du
+       filet, ce qui se lit comme un oubli et non comme du vide actif.
+       `:has()` fait ça sans toucher à l'interface du composant Figure. Là où il
+       n'est pas connu, le cadre reste large : personne ne perd de contenu. */
+    .project__body :global(figure:has(.inc)),
+    .project__body :global(figure:has(.ec)) { max-width: 62rem; }
     /* Listes de la fiche : puces discretes, une ligne d'air entre les entrees.
        Le corps de page etait jusqu'ici de la prose seule — sans ces regles, une
        liste MDX arrivait sans puce ni retrait. */
     .project__body :global(ul) {
       list-style: none;
-      margin: 0 0 var(--space-3);
+      /* La marge HAUTE était absente : mesuré le 2026-09-07, une liste commençait
+         2 px au-dessus du bas du paragraphe qui l'introduit, et 10 px au-dessus du
+         bas de son titre. Elles se chevauchaient. */
+      margin: var(--space-3) 0 var(--space-3);
       padding: 0;
       display: grid;
       gap: var(--space-2);
@@ -251,11 +295,11 @@ const slug = entry.id.split('/')[1];
       background: var(--c-line-ui);
     }
     .project__body :global(li strong) { color: var(--c-fg); font-weight: 600; }
-    .project__body :global(h3) {
-      font-size: var(--fs-300);
-      margin-top: var(--space-4);
-      margin-bottom: var(--space-2);
-    }
+    /* ⚠ CETTE RÈGLE DOUBLONNAIT celle du rythme, plus haut, et l'écrasait : même
+       spécificité, donc la dernière écrite gagne. Le sous-titre restait collé à 2rem
+       du bloc précédent alors que le rythme lui en donne 3. Elle ne garde plus que
+       ce qu'elle seule apporte : la taille. */
+    .project__body :global(h3) { font-size: var(--fs-300); }
 
     /* ⚠ La composition editoriale asymetrique a ete SUPPRIMEE le 25/08/2026.
        Elle etait ecrite en dur pour EXACTEMENT 3 titres et 3 paragraphes — la forme
@@ -269,7 +313,13 @@ const slug = entry.id.split('/')[1];
       .project__body { grid-template-columns: minmax(0, 1fr); }
       .project__body :global(> *) { grid-column: 1 / -1; }
       .project__body :global(> figure) { grid-column: 1 / -1; }
-      .project__body :global(h2) { margin-top: var(--space-6); }
+      /* La coupure de section RESTE la plus large sur téléphone aussi. À
+         --space-6 elle valait 65 px après un paragraphe, moins que les 72 px qui
+         séparent deux planches voisines : la hiérarchie se réinversait dès qu'on
+         passait sous 1000 px. --space-8 la remet devant. */
+      .project__body :global(h2) { margin-top: var(--space-8); }
+      /* Une planche respire moins quand il n'y a plus de colonne à côté. */
+      .project__body :global(> figure) { margin-block: var(--space-4); }
       .project__body :global(p) { margin-bottom: var(--space-3); max-width: 62ch; }
       [data-slug='dgc-system'] .project__body :global(blockquote) { margin-top: var(--space-4); }
     }

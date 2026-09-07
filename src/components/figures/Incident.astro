@@ -55,7 +55,11 @@ const lignes: Array<[string, string, boolean]> = [
 </section>
 
 <style>
-  .inc { display: grid; gap: var(--space-3); }
+  /* MÊME BORD DROIT QUE LES CAPTURES PRODUIT (62rem). Sans borne, le bloc
+     s'étirait à la largeur de la planche (1210 px) alors que les captures
+     s'arrêtent à 890 : la page avait trois bords droits différents selon le
+     composant. Un récit et un document se lisent à la même laisse. */
+  .inc { display: grid; gap: var(--space-3); max-width: 62rem; }
   .inc__head { display: grid; gap: var(--space-1); }
   .inc__titre {
     font-family: var(--font-display);

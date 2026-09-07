@@ -27,7 +27,11 @@ const { poids = 1.6 } = Astro.props;
   .cote {
     display: grid;
     grid-template-columns: minmax(0, var(--cote-poids, 1.75fr)) minmax(0, 1fr);
-    gap: var(--space-5);
+    /* ⚠ ÉTAIT `--space-5`, UN JETON QUI N'EXISTE PAS (échelle : 1,2,3,4,6,8,12).
+       La déclaration était invalide, donc jetée : les deux colonnes se touchaient à
+       1 px près — mesuré le 2026-09-07. L'écart qu'on croyait voir ne venait que de
+       l'objet, plus étroit que sa colonne. */
+    gap: var(--space-6);
     align-items: stretch;
   }
   .cote__etroit {
