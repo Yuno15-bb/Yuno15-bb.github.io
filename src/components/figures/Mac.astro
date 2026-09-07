@@ -52,6 +52,18 @@ const { titre = 'Field Ops', clair = false, marge = 0 } = Astro.props;
     position: absolute; left: 50%; transform: translateX(-50%);
     font: 500 11.5px/1 -apple-system, system-ui, sans-serif;
     color: rgba(255, 255, 255, 0.55);
+    /* LE TITRE NE DOIT JAMAIS RECOUVRIR LES FEUX. Il est centré en absolu, donc il
+       ignore la place que prennent les trois pastilles : dans une fenêtre étroite
+       — la capsule sur téléphone, 202 px — « c-brain — capsule » passait à la ligne
+       et se posait par-dessus. Il est borné à la largeur libre entre les feux et la
+       marge symétrique de droite, et coupé proprement plutôt que replié.
+       128 px = les trois feux et leur marge (59 px) comptés DES DEUX CÔTÉS, plus
+       10 px de souffle : un titre centré déborde autant à gauche qu'à droite, donc
+       la place libre vaut deux fois celle des feux, pas une. */
+    max-width: calc(100% - 128px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .mcw__corps { display: block; }
   /* Le noir de la fenêtre (#101014) n'est PAS celui de la vidéo (#000) : avec une

@@ -162,3 +162,51 @@ p { max-width: var(--measure); }
   background: transparent;
   overflow: hidden;
 }
+
+/* ============================================================
+   TÉLÉPHONE — la même direction, à la bonne échelle
+   (Dylan, 2026-09-07 : « l'expérience desktop aérée et pro, on ne la retrouve
+   pas en mobile ; cette version est brouillon et mal faite »)
+
+   Le site n'avait pas de mise au point mobile : il héritait de réglages pris
+   POUR LE BUREAU, qui se retournent contre lui sur un écran de 390 px. Trois
+   d'entre eux ont été mesurés sur un vrai gabarit de téléphone.
+   ============================================================ */
+@media (max-width: 720px) {
+  /* 1. LA RACINE REVIENT À 100 %. Le 90 % posé en tête de tokens.css est une
+     décision de bureau (Dylan, 05/09 : « plein écran + deux fois Cmd − ») : elle
+     rétrécit TOUT ce qui est en rem d'un coup, exactement comme le zoom du
+     navigateur. Sur un téléphone il n'y a pas de plein écran à dézoomer, il ne
+     reste que le rétrécissement — légendes à 12,7 px, corps à 15,8 px, mesuré.
+     À 100 % elles remontent à 14 et 17,6 px, et tout l'espacement en rem avec
+     elles : c'est l'air du bureau qui revient, pas seulement la taille du texte. */
+  html { font-size: 100%; }
+
+  /* 2. LA GOUTTIÈRE SE RESSERRE. --space-6 fait 43 px de chaque côté : sur 390 px
+     d'écran, la colonne de lecture tombait à 304 px — près d'un quart de l'écran
+     en marge, et des lignes de 38 signes. --space-4 rend 40 px au contenu sans
+     coller au bord. Sur grand écran rien ne change : la largeur y est déjà
+     plafonnée par --container. */
+  .container { width: min(100% - 2 * var(--space-4), var(--container)); }
+
+  /* 3. CIBLES TACTILES À 44 px. Six liens passaient sous la barre : « Contact » et
+     « English » faisaient 21 px de haut, le retour aux travaux 20 px. 44 px est le
+     minimum d'Apple comme de Google — en dessous, on vise et on rate. La hauteur
+     est ajoutée SANS toucher au dessin : le texte ne bouge pas, c'est la zone
+     sensible autour qui grandit. */
+  .nav-link,
+  .lang-switch,
+  .wordmark,
+  .project__back,
+  .skip-link,
+  .btn,
+  .filter__btn,
+  .gh {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  /* Les liens de l'en-tête étant devenus des boîtes de 44 px, l'alignement sur la
+     ligne de base n'a plus de sens : il calait des textes, il calerait des boîtes. */
+  .site-head { align-items: center; }
+}

@@ -75,10 +75,26 @@ const { poids = 1.6 } = Astro.props;
     line-height: 1.5;
     text-align: left;
   }
+  /* ENTRE 900 ET 1200 px, l'objet doit maigrir. Les deux colonnes restent côte à
+     côte mais l'écran de gauche rétrécit avec la fenêtre, alors que l'objet, borné
+     en rem, ne bouge pas : il grossit donc EN PROPORTION, et son groupe finit par
+     dépasser la hauteur de l'écran d'à côté. Mesuré à 1024 px : la légende tombait
+     40 px sous le bas de la carte. À 16rem le groupe repasse dessous. */
+  @media (max-width: 1200px) and (min-width: 901px) {
+    .cote__etroit :global(> *) { max-width: 16rem; }
+  }
   @media (max-width: 900px) {
     .cote { grid-template-columns: 1fr; gap: var(--space-4); }
     /* Empilé, « au milieu de la carte » n'a plus de sens : l'objet reprend sa
        place normale, en tête de sa propre colonne. */
     .cote__etroit { justify-content: flex-start; align-items: flex-start; height: auto; }
+    /* ET IL REDEVIENT SECONDAIRE. Empilés, les deux cadres prennent la même largeur ;
+       mais la carte est panoramique et la capsule presque carrée, donc à largeur
+       égale la capsule paraît PLUS GROSSE — mesuré à 390 px : 356 px de haut contre
+       241 pour la carte. La hiérarchie du bureau s'inversait sur téléphone. À 74 %
+       de la colonne, l'objet reprend sa place de commentaire — et 74 % est le plancher
+       mesuré : en dessous, « c-brain — capsule » (100 px) ne tient plus dans la place
+       laissée par les feux et se fait couper. */
+    .cote__etroit :global(> *:first-child) { max-width: 74%; }
   }
 </style>

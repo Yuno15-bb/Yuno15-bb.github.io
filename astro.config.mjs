@@ -1,7 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
-import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
 
 // Site public. Le workflow Pages fixe SITE_URL au build ; ce repli sert au dev local.
@@ -35,5 +34,5 @@ export default defineConfig({
       redirectToDefaultLocale: false,
     },
   },
-  integrations: [mdx(), react(), sitemap()],
+  integrations: [mdx(), sitemap()],
 });
