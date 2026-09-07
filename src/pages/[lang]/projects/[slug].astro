@@ -33,21 +33,32 @@ const slug = entry.id.split('/')[1];
 
     {/* Le contexte d'abord : faits + récit, en composition éditoriale asymétrique. */}
     <div class="container">
+      {/* LA STACK N'EST PLUS EN TÊTE (2026-09-07). Elle occupait un tiers du premier
+          écran, juste sous le titre : le premier fait retenu d'une étude de cas était
+          donc une liste d'outils. Or ce qu'une étude de cas doit prouver, c'est
+          POURQUOI l'architecture est celle-là — les contraintes, pas le catalogue.
+          Elle reste accessible, en bas, après la démonstration : qui la cherche la
+          trouve, personne ne la lit avant l'histoire. */}
       <dl class="grid project__facts">
-        <div style="grid-column: span 4;"><dt class="eyebrow">{t['project.role']}</dt><dd>{d.role}</dd></div>
-        <div style="grid-column: span 4;"><dt class="eyebrow">{t['project.stack']}</dt><dd>{d.stack.join(', ')}</dd></div>
-        <div style="grid-column: span 4;"><dt class="eyebrow">{t['project.result']}</dt><dd>{d.resultat}</dd></div>
+        <div style="grid-column: span 6;"><dt class="eyebrow">{t['project.role']}</dt><dd>{d.role}</dd></div>
+        <div style="grid-column: span 6;"><dt class="eyebrow">{t['project.result']}</dt><dd>{d.resultat}</dd></div>
       </dl>
 
       <div class="project__body">
         <Content />
       </div>
+
+      <dl class="grid project__facts project__facts--pied">
+        <div style="grid-column: span 12;"><dt class="eyebrow">{t['project.stack']}</dt><dd>{d.stack.join(', ')}</dd></div>
+      </dl>
     </div>
 
   </article>
 
   <style>
     .project { padding-block: 0 var(--space-8); }
+    /* Le bloc de pied reprend le dessin du bloc de tête, décalé après le récit. */
+    .project__facts--pied { margin-top: var(--space-8); }
     /* En-tête projet : TRANSPARENCE TOTALE (décision 2026-07-13).
        Aucun fond, aucun gradient, aucun filtre entre le fond dynamique (WebGL) et le texte —
        les mots posent directement sur le champ de particules. Aucune vitre, aucun aplat. */

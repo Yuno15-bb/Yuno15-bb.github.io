@@ -20,6 +20,7 @@ import Ecrans from '../../../components/figures/Ecrans.astro';
 import Duo from '../../../components/figures/Duo.astro';
 import Mac from '../../../components/figures/Mac.astro';
 import Incident from '../../../components/figures/Incident.astro';
+import Systeme from '../../../components/figures/Systeme.astro';
 import FicheProposition from '../../../components/figures/FicheProposition.astro';
 
 <Figure
@@ -77,7 +78,24 @@ structure — le reste n'était que du détail.
   />
 </Figure>
 
-## Le trajet d'un relevé
+## Comment tout ça tient ensemble
+
+<Figure
+  titre="Les quatre parties, et la règle de chaque passage"
+  legende="Les flèches ne sont pas décoratives : chacune porte la règle qui gouverne ce passage. Les deux en ambre sont les seuls endroits où quelque chose peut être refusé — une file qui attend le réseau, une personne qui clique."
+>
+  <Systeme parties={[
+    { nom: 'Le terrain', items: ['Le téléphone du technicien', 'Relevé, photos, croquis, position', 'Fonctionne en mode avion'],
+      lien: 'Rien ne part sans passer par la file locale', garde: true },
+    { nom: 'La donnée', items: ['Une base par entreprise, cloisonnée ligne à ligne', 'Les photos dans un stockage privé', 'La fusion se fait champ par champ'],
+      lien: 'Le bureau lit la même ligne, en direct' },
+    { nom: 'Le bureau', items: ['Carte des équipes, compteurs, planning', 'Annuaire des lieux et des donneurs d’ordre', 'Le rapport client en PDF'],
+      lien: 'L’agent propose, il n’écrit jamais', garde: true },
+    { nom: 'L’automatisation', items: ['Deux boîtes mail relues chaque minute', 'Devis, factures, réclamations extraits des PDF', 'Tout finit dans une file de propositions'] },
+  ]} />
+</Figure>
+
+### Le trajet d'un relevé
 
 <Figure
   titre="Du toit au rapport du client"

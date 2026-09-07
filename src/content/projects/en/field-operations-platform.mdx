@@ -20,6 +20,7 @@ import Ecrans from '../../../components/figures/Ecrans.astro';
 import Duo from '../../../components/figures/Duo.astro';
 import Mac from '../../../components/figures/Mac.astro';
 import Incident from '../../../components/figures/Incident.astro';
+import Systeme from '../../../components/figures/Systeme.astro';
 import FicheProposition from '../../../components/figures/FicheProposition.astro';
 
 <Figure
@@ -78,7 +79,24 @@ decision — the rest were details.
   />
 </Figure>
 
-## How a finding travels
+## How it all fits together
+
+<Figure
+  titre="The four parts, and the rule that governs each crossing"
+  legende="The arrows are not decoration: each one carries the rule that governs that crossing. The two in amber are the only places where something can be refused — a queue waiting for the network, and a person clicking."
+>
+  <Systeme parties={[
+    { nom: 'The field', items: ['The technician’s phone', 'Survey, photos, sketch, position', 'Works in airplane mode'],
+      lien: 'Nothing leaves without going through the local queue', garde: true },
+    { nom: 'The data', items: ['One database per company, isolated row by row', 'Photos in private storage', 'Merging happens field by field'],
+      lien: 'The office reads the same row, live' },
+    { nom: 'The office', items: ['Crew map, counters, planner', 'Directory of sites and managing agents', 'The client report as a PDF'],
+      lien: 'The agent proposes, it never writes', garde: true },
+    { nom: 'Automation', items: ['Two mailboxes re-read every minute', 'Quotes, invoices, complaints extracted from PDFs', 'Everything lands in a proposal queue'] },
+  ]} />
+</Figure>
+
+### How a finding travels
 
 <Figure
   titre="From the roof to the client's report"
