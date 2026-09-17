@@ -10,9 +10,10 @@ interface Props {
   annee: number;
   cover?: string;      // chemin image dans /public — active la carte "media"
   cover2?: string;     // seconde maquette, posee A COTE de la premiere (diptyque)
+  coverEntier?: boolean; // montrer la vignette EN ENTIER (aucun rognage, aucun voile)
   tilt?: number;       // rotationFactor du tilt 3D (0 = pas de tilt)
 }
-const { lang, slug, titre, pitch, audience, annee, cover, cover2, tilt = 0 } = Astro.props;
+const { lang, slug, titre, pitch, audience, annee, cover, cover2, coverEntier = false, tilt = 0 } = Astro.props;
 const tiltAttrs = tilt > 0 ? { 'data-tilt': String(tilt), 'data-tilt-reverse': '' } : {};
 ---
 <a
@@ -33,7 +34,7 @@ const tiltAttrs = tilt > 0 ? { 'data-tilt': String(tilt), 'data-tilt-reverse': '
           <img class="shot shot--office" src={cover2} alt="" loading="lazy" decoding="async" width="720" height="608" />
         </>
       ) : (
-        <img class="shot shot--seul" src={cover} alt="" loading="lazy" decoding="async" width="1100" height="464" />
+        <img class:list={['shot', 'shot--seul', coverEntier && 'shot--entier']} src={cover} alt="" loading="lazy" decoding="async" width="1100" height="464" />
       )}
     </div>
   )}
@@ -154,6 +155,10 @@ const tiltAttrs = tilt > 0 ? { 'data-tilt': String(tilt), 'data-tilt-reverse': '
     /* Couverture seule : l'ecran occupe la largeur de la carte. Meme voile bas
        que les autres pour que la coupe reste un choix, pas une image cassee. */
     .shot--seul { width: 100%; height: 100%; aspect-ratio: auto; }
+    /* Planche de plusieurs appareils : on la montre EN ENTIER. Le rognage du bas
+       coupait l'iPhone, et le voile de nuit n'a pas de sens sur une image qui
+       porte déjà sa transparence. */
+    .shot--entier { object-fit: contain; object-position: center; -webkit-mask-image: none; mask-image: none; }
     @media (max-width: 700px) {
       /* Sous 700px la rangee etoufferait : on ne garde que le telephone. */
       .shot--office { display: none; }

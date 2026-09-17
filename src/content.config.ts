@@ -19,6 +19,9 @@ const projects = defineCollection({
     resultat: z.string(), // mesurable / observable
     cover: z.string().optional(),  // chemin relatif dans /public (rempli plus tard)
     cover2: z.string().optional(), // seconde maquette, posee a cote de la premiere
+    // Vignette montrée EN ENTIER, sans rognage : une planche de plusieurs appareils
+    // perd son sens si on lui coupe les bords (Dylan, 17/09).
+    coverEntier: z.boolean().optional(),
     medias: z.array(z.string()).default([]),
     liens: z.array(z.object({ label: z.string(), url: z.string().url() })).default([]),
     nda: z.boolean().default(false), // client reel -> captures maquettees, aucune vraie data
