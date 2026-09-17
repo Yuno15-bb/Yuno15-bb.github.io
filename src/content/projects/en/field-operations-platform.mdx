@@ -16,7 +16,7 @@ cover2: "/projects/terrain-bureau-04-09.jpg"
 
 import Figure from '../../../components/Figure.astro';
 import Flow from '../../../components/figures/Flow.astro';
-import Ecrans from '../../../components/figures/Ecrans.astro';
+import Appareils from '../../../components/figures/Appareils.astro';
 import Duo from '../../../components/figures/Duo.astro';
 import Mac from '../../../components/figures/Mac.astro';
 import Incident from '../../../components/figures/Incident.astro';
@@ -25,13 +25,15 @@ import FicheProposition from '../../../components/figures/FicheProposition.astro
 
 <Figure
   cadre={false}
-  source="Screenshots of the app in production, demo mode — branding, places and data neutralised"
+  source="Screenshots of the app in production, demo mode — branding, places and data neutralised. Official Apple bezels, at true relative scale."
 >
-  <Ecrans
-    tel="/projects/terrain-tel-04-09.jpg"
-    telAlt="The technician's phone — current job, route, upcoming visits"
-    bureau="/projects/terrain-bureau-04-09.jpg"
-    bureauAlt="The office — live crews on the map, counters for the day, month planner"
+  <Appareils
+    mac="/projects/fo-mac-17-09.webp"
+    macAlt="The Mac — live crews on the map, counters for the day, month planner"
+    ipad="/projects/fo-ipad-17-09.webp"
+    ipadAlt="The iPad — the same dashboard, at the same moment"
+    iphone="/projects/fo-iphone-17-09.webp"
+    iphoneAlt="The iPhone — the same dashboard in the technician's pocket"
   />
 </Figure>
 
@@ -115,12 +117,13 @@ decision — the rest were details.
   cadre={false}
   legende="The same product in light theme — the technician switches depending on whether he is on a roof in full sun or back in the van, and the office runs it in daylight."
 >
-  <Ecrans
-    clair
-    tel="/projects/terrain-tel-clair-04-09.jpg"
-    telAlt="The phone, light theme"
-    bureau="/projects/terrain-bureau-clair-04-09.jpg"
-    bureauAlt="The office, light theme"
+  <Appareils
+    mac="/projects/fo-mac-clair-17-09.webp"
+    macAlt="The Mac, light theme"
+    ipad="/projects/fo-ipad-clair-17-09.webp"
+    ipadAlt="The iPad, light theme"
+    iphone="/projects/fo-iphone-clair-17-09.webp"
+    iphoneAlt="The iPhone, light theme"
   />
 </Figure>
 

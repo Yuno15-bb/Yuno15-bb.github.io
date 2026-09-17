@@ -1,0 +1,54 @@
+---
+/**
+ * Appareils — le même écran du produit, au même instant, sur Mac, iPad et iPhone.
+ *
+ * REMPLACE `Ecrans.astro` (cadres dessinés en CSS) pour les projets d'apps Apple. Deux règles
+ * d'Apple, relues le 2026-09-17, commandent ce composant :
+ *   · « Use Apple-provided product bezels » — les cadres sont les images officielles d'Apple
+ *     (Apple Design Resources), posées telles quelles. Un iPhone redessiné en CSS est une
+ *     imitation au sens des App Store Marketing Guidelines.
+ *   · « Maintain the correct relative product scale whenever multiple products are shown » —
+ *     les largeurs ci-dessous sont les vraies largeurs des appareils, en millimètres :
+ *     MacBook Pro 16 = 355,7 · iPad Pro 11 (paysage) = 249,7 · iPhone 18 Pro Max = 78,0.
+ *     Écarts voulus par Dylan le 17/09 : 2 mm entre le Mac et l'iPad, 8 mm entre l'iPad et
+ *     l'iPhone ; l'iPad et l'iPhone remontés de 36 mm au-dessus du bas du Mac.
+ *
+ * Les images sont découpées au ras de l'appareil, FOND TRANSPARENT : le champ de particules du
+ * site reste visible derrière, comme l'exige la direction « Champ spatial » (aucun aplat opaque).
+ *
+ * Fabrication des images : ~/Desktop/DG CHARPENTE/presentation-apple/ (capturer.mjs +
+ * assembler.py), à partir du mode démonstration de l'app réelle, en anglais, données neutralisées.
+ */
+interface Props {
+  mac: string;
+  macAlt: string;
+  ipad: string;
+  ipadAlt: string;
+  iphone: string;
+  iphoneAlt: string;
+}
+const { mac, macAlt, ipad, ipadAlt, iphone, iphoneAlt } = Astro.props;
+---
+<div class="app">
+  <img class="app__mac" src={mac} alt={macAlt} loading="lazy" decoding="async" />
+  <img class="app__ipad" src={ipad} alt={ipadAlt} loading="lazy" decoding="async" />
+  <img class="app__iphone" src={iphone} alt={iphoneAlt} loading="lazy" decoding="async" />
+</div>
+
+<style>
+  /* Les pourcentages sortent des millimètres réels : total 355,7 + 2 + 249,7 + 8 + 78 = 693,4 mm.
+     Un pourcentage de marge se calcule sur la LARGEUR du bloc, y compris `margin-bottom` : la
+     levée de 36 mm reste donc juste à toutes les tailles d'écran. */
+  .app {
+    display: flex;
+    align-items: flex-end;
+    width: 100%;
+  }
+  .app img {
+    display: block;
+    height: auto;
+  }
+  .app__mac { width: 51.30%; }
+  .app__ipad { width: 36.01%; margin-left: 0.288%; margin-bottom: 5.19%; }
+  .app__iphone { width: 11.25%; margin-left: 1.154%; margin-bottom: 5.19%; }
+</style>

@@ -16,7 +16,7 @@ cover2: "/projects/terrain-bureau-04-09.jpg"
 
 import Figure from '../../../components/Figure.astro';
 import Flow from '../../../components/figures/Flow.astro';
-import Ecrans from '../../../components/figures/Ecrans.astro';
+import Appareils from '../../../components/figures/Appareils.astro';
 import Duo from '../../../components/figures/Duo.astro';
 import Mac from '../../../components/figures/Mac.astro';
 import Incident from '../../../components/figures/Incident.astro';
@@ -25,13 +25,15 @@ import FicheProposition from '../../../components/figures/FicheProposition.astro
 
 <Figure
   cadre={false}
-  source="Captures de l'app en production, mode démonstration — marque, lieux et données neutralisés"
+  source="Captures de l'app en production, mode démonstration — marque, lieux et données neutralisés. Cadres officiels d'Apple, à l'échelle réelle."
 >
-  <Ecrans
-    tel="/projects/terrain-tel-04-09.jpg"
-    telAlt="Le téléphone du technicien — intervention du jour, itinéraire, visites à venir"
-    bureau="/projects/terrain-bureau-04-09.jpg"
-    bureauAlt="Le bureau — équipes en direct sur la carte, compteurs du jour, planning du mois"
+  <Appareils
+    mac="/projects/fo-mac-17-09.webp"
+    macAlt="Le Mac — équipes en direct sur la carte, compteurs du jour, planning du mois"
+    ipad="/projects/fo-ipad-17-09.webp"
+    ipadAlt="L'iPad — le même tableau de bord, au même instant"
+    iphone="/projects/fo-iphone-17-09.webp"
+    iphoneAlt="L'iPhone — le même tableau de bord dans la poche du technicien"
   />
 </Figure>
 
@@ -114,12 +116,13 @@ structure — le reste n'était que du détail.
   cadre={false}
   legende="Le même produit en thème clair — le technicien bascule selon qu'il est sur un toit en plein soleil ou revenu dans la camionnette, et le bureau tourne en clair toute la journée."
 >
-  <Ecrans
-    clair
-    tel="/projects/terrain-tel-clair-04-09.jpg"
-    telAlt="Le téléphone, thème clair"
-    bureau="/projects/terrain-bureau-clair-04-09.jpg"
-    bureauAlt="Le bureau, thème clair"
+  <Appareils
+    mac="/projects/fo-mac-clair-17-09.webp"
+    macAlt="Le Mac, thème clair"
+    ipad="/projects/fo-ipad-clair-17-09.webp"
+    ipadAlt="L'iPad, thème clair"
+    iphone="/projects/fo-iphone-clair-17-09.webp"
+    iphoneAlt="L'iPhone, thème clair"
   />
 </Figure>
 
