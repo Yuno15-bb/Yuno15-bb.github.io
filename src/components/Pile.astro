@@ -113,6 +113,9 @@ const badges = items.map((nom) => ({ nom, slug: CATALOGUE[nom] ?? null }));
   .pile__logo {
     width: 1em;
     height: 1em;
+    /* ⚠ 1em = la taille du texte du badge. La bande de l'accueil, elle, double (voir
+       `.pile--bandeau .pile__logo` plus bas) : sur les pages projet le logo accompagne
+       un nom, sur l'accueil c'est LUI qu'on reconnaît en passant. */
     flex: none;
     background: currentColor;
     -webkit-mask-repeat: no-repeat;
@@ -151,6 +154,15 @@ const badges = items.map((nom) => ({ nom, slug: CATALOGUE[nom] ?? null }));
      badges et avec la largeur de l'écran.
      ============================================================ */
   .pile--bandeau { min-width: 0; }
+
+  /* LES LOGOS DE LA BANDE SONT DEUX FOIS PLUS GRANDS (Dylan, 18/09 : « tu peux agrandir
+     les icônes x2 sur l'accueil »). Ils passent de 1em à 2em, soit de 14 à 28 px de haut
+     — on rejoint les bandeaux mesurés le même jour, où le logo fait 25 px chez Prisma et
+     30 chez Sentry. Le badge grandit avec, et c'est voulu : une bande qui défile se
+     reconnaît au logo avant de se lire au mot. Les pages projet ne bougent pas, leur pile
+     est une liste qu'on lit, pas une bande qu'on aperçoit. */
+  .pile--bandeau .pile__logo { width: 2em; height: 2em; }
+  .pile--bandeau .pile__badge { padding: 0.35rem 0.8rem; gap: 0.55rem; }
 
   /* Le cadre coupe, et fond aux deux bords : sans ce dégradé, un badge est tranché net
      au ras de l'écran et la bande a l'air cassée plutôt qu'infinie. */

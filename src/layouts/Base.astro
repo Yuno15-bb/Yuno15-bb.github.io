@@ -47,17 +47,18 @@ const contactHref = `/${lang}/#contact`;
     <header class="container site-head">
       <a href={`/${lang}/`} class="wordmark" aria-label="Accueil / Home">Yuno<span class="accent">15</span></a>
       <nav class="site-nav" aria-label={lang === 'fr' ? 'Navigation principale' : 'Main navigation'}>
-        {/* Identité GitHub : photo de profil ronde + marque, un seul lien. */}
-        <a class="gh" href="https://github.com/Yuno15-bb" target="_blank" rel="me noopener noreferrer"
+        {/* LA PHOTO DE PROFIL A ÉTÉ RETIRÉE le 18/09 (Dylan : « la pastille github enlève
+            ma photo »). La pastille ne porte plus que la marque, comme celle de LinkedIn :
+            les deux destinations se ressemblent enfin, et la barre y gagne 38 px. */}
+        <a class="gh gh--seul" href="https://github.com/Yuno15-bb" target="_blank" rel="me noopener noreferrer"
            aria-label="GitHub — Yuno15-bb" title="GitHub — @Yuno15-bb">
-          <img class="gh__pic" src="/avatar.jpg" width="30" height="30" alt="" loading="lazy" decoding="async" />
           <svg class="gh__mark" viewBox="0 0 16 16" width="17" height="17" aria-hidden="true" fill="currentColor">
             <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
           </svg>
         </a>
         {/* LinkedIn a sa propre pastille, pas un troisieme glyphe dans celle de GitHub : deux
             destinations differentes ne partagent pas un lien. Le glyphe est celui de LinkedIn. */}
-        <a class="gh gh--seul" href="https://www.linkedin.com/in/elliass-peellaert" target="_blank" rel="me noopener noreferrer"
+        <a class="gh gh--seul gh--voisine" href="https://www.linkedin.com/in/elliass-peellaert" target="_blank" rel="me noopener noreferrer"
            aria-label="LinkedIn — Elliass Peellaert" title="LinkedIn — Elliass Peellaert">
           <svg class="gh__mark" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true" fill="currentColor">
             <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05a3.74 3.74 0 0 1 3.37-1.85c3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13ZM7.12 20.45H3.55V9h3.57v11.45ZM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0Z"/>
@@ -108,6 +109,18 @@ const contactHref = `/${lang}/#contact`;
 
       .lang-switch__code { display: none; }
 
+      /* GITHUB ET LINKEDIN SE TIENNENT ENSEMBLE (Dylan, 18/09 : « rapproche-la de la
+         pastille linkedin »). Ce sont deux portes vers la même personne : l'écart entre
+         elles doit être plus court que celui qui les sépare du reste de la barre. 6 px
+         contre les 24 de la nav — elles se lisent comme une paire, pas comme deux liens
+         posés là. La marge NÉGATIVE annule l'écart de la nav au lieu de le contredire :
+         `gap` ne se règle pas élément par élément. */
+      .gh--voisine { margin-left: calc(6px - var(--space-4)); }
+      /* ⚠ CETTE RÈGLE DOIT RESTER AU-DESSUS DU BLOC TÉLÉPHONE. Écrite en dessous, elle
+         écrasait son propre correctif : à spécificité égale, la dernière déclarée gagne,
+         media query ou pas. Mesuré le 18/09 — les deux pastilles se CHEVAUCHAIENT de
+         16 px sur téléphone alors que la règle d'écart y était bien présente. */
+
       /* ============================================================
          L'EN-TETE DOIT TENIR SUR LA LARGEUR DU TELEPHONE — mesure du 19/09.
          Le 04/09 on avait choisi de tout garder SUR UNE LIGNE : passer a la
@@ -146,6 +159,9 @@ const contactHref = `/${lang}/#contact`;
            la place existe maintenant. */
         .gh { flex: none; padding-right: 8px; gap: 6px; }
         .gh--seul { padding-inline: 8px; }
+        /* L'écart de la nav tombe à 10 px ici : la marge négative se recalcule dessus,
+           sinon les deux pastilles se chevaucheraient. */
+        .gh--voisine { margin-left: -6px; }
       }
 
       /* Photo de profil ronde liée au logo GitHub — vitre légère assortie au reste. */
@@ -165,10 +181,6 @@ const contactHref = `/${lang}/#contact`;
       .gh:hover, .gh:focus-visible {
         border-color: color-mix(in srgb, var(--c-ember) 55%, transparent);
         transform: translateY(-1px);
-      }
-      .gh__pic {
-        width: 30px; height: 30px; border-radius: 50%; display: block;
-        object-fit: cover; border: 1px solid rgba(255,255,255,0.2);
       }
       /* Sans photo, la pastille n'a pas besoin du creux de gauche qui logeait l'avatar. */
       .gh--seul { padding: 7px 10px; }
