@@ -15,32 +15,18 @@ import { mkdirSync, writeFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+/* Le catalogue est une DONNÉE : il vit dans src/data/logos.ts, que le site importe sans
+   effet de bord. Ce script-ci est l'outil qui va chercher les fichiers — on ne le charge
+   jamais depuis une page. */
+import { LOGOS } from '../src/data/logos.ts';
+
 const ICI = dirname(fileURLToPath(import.meta.url));
 const SORTIE = join(ICI, '..', 'public', 'logos');
 const CDN = 'https://cdn.jsdelivr.net/npm/simple-icons@latest/icons';
 
 // Le nom tel qu'il est écrit dans les .mdx → le nom du logo chez Simple Icons.
 // `null` = pas de marque, badge en texte seul.
-export const LOGOS = {
-  'Python': 'python',
-  'Bash': 'gnubash',
-  'Electron': 'electron',
-  'WebGL': 'webgl',
-  'GitHub Actions': 'githubactions',
-  'Apache 2.0': 'apache',
-  'Supabase': 'supabase',
-  'PostgreSQL': 'postgresql',
-  'FastAPI': 'fastapi',
-  'JavaScript': 'javascript',
-  'Gmail': 'gmail',
-  'PWA': 'pwa',
-  'Claude': 'claude',
-  'Microsoft Graph': 'microsoft',
-  'Service Worker': null,
-  'PDF': null,
-  'RLS': null,
-  'GPS': null,
-};
+
 
 mkdirSync(SORTIE, { recursive: true });
 let pris = 0, deja = 0;

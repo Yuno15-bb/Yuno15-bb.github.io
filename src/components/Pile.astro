@@ -20,7 +20,7 @@
  * Le SVG est posé en <img> et recoloré par masque CSS : le fichier reste un seul fichier, et le
  * badge suit la couleur du texte sans qu'on duplique un logo par état.
  */
-import { LOGOS } from '../../scripts/logos-de-la-pile.mjs';
+import { LOGOS } from '../data/logos.ts';
 // Le script est en JavaScript : TypeScript en deduit un objet aux clefs figees, et refuse
 // qu'on l'interroge avec un nom venu du contenu. On declare ce qu'il est vraiment — un
 // dictionnaire nom → logo, ou rien. (`astro check` l'a refuse le 18/09 ; `astro build`, non.)
@@ -144,8 +144,8 @@ const badges = items.map((nom) => ({ nom, slug: CATALOGUE[nom] ?? null }));
      logos de 30 px posés sur une ligne fixe. Les trois sont en monochrome — c'est ce
      qui fait lire la bande comme un seul objet au lieu d'un arc-en-ciel ; nos badges
      le sont déjà, le logo suit la couleur du texte par masque.
-     On prend 100 px/s, sous les deux bandeaux observés : les nôtres portent un NOM à
-     côté du logo, et un mot qui défile se lit moins vite qu'un sigle.
+     On prend 55 px/s : les nôtres portent un NOM à côté du logo, et un mot qui défile se
+     lit moins vite qu'un sigle (posé à 100, ramené à 55 le 18/09 sur demande de Dylan).
      La durée n'est pas écrite ici : elle est calculée au chargement depuis la largeur
      réelle de la piste (script en bas), sinon la vitesse changerait avec le nombre de
      badges et avec la largeur de l'écran.
@@ -195,11 +195,14 @@ const badges = items.map((nom) => ({ nom, slug: CATALOGUE[nom] ?? null }));
   /* LA VITESSE EST CONSTANTE, PAS LA DURÉE. Une durée écrite en dur ferait défiler une
      pile de six badges au ralenti et une pile de dix-huit en trombe, et changerait de
      vitesse à chaque largeur d'écran. On mesure la piste et on en déduit le temps :
-     100 px par seconde, la valeur prise sous les bandeaux de Sentry (143) et de
-     Prisma (123), mesurés le 19/09.
+     55 px par seconde. Première valeur posée à 100, sous les bandeaux de Sentry (143) et
+     de Prisma (123) mesurés le 18/09 — Dylan, le même soir : « ralentis le défilement ».
+     Nos badges ne sont pas des sigles : ils portent un NOM à lire, et la bande n'est pas
+     une bannière de clients qu'on parcourt du coin de l'œil, c'est une liste qu'on lit.
+     À 55, un badge reste dans le champ deux fois plus longtemps.
      `ResizeObserver` refait le calcul quand la largeur change — rotation du téléphone,
      fenêtre redimensionnée, police qui arrive après coup. */
-  const VITESSE = 100; // px/s
+  const VITESSE = 55; // px/s
 
   const regler = (piste: HTMLElement) => {
     const moitie = piste.scrollWidth / 2;

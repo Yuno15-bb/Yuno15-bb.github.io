@@ -77,6 +77,19 @@ for (const [nom, voie] of VOIES) {
   await page.goto(BASE + voie, { waitUntil: 'networkidle' });
   await page.waitForTimeout(1200);
 
+  /* ⚠ ON OUVRE TOUT AVANT DE MESURER. Depuis le 18/09 les planches se replient sur
+     téléphone : leur contenu est alors hors flux, donc invisible pour ce contrôle. Un
+     garde-fou qui ne voit que le premier pli ne protège que le premier pli — c'est
+     exactement la faute déjà payée avec la moyenne (cf. Brain :
+     un-garde-fou-juge-sur-la-moyenne-ne-voit-pas-le-passage-etroit). On déplie, on
+     mesure la page entière, puis on juge. */
+  const replis = await page.evaluate(() => {
+    const d = document.querySelectorAll('details');
+    d.forEach((x) => { x.open = true; });
+    return d.length;
+  });
+  if (replis) await page.waitForTimeout(400);
+
   const m = await page.evaluate(() => {
     const V = document.documentElement.clientWidth;
     const tete = document.querySelector('.site-head');
@@ -167,7 +180,7 @@ for (const [nom, voie] of VOIES) {
   console.log(
     `${nom.padEnd(14)} page ${m.pageLargeur} px · en-tête ${m.teteBesoin}/${m.teteDispo} · ` +
     `${m.signesParLigne ?? '—'} signes/ligne au plus étroit dans ${m.signesOu ?? '—'} ` +
-    `(moyenne ${m.signesMoyenne ?? '—'})`);
+    `(moyenne ${m.signesMoyenne ?? '—'}) · ${replis} pli(s) dépliés`);
 }
 
 await navigateur.close();

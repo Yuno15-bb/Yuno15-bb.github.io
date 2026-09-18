@@ -3,6 +3,10 @@ import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import Pile from '../../components/Pile.astro';
+import { COMPETENCES, LOGOS } from '../../data/logos.ts';
+// Le script est en JavaScript : on déclare ce que LOGOS est vraiment, un dictionnaire
+// nom → logo ou rien. (Même raison que dans Pile.astro — `astro check` le refuse sinon.)
+const CATALOGUE_LOGOS = LOGOS as Record<string, string | null>;
 import { languages, ui, type Lang } from '../../i18n/ui';
 
 export async function getStaticPaths() {
@@ -31,12 +35,16 @@ const filters = [
 // public revient, le filtre revient tout seul.
 const publics = new Set(projects.flatMap((p) => p.data.audience));
 const filtreUtile = publics.size > 1;
-/* LA BANDE DE COMPÉTENCES SE DÉDUIT DES PROJETS, elle ne se recopie pas.
-   Écrite à la main, elle aurait vieilli au premier projet ajouté et on aurait affiché
-   une compétence que plus aucune étude ne prouve. Ici c'est l'union des piles réelles,
-   dans l'ordre où les projets se présentent — donc toujours vraie par construction.
-   Une technologie qui disparaît des projets disparaît de l'accueil le même jour. */
-const competences = [...new Set(projects.flatMap((p) => p.data.stack))];
+/* LA BANDE DE COMPÉTENCES VIENT DU CV, ET SEULEMENT DE CE QUI PORTE UN VRAI LOGO.
+   (Dylan, 18/09 : « je doute que les skills citent absolument tout les skills cités dans
+   mes profils » et « tout ce qui n'a pas d'icône, enlève-le ».)
+   Premier jet : l'union des piles des deux études de cas. C'était vrai mais partiel — ni
+   React, ni TypeScript, ni Playwright, ni pytest, ni Git, ni Railway, ni Sentry n'y
+   étaient, alors qu'ils sont tous dans le CV.
+   Le filtre sur `LOGOS[nom]` rend la seconde consigne MÉCANIQUE : une compétence sans
+   marque ne peut pas entrer, même ajoutée par distraction dans la liste. La liste et le
+   catalogue vivent côte à côte dans scripts/logos-de-la-pile.mjs. */
+const competences = COMPETENCES.filter((nom) => CATALOGUE_LOGOS[nom]);
 
 const email = 'sashapeellaertjuan@outlook.com';
 const mail = `mailto:${email}`;
@@ -70,7 +78,11 @@ const mail = `mailto:${email}`;
         <p class="hero__name anim-in">Elliass Peellaert</p>
         <p class="hero__eyebrow anim-in">{t['site.role']}</p>
         <h1 class="anim-in" id="hero-title">{t['home.intro']}</h1>
-        <p class="hero__lead anim-in">{t['home.lead']}</p>
+        {/* LE SOUS-TITRE A ÉTÉ SUPPRIMÉ le 18/09, sur demande de Dylan (« two products
+            running for a real client… , supprime »). Il annonçait deux produits en
+            production chez un vrai client depuis mai 2026 ; les deux études de cas le
+            disent déjà, chiffres à l'appui, et le titre n'a pas besoin qu'on le double.
+            Ne pas le remettre sans lui. */}
         <a class="btn hero__cta anim-in" href={mail}>{t['cta.contact']} →</a>
       </div>
     </div>
@@ -210,14 +222,6 @@ const mail = `mailto:${email}`;
       margin-top: var(--space-3);
       color: var(--c-fg);
     }
-    .hero__lead {
-      color: var(--c-muted);
-      font-size: var(--fs-200);
-      line-height: 1.65;
-      margin-top: var(--space-3);
-      max-width: 46ch;
-      margin-inline: auto;
-    }
     .hero__cta {
       margin-top: var(--space-6);
       background: var(--c-ember); color: var(--c-accent-ink); border-color: var(--c-ember);
@@ -315,15 +319,14 @@ const mail = `mailto:${email}`;
       const wipe = q('.intro-wipe');
       const eyebrow = q('.hero__eyebrow');
       const title = q('#hero-title');
-      const lead = q('.hero__lead');
       const cta = q('.hero__cta');
       const blocks = gsap.utils.toArray<HTMLElement>('.hero__block');
 
       gsap.set(cta, { opacity: 0, y: 24 });
       gsap.set(blocks, { scale: 0, transformOrigin: 'center' });
 
-      // Révélation CARACTÈRE PAR CARACTÈRE (machine à écrire) sur l'eyebrow,
-      // le titre et le lead. SplitText est reverté à la fin : le texte
+      // Révélation CARACTÈRE PAR CARACTÈRE (machine à écrire) sur l'eyebrow
+      // et le titre. SplitText est reverté à la fin : le texte
       // redevient du texte normal (sélectionnable, lisible aux lecteurs d'écran).
       const splits: SplitText[] = [];
       const charsOf = (el: HTMLElement | null): Element[] => {
@@ -343,17 +346,15 @@ const mail = `mailto:${email}`;
         }
       };
 
-      let cEyebrow: Element[] = [], cTitle: Element[] = [], cLead: Element[] = [];
+      let cEyebrow: Element[] = [], cTitle: Element[] = [];
       try {
         gsap.registerPlugin(SplitText);
         cEyebrow = charsOf(eyebrow);
         cTitle = charsOf(title);
-        cLead = charsOf(lead);
       } catch {
-        gsap.set([eyebrow, title, lead], { opacity: 0 });
+        gsap.set([eyebrow, title], { opacity: 0 });
         cEyebrow = eyebrow ? [eyebrow] : [];
         cTitle = title ? [title] : [];
-        cLead = lead ? [lead] : [];
       }
 
       root.setAttribute('data-hero', 'playing');
@@ -370,7 +371,6 @@ const mail = `mailto:${email}`;
         // chaque caractère apparaît l'un après l'autre — cadence posée, lisible
         .to(cEyebrow, { opacity: 1, duration: 0.01, stagger: 0.035 }, '-=0.2')
         .to(cTitle, { opacity: 1, duration: 0.01, stagger: 0.024 }, '-=0.05')
-        .to(cLead, { opacity: 1, duration: 0.01, stagger: 0.011 }, '-=0.15')
         .to(cta, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' }, '-=0.1')
         .to(blocks, { scale: 1, duration: 0.4, stagger: 0.06, ease: 'back.out(2)' }, '-=0.4');
     }

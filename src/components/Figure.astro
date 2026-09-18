@@ -25,8 +25,24 @@ interface Props {
 const { titre, legende, source, cadre = true } = Astro.props;
 ---
 <figure class="fig">
-  {titre && <p class="fig__kicker eyebrow">{titre}</p>}
-  <div class:list={['fig__plate', !cadre && 'fig__plate--nu']}><slot /></div>
+  {titre ? (
+    /* LA PLANCHE SE REPLIE SUR TÉLÉPHONE — voir le bloc de style plus bas.
+       `<details open>` : elle est OUVERTE partout, y compris sans JavaScript, y compris
+       pour un moteur de recherche. Seul un script, et seulement sous 720 px, lui retire
+       son `open`. Le repli est donc un bonus d'écran étroit, jamais une condition pour
+       accéder au contenu.
+       On ne replie que ce qui a un SURTITRE : sans titre, une planche fermée serait une
+       boîte muette qu'on n'ouvre pas parce qu'on ignore ce qu'elle contient. */
+    <details class="fig__repli" open>
+      <summary class="fig__resume">
+        <span class="fig__kicker eyebrow">{titre}</span>
+        <span class="fig__chevron" aria-hidden="true"></span>
+      </summary>
+      <div class:list={['fig__plate', !cadre && 'fig__plate--nu']}><slot /></div>
+    </details>
+  ) : (
+    <div class:list={['fig__plate', !cadre && 'fig__plate--nu']}><slot /></div>
+  )}
   {(legende || source) && (
     <figcaption class="fig__cap">
       {legende}
@@ -89,4 +105,74 @@ const { titre, legende, source, cadre = true } = Astro.props;
   @media (max-width: 480px) {
     .fig__plate { padding-inline: 0; border-inline: 0; }
   }
+
+  /* ============================================================
+     LE REPLI DES PLANCHES SUR TÉLÉPHONE — Dylan, 18/09 : « dès que tu rentres dans
+     un projet c'est vite illisible et trop volumineux ».
+
+     CE QUE LA MESURE DISAIT. Field Ops, 393 px : 19 486 px de page, soit 22,9 écrans.
+     Les onze planches en prenaient 12 856, c'est-à-dire 66 % de la page — et ce ne
+     sont PAS des images : dix sur onze sont du texte, des schémas et des récits de
+     panne de 100 à 280 mots. Sur le bureau ils tiennent en colonnes ; sur téléphone
+     chaque colonne devient une tour d'un à deux écrans. Le texte courant, lui, ne
+     pesait que 3 558 px, 18 % de la page. Ce n'est donc pas l'écriture qui est trop
+     longue, c'est la mise en page qui se déplie à la verticale.
+
+     SUR LE BUREAU RIEN NE CHANGE. Le triangle du navigateur est retiré, le chevron
+     est caché, et `<summary>` reprend exactement l'allure du surtitre d'avant. Une
+     planche ouverte est indiscernable de ce qu'elle était.
+     ============================================================ */
+  .fig__repli { display: contents; }
+  .fig__resume { display: contents; cursor: default; }
+  .fig__resume::-webkit-details-marker { display: none; }
+  .fig__resume::marker { content: ''; }
+  .fig__chevron { display: none; }
+
+  @media (max-width: 720px) {
+    /* Le résumé redevient une vraie ligne cliquable, avec le chevron à droite.
+       44 px de haut : c'est la cible tactile minimale d'Apple comme de Google. */
+    .fig__repli { display: block; }
+    .fig__resume {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-2);
+      min-height: 44px;
+      cursor: pointer;
+      list-style: none;
+      border-block: 1px solid var(--c-line);
+      padding-block: var(--space-1);
+    }
+    .fig__resume .fig__kicker { margin: 0; }
+    /* Le chevron est dessiné, pas écrit : un caractère « ▾ » change de dessin d'une
+       police à l'autre et ne tourne pas proprement. */
+    .fig__chevron {
+      display: block;
+      flex: none;
+      width: 9px; height: 9px;
+      border-right: 1.5px solid var(--c-ember);
+      border-bottom: 1.5px solid var(--c-ember);
+      transform: translateY(-2px) rotate(45deg);
+      transition: transform var(--dur-micro) var(--ease-out);
+    }
+    .fig__repli[open] .fig__chevron { transform: translateY(2px) rotate(225deg); }
+    /* Fermée, la planche ne laisse pas le filet du bas du résumé coller au bloc suivant. */
+    .fig__repli:not([open]) { margin-bottom: var(--space-2); }
+    .fig__repli[open] .fig__plate { margin-top: var(--space-3); }
+  }
 </style>
+
+<script>
+  /* LE REPLI EST UN GESTE D'ÉCRAN ÉTROIT, PAS UNE RÈGLE DU DOCUMENT.
+     Le HTML sort `open` : sans JavaScript, sans CSS, pour un moteur de recherche ou un
+     lecteur d'écran, la planche est ouverte et le contenu est là. C'est seulement ici,
+     sous 720 px, qu'on la referme — et une seule fois, au chargement. Rouvrir en tournant
+     le téléphone en paysage effacerait ce que le lecteur vient d'ouvrir à la main.
+     La première planche titrée de la page reste OUVERTE : arriver sur une suite de boîtes
+     closes ne dit pas ce qu'on peut en attendre ; une d'ouverte montre la nature du
+     contenu, les suivantes se replient. */
+  if (matchMedia('(max-width: 720px)').matches) {
+    const plis = document.querySelectorAll<HTMLDetailsElement>('.fig__repli');
+    plis.forEach((d, i) => { if (i > 0) d.open = false; });
+  }
+</script>
