@@ -17,6 +17,7 @@ const t = ui[lang];
 const { Content } = await render(entry);
 const d = entry.data;
 const slug = entry.id.split('/')[1];
+import Pile from '../../../components/Pile.astro';
 ---
 <Base title={`${d.titre} — Yuno15`} description={d.pitch} lang={lang} altPath={`/projects/${slug}`}>
   <article class="project" data-slug={slug}>
@@ -33,24 +34,23 @@ const slug = entry.id.split('/')[1];
 
     {/* Le contexte d'abord : faits + récit, en composition éditoriale asymétrique. */}
     <div class="container">
-      {/* LA STACK N'EST PLUS EN TÊTE (2026-09-07). Elle occupait un tiers du premier
-          écran, juste sous le titre : le premier fait retenu d'une étude de cas était
-          donc une liste d'outils. Or ce qu'une étude de cas doit prouver, c'est
-          POURQUOI l'architecture est celle-là — les contraintes, pas le catalogue.
-          Elle reste accessible, en bas, après la démonstration : qui la cherche la
-          trouve, personne ne la lit avant l'histoire. */}
+      {/* LA STACK REMONTE SOUS LE TITRE (2026-09-18), en badges avec leurs vrais logos.
+          Elle en était descendue le 2026-09-07 parce qu'EN TEXTE elle occupait un tiers
+          du premier écran : le premier fait retenu d'une étude de cas était une liste
+          d'outils au lieu d'une contrainte. Le reproche visait la place, pas la
+          présence. En badges elle tient dans la colonne restée vide entre « rôle » et
+          « résultat », et se lit d'un coup d'œil. Dylan, 18/09 : « je les veux sous le
+          titre toujours, et pour tous les projets ». */}
       <dl class="grid project__facts">
-        <div style="grid-column: span 6;"><dt class="eyebrow">{t['project.role']}</dt><dd>{d.role}</dd></div>
-        <div style="grid-column: span 6;"><dt class="eyebrow">{t['project.result']}</dt><dd>{d.resultat}</dd></div>
+        <div style="grid-column: span 4;"><dt class="eyebrow">{t['project.role']}</dt><dd>{d.role}</dd></div>
+        <div style="grid-column: span 4;" class="project__pile"><Pile items={d.stack} titre={t['project.stack']} /></div>
+        <div style="grid-column: span 4;"><dt class="eyebrow">{t['project.result']}</dt><dd>{d.resultat}</dd></div>
       </dl>
 
       <div class="project__body">
         <Content />
       </div>
 
-      <dl class="grid project__facts project__facts--pied">
-        <div style="grid-column: span 12;"><dt class="eyebrow">{t['project.stack']}</dt><dd>{d.stack.join(', ')}</dd></div>
-      </dl>
     </div>
 
   </article>

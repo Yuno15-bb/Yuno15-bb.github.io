@@ -23,6 +23,17 @@ import Appareils from '../../../components/figures/Appareils.astro';
 
 <Figure
   cadre={false}
+  legende="The same trunk map at the same instant on both screens: 701 notes, 2,881 links, 21 regions. At the bottom, the power-on self-test and the column of code being written right now."
+  source="Captures of a demonstration trunk at full density, names and paths neutralised before the photo. Official Apple bezels, at true relative scale."
+>
+  <Appareils
+    src="/projects/gmtr-duo-18-09.webp"
+    alt="The trunk map on MacBook Pro and iPad"
+  />
+</Figure>
+
+<Figure
+  cadre={false}
   legende="Every dot is a note, and distance means resemblance. Click one: it opens with its region, its summary and its links. Ask for the filing: the map reorganises into a ring. Enter a family: the map closes in on it."
   source="Filmed on a demonstration trunk at true density — 701 notes, 2,881 links, every name neutralised before filming"
 >
@@ -126,16 +137,5 @@ linked, and resurfaces on its own in the next session.
 - **Every release is replayed** by continuous integration: full install, uninstall, and
   every past migration run **twice** — with the requirement that it has eaten no note.
 - **46 releases published**, under the Apache 2.0 licence, on a public repository.
-
-<Figure
-  cadre={false}
-  legende="The same trunk map at the same instant on both screens: 701 notes, 2,881 links, 21 regions. At the bottom, the power-on self-test and the column of code being written right now."
-  source="Captures of a demonstration trunk at full density, names and paths neutralised before the photo. Official Apple bezels, at true relative scale."
->
-  <Appareils
-    src="/projects/gmtr-duo-18-09.webp"
-    alt="The trunk map on MacBook Pro and iPad"
-  />
-</Figure>
 
 Source code: [github.com/Yuno15-bb/c-brain](https://github.com/Yuno15-bb/c-brain)

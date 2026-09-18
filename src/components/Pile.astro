@@ -1,0 +1,105 @@
+---
+/**
+ * Pile — les technologies d'un projet, en badges avec leur VRAI logo.
+ *
+ * Dylan, 2026-09-18 : « à la place de [la liste de texte] je veux la même chose mais avec leurs
+ * vrais logos qui sont posés comme des badges, et je les veux sous le titre, pour tous les projets ».
+ *
+ * CE QUE ÇA ROUVRE, ET POURQUOI C'EST TENABLE. Le 2026-09-07, la pile avait été DESCENDUE en bas
+ * de page : en texte, elle prenait un tiers du premier écran, et le premier fait retenu d'une
+ * étude de cas était une liste d'outils au lieu d'une contrainte. Le reproche visait la PLACE
+ * qu'elle prenait, pas le fait d'être là. En badges, la même pile tient sur une ou deux lignes
+ * dans la colonne laissée libre entre « rôle » et « résultat » — elle se lit d'un coup d'œil
+ * au lieu de se lire mot à mot.
+ *
+ * LES LOGOS SONT LES VRAIS, ET SEULEMENT LES VRAIS. Ils viennent de Simple Icons (CC0), copiés
+ * dans public/logos/ par scripts/logos-de-la-pile.mjs. Une technologie qui n'est pas une marque
+ * — « Service Worker », « RLS », « GPS », « PDF » — sort en texte seul : on ne dessine pas un
+ * faux logo pour boucher un trou.
+ *
+ * Le SVG est posé en <img> et recoloré par masque CSS : le fichier reste un seul fichier, et le
+ * badge suit la couleur du texte sans qu'on duplique un logo par état.
+ */
+import { LOGOS } from '../../scripts/logos-de-la-pile.mjs';
+
+interface Props {
+  items: string[];
+  titre: string;
+  /** true : le bloc défile tout seul horizontalement quand il déborde (petits écrans). */
+  defilant?: boolean;
+}
+const { items, titre, defilant = true } = Astro.props;
+const badges = items.map((nom) => ({ nom, slug: LOGOS[nom] ?? null }));
+---
+
+<div class:list={['pile', { 'pile--defilante': defilant }]}>
+  <p class="eyebrow pile__titre">{titre}</p>
+  <ul class="pile__liste" role="list">
+    {badges.map(({ nom, slug }) => (
+      <li class:list={['pile__badge', { 'pile__badge--nu': !slug }]}>
+        {slug && <span class="pile__logo" style={`-webkit-mask-image:url(/logos/${slug}.svg);mask-image:url(/logos/${slug}.svg)`} aria-hidden="true" />}
+        <span>{nom}</span>
+      </li>
+    ))}
+  </ul>
+</div>
+
+<style>
+  .pile { min-width: 0; }
+  .pile__titre { margin: 0 0 0.6rem; }
+
+  .pile__liste {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .pile__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid var(--c-line);
+    border-radius: 999px;
+    font-size: var(--fs-100);
+    line-height: 1.2;
+    color: var(--c-text);
+    white-space: nowrap;
+    /* Le verre ne va que sur la navigation et les commandes, jamais sur le contenu : ici, un
+       simple voile sombre, pas de flou. */
+    background: rgb(255 255 255 / 0.03);
+  }
+
+  /* Sans logo : le badge se distingue, on ne fait pas croire qu'il en manque un. */
+  .pile__badge--nu { color: var(--c-muted); border-style: dashed; }
+
+  .pile__logo {
+    width: 1em;
+    height: 1em;
+    flex: none;
+    background: currentColor;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+  }
+
+  /* Quand la place manque, la pile défile à l'horizontale au lieu de pousser la page vers le bas.
+     Elle ne se coupe jamais en plein badge : `scroll-snap` cale chaque badge sur le bord. */
+  @media (max-width: 760px) {
+    .pile--defilante .pile__liste {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scroll-snap-type: x proximity;
+      padding-bottom: 0.4rem;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .pile--defilante .pile__liste::-webkit-scrollbar { display: none; }
+    .pile--defilante .pile__badge { scroll-snap-align: start; }
+  }
+</style>
