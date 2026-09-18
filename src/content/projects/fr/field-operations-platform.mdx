@@ -10,7 +10,7 @@ resultat: "69 tests d'invariants, chacun né d'un bug de production. Le bureau v
 nda: true
 featured: true
 ordre: 1
-cover: "/projects/fo-trio-17-09.webp"
+cover: "/projects/fo-duo-18-09.webp"
 coverEntier: true
 ---
 
@@ -25,11 +25,12 @@ import FicheProposition from '../../../components/figures/FicheProposition.astro
 
 <Figure
   cadre={false}
+  legende="Le même tableau de bord au même instant, et les deux thèmes d'un seul coup d'œil : le bureau tourne en sombre, le technicien bascule en clair quand il est sur un toit en plein soleil."
   source="Captures de l'app en production, mode démonstration — marque, lieux et données neutralisés. Cadres officiels d'Apple, à l'échelle réelle."
 >
   <Appareils
-    src="/projects/fo-trio-17-09.webp"
-    alt="Le même tableau de bord au même instant sur MacBook Pro, iPad et iPhone"
+    src="/projects/fo-duo-18-09.webp"
+    alt="Le même tableau de bord au même instant sur MacBook Pro en thème sombre et iPad en thème clair"
   />
 </Figure>
 
@@ -106,16 +107,6 @@ structure — le reste n'était que du détail.
     { t: 'Le réseau revient', d: "La file se rejoue dans l'ordre. Avant chaque écriture, elle relit la ligne du serveur et fusionne champ par champ." },
     { t: 'Le bureau', d: "Carte en direct, compteurs du jour, planning du mois — et le rapport client en PDF, en un geste." },
   ]} />
-</Figure>
-
-<Figure
-  cadre={false}
-  legende="Le même produit en thème clair — le technicien bascule selon qu'il est sur un toit en plein soleil ou revenu dans la camionnette, et le bureau tourne en clair toute la journée."
->
-  <Appareils
-    src="/projects/fo-trio-clair-17-09.webp"
-    alt="Le même tableau de bord au même instant sur MacBook Pro, iPad et iPhone, thème clair"
-  />
 </Figure>
 
 À côté, un agent surveille deux boîtes mail : devis signés, factures et réclamations étaient

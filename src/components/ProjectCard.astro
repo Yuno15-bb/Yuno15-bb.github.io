@@ -117,7 +117,12 @@ const tiltAttrs = tilt > 0 ? { 'data-tilt': String(tilt), 'data-tilt-reverse': '
          diptyque, et les titres de la rangée ne commencent pas à la même ligne —
          constaté par Dylan sur l'accueil le 2026-09-06. Le rapport est celui de la
          couverture seule, la plus grande des deux mises en page. */
-      aspect-ratio: 1100 / 464;
+      /* Reglé à 1100/620 le 18/09. Dylan, devant la vignette de C Brain : « centre, agrandi ».
+         Un MacBook seul est un rectangle de 1,64 pour 1 ; dans une fenetre de 2,37 pour 1 il est
+         bride par la HAUTEUR et ne prend que 61 % de la largeur — c'est ce qui le faisait paraitre
+         petit, pas l'image. A 1,77 pour 1 il prend la largeur entiere. Toutes les cartes changent
+         ensemble : c'est la condition posee le 06/09, les titres restent sur la meme ligne. */
+      aspect-ratio: 1100 / 620;
       /* Les maquettes plus courtes que la boîte se posent au MILIEU, pas en haut :
          collées en haut elles laissaient un trou sous elles. */
       align-items: center;

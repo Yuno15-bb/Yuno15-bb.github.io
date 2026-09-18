@@ -10,7 +10,7 @@ resultat: "69 invariant tests, each one born from a production bug. The office s
 nda: true
 featured: true
 ordre: 1
-cover: "/projects/fo-trio-17-09.webp"
+cover: "/projects/fo-duo-18-09.webp"
 coverEntier: true
 ---
 
@@ -25,11 +25,12 @@ import FicheProposition from '../../../components/figures/FicheProposition.astro
 
 <Figure
   cadre={false}
+  legende="The same dashboard at the same moment, and both themes in one glance: the office runs it dark, the technician switches to light when he is on a roof in full sun."
   source="Screenshots of the app in production, demo mode — branding, places and data neutralised. Official Apple bezels, at true relative scale."
 >
   <Appareils
-    src="/projects/fo-trio-17-09.webp"
-    alt="The same dashboard at the same moment on MacBook Pro, iPad and iPhone"
+    src="/projects/fo-duo-18-09.webp"
+    alt="The same dashboard at the same moment on MacBook Pro in dark theme and iPad in light theme"
   />
 </Figure>
 
@@ -107,16 +108,6 @@ decision — the rest were details.
     { t: 'The signal returns', d: 'The queue replays in order. Before each write it re-reads the server row and merges field by field.' },
     { t: 'The office', d: 'Live map, counters for the day, month planner — and the client report as a PDF, in one gesture.' },
   ]} />
-</Figure>
-
-<Figure
-  cadre={false}
-  legende="The same product in light theme — the technician switches depending on whether he is on a roof in full sun or back in the van, and the office runs it in daylight."
->
-  <Appareils
-    src="/projects/fo-trio-clair-17-09.webp"
-    alt="The same dashboard at the same moment on MacBook Pro, iPad and iPhone, light theme"
-  />
 </Figure>
 
 Alongside it, an agent watches two mailboxes: signed quotes, invoices and complaints used
