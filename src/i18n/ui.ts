@@ -9,11 +9,11 @@ export const defaultLang: Lang = 'en';
 
 export const ui = {
   fr: {
-    'site.role': 'Ingénieur IA & produit',
+    'site.role': 'AI Engineer · développeur full-stack',
     'nav.work': 'Travaux',
     'nav.contact': 'Contact',
     'skip': 'Aller au contenu',
-    'home.intro': 'Je construis des systèmes d’IA — et l’instrument qui prouve qu’ils tiennent.',
+    'home.intro': 'Développeur et concepteur produit. Du premier écran jusqu’à la production.',
     'home.lead': 'Deux produits en production chez un vrai client depuis mai 2026. Derrière chacun, un banc de mesure qui a le droit de me donner tort.',
     'home.work.title': 'Projets',
     'home.filter.label': 'Filtrer par domaine',
@@ -43,11 +43,11 @@ export const ui = {
     'story.s2.b': 'Un tableau de bord unique : les équipes en direct sur la carte, les compteurs, les conclusions urgentes, les interventions récentes. Ce qui se perdait entre le chantier et le bureau devient une source de vérité.',
   },
   en: {
-    'site.role': 'AI & product engineer',
+    'site.role': 'AI Engineer · Full-Stack Developer',
     'nav.work': 'Work',
     'nav.contact': 'Contact',
     'skip': 'Skip to content',
-    'home.intro': 'I build AI systems — and the instrument that proves they hold.',
+    'home.intro': 'Developer and product designer. From the first screen to production.',
     'home.lead': 'Two products running for a real client since May 2026. Behind each one, a measurement bench allowed to prove me wrong.',
     'home.work.title': 'Projects',
     'home.filter.label': 'Filter by field',
