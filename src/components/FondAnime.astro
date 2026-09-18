@@ -35,8 +35,10 @@ interface Props {
   /** Force de la matière, 0 à 1 : elle assombrit les couleurs du shader plutôt que
       de poser un voile par-dessus. */
   intensite?: number;
+  /** La même force, sur un écran étroit. Voir le bloc « LE TÉLÉPHONE » ci-dessous. */
+  intensiteEtroit?: number;
 }
-const { intensite = 0.72 } = Astro.props;
+const { intensite = 0.72, intensiteEtroit = 0.42 } = Astro.props;
 
 /** Assombrit une couleur au prorata — l'intensité entre DANS le shader. */
 const teinte = (hex: string, k: number) => {
@@ -44,16 +46,34 @@ const teinte = (hex: string, k: number) => {
   const c = [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => Math.round(v * k));
   return '#' + c.map((v) => v.toString(16).padStart(2, '0')).join('');
 };
-const couleurs = {
+const palette = (k: number) => ({
   color1: teinte('#050505', 1),
-  color2: teinte('#66B3FF', intensite),
+  color2: teinte('#66B3FF', k),
   /* Le blanc de l'ambiance est le vrai danger pour la lecture : c'est lui qui fait
      monter les bandes jusqu'à 236 sur 255, là où un titre blanc disparaît. Il est
      tenu bas — la bande reste lumineuse, elle cesse d'être un mur blanc. */
-  color3: teinte('#FFFFFF', intensite * 0.42),
-};
+  color3: teinte('#FFFFFF', k * 0.42),
+});
+const couleurs = palette(intensite);
+/* ============================================================
+   LE TÉLÉPHONE REÇOIT LA MÊME MATIÈRE, PLUS SOMBRE — mesure du 19/09.
+   Les bandes claires ne sont pas plus nombreuses sur un téléphone : elles
+   couvrent 17 à 24 % de l'écran, contre 16 à 31 % sur le bureau. Ce qui change,
+   c'est OÙ elles tombent. Sur le bureau la colonne de texte occupe 15 % de
+   l'écran, perdue au milieu d'un grand canevas : une bande passe à côté. Sur un
+   téléphone elle en occupe 40 %, bord à bord — une bande qui traverse l'écran
+   traverse forcément le texte. Mesuré sur la page Field Ops : 27,7 % de la
+   surface de texte tombait sous 4,5:1 pour le gris courant, contre 21,3 % sur
+   le bureau.
+   On n'ajoute donc PAS un voile par-dessus le champ — la règle de la direction
+   l'interdit, et une couche de plus se compose à chaque image. On assombrit les
+   couleurs données au shader, exactement comme le fait déjà l'intensité : même
+   matière, même mouvement, moins de lumière là où il n'y a pas la place de
+   l'éviter.
+   ============================================================ */
+const couleursEtroit = palette(intensiteEtroit);
 ---
-<div class="fond-anime" aria-hidden="true" data-couleurs={JSON.stringify(couleurs)}>
+<div class="fond-anime" aria-hidden="true" data-couleurs={JSON.stringify(couleurs)} data-couleurs-etroit={JSON.stringify(couleursEtroit)}>
   <div class="fond-anime__gbg"></div>
 </div>
 
@@ -110,7 +130,13 @@ const couleurs = {
       .then(() => {
         const G = (window as any).GradientBackground;
         if (!G) return;
-        const couleurs = JSON.parse(hote.dataset.couleurs || '{}');
+        /* Le HTML est le même pour toutes les largeurs : c'est ici, au montage, que
+           l'écran étroit choisit sa palette. 720 px est la borne déjà utilisée par le
+           reste du site pour « téléphone ». */
+        const etroit = matchMedia('(max-width: 720px)').matches;
+        const couleurs = JSON.parse(
+          (etroit ? hote.dataset.couleursEtroit : hote.dataset.couleurs) || '{}',
+        );
         const api = G.create(cible, {
           preset: 'Prism',
           ...couleurs,

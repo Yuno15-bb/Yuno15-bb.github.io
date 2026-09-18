@@ -92,18 +92,15 @@ const badges = items.map((nom) => ({ nom, slug: CATALOGUE[nom] ?? null }));
     mask-size: contain;
   }
 
-  /* Quand la place manque, la pile défile à l'horizontale au lieu de pousser la page vers le bas.
-     Elle ne se coupe jamais en plein badge : `scroll-snap` cale chaque badge sur le bord. */
-  @media (max-width: 760px) {
-    .pile--defilante .pile__liste {
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      scroll-snap-type: x proximity;
-      padding-bottom: 0.4rem;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
-    }
-    .pile--defilante .pile__liste::-webkit-scrollbar { display: none; }
-    .pile--defilante .pile__badge { scroll-snap-align: start; }
-  }
+  /* ⚠ LE DEFILEMENT HORIZONTAL A ETE RETIRE SUR TELEPHONE — mesure du 19/09.
+     L'idee de depart : quand la place manque, la pile defile a l'horizontale au lieu de
+     pousser la page vers le bas. Mesure a 393 px : sur GreyMatter 4 badges sur 7 etaient
+     visibles, sur Field Ops 5 sur 13. Les huit autres — « GitHub Actions », « Apache 2.0 »,
+     « FastAPI »… — se trouvaient HORS DE L'ECRAN, derriere un badge coupe en deux au bord
+     droit, sans barre, sans ombre, sans fleche : rien ne disait qu'il fallait balayer.
+     Une pile de technologies sert a etre lue d'un coup d'oeil ; celle-la cachait les deux
+     tiers de ce qu'elle annonçait.
+     Le repli coute quatre lignes, soit environ 150 px sur une page qui en fait 20 000 : le
+     prix qu'on evitait etait negligeable, le defaut qu'il creait ne l'etait pas.
+     La propriete `defilant` reste, elle ne change plus rien sur telephone. */
 </style>

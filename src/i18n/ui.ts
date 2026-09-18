@@ -4,6 +4,16 @@ export const languages = {
   en: 'English',
 } as const;
 
+/* Le meme interrupteur, en deux lettres. Sur un telephone de 393 px, « English »
+   coutait 77 px d'une barre qui n'en avait que 329 : l'en-tete debordait de 57 px
+   et le mot etait coupe a l'ecran (mesure du 19/09). Deux lettres en coutent 28 et
+   se lisent aussi bien — c'est la forme habituelle d'un selecteur de langue sur
+   telephone. Le mot entier reste affiche des qu'il y a la place. */
+export const languageCodes = {
+  fr: 'FR',
+  en: 'EN',
+} as const;
+
 export type Lang = keyof typeof languages;
 export const defaultLang: Lang = 'en';
 

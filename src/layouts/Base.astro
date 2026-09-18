@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { languages, ui, type Lang } from '../i18n/ui';
+import { languages, languageCodes, ui, type Lang } from '../i18n/ui';
 import FondAnime from "../components/FondAnime.astro";
 
 interface Props {
@@ -65,7 +65,11 @@ const contactHref = `/${lang}/#contact`;
         </a>
         <a class="eyebrow nav-link" href={contactHref}>{t['nav.contact']}</a>
         <a class="lang-switch eyebrow" href={`/${other}${altPath}`} hreflang={other} rel="alternate">
-          {languages[other]}
+          {/* Le mot entier porte TOUJOURS le nom accessible : sur telephone il passe en
+              `sr-only` (il reste lu, il cesse d'etre dessine) et les deux lettres prennent
+              sa place a l'ecran. Un seul libelle pour un lecteur d'ecran, jamais deux. */}
+          <span class="lang-switch__mot">{languages[other]}</span>
+          <span class="lang-switch__code" aria-hidden="true">{languageCodes[other]}</span>
         </a>
       </nav>
     </header>
@@ -101,7 +105,48 @@ const contactHref = `/${lang}/#contact`;
         letter-spacing: var(--tracking-tight);
       }
       .site-nav { display: flex; align-items: center; gap: var(--space-4); }
-      @media (max-width: 460px) { .site-nav { gap: var(--space-2); } }
+
+      .lang-switch__code { display: none; }
+
+      /* ============================================================
+         L'EN-TETE DOIT TENIR SUR LA LARGEUR DU TELEPHONE — mesure du 19/09.
+         Le 04/09 on avait choisi de tout garder SUR UNE LIGNE : passer a la
+         ligne doublait la hauteur de l'en-tete pour un debordement de 16 px.
+         Depuis, la pastille LinkedIn est arrivee (18/09) et le debordement est
+         passe a 57 px en anglais : `Yuno15` + photo + GitHub + LinkedIn +
+         `Contact` + `English` demandaient 386 px dans une barre qui en offre
+         329. Resultat a l'ecran : « ENGLISH » coupe au bord droit, et TOUTE la
+         page qui glissait de 15 px sur le cote, sur les quatre pages.
+         La decision du 04/09 est tenue — une seule ligne — en RETRECISSANT au
+         lieu de retirer : rien ne disparait de la barre.
+         ============================================================ */
+      @media (max-width: 460px) {
+        /* 1. LA LANGUE EN DEUX LETTRES : 77 px -> 28 px. Le plus gros gain, et
+           celui qui ne coute rien — c'est la forme habituelle sur telephone. */
+        .lang-switch__mot {
+          position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+          overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+        }
+        .lang-switch__code { display: inline; }
+
+        /* 2. LES ECARTS SE RESSERRENT. 16 px entre quatre elements et 24 px entre
+           le nom et la nav, c'est une respiration de bureau : 10 et 12 suffisent a
+           separer, et rendent 30 px au contenu. */
+        .site-nav { gap: 10px; }
+        .site-head { gap: 12px; }
+
+        /* 3. LE MOT-MARQUE D'UN CRAN PLUS BAS. 25 px de haut, il pesait 88 px de
+           large a lui seul — plus que la photo et les deux glyphes reunis. A 20 px
+           il reste le premier objet de la barre sans en prendre le quart. */
+        .wordmark { font-size: var(--fs-300); }
+
+        /* 4. LA PASTILLE GITHUB CESSE D'ETRE ECRASEE. Le flex la comprimait a 43 px
+           pour ses 71 px de contenu : le chat GitHub se posait PAR-DESSUS le bord
+           droit de la photo (vu sur la capture). `flex: none` lui rend sa taille —
+           la place existe maintenant. */
+        .gh { flex: none; padding-right: 8px; gap: 6px; }
+        .gh--seul { padding-inline: 8px; }
+      }
 
       /* Photo de profil ronde liée au logo GitHub — vitre légère assortie au reste. */
       .gh {

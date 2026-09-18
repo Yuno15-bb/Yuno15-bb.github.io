@@ -70,4 +70,23 @@ const { titre, legende, source, cadre = true } = Astro.props;
     .fig__plate { padding: var(--space-3); }
     .fig__plate--nu { padding: 0; }
   }
+
+  /* ============================================================
+     SUR TELEPHONE, LE CADRE S'OUVRE SUR LES COTES — mesure du 19/09.
+     Le cadre coutait 24 px de marge A GAUCHE ET A DROITE a l'interieur d'une
+     colonne qui n'en a que 329. Dans une planche qui porte elle-meme un filet
+     — le recit d'incident — il restait 262 px de texte, soit 25 signes par
+     ligne : une ligne de quatre mots, qu'on relit plus qu'on ne la lit.
+     Pour comparer, mesure le meme jour sur quatre sites de lecture longue a
+     393 px : MDN 353 px de colonne et 37,8 signes par ligne, web.dev 361 px et
+     42,5, Smashing Magazine 332 px et 38,6, Nielsen Norman Group 413 px et
+     46,9. Aucun ne descend sous 37. Le portfolio etait a 25.
+     Les filets du haut et du bas RESTENT : la planche garde son cadre, elle
+     cesse seulement de le payer sur les cotes, la ou l'ecran est compte. Le
+     cadre d'appareil d'une maquette, lui, n'a jamais eu ce probleme — il porte
+     son propre contour et passe deja par `--nu`.
+     ============================================================ */
+  @media (max-width: 480px) {
+    .fig__plate { padding-inline: 0; border-inline: 0; }
+  }
 </style>

@@ -167,6 +167,12 @@ const tiltAttrs = tilt > 0 ? { 'data-tilt': String(tilt), 'data-tilt-reverse': '
     @media (max-width: 700px) {
       /* Sous 700px la rangee etoufferait : on ne garde que le telephone. */
       .shot--office { display: none; }
+      /* LA MARGE DE DROITE N'A PLUS DE VOISINE A ECARTER — mesure du 19/09. Les 24 px
+         de droite separent deux cartes posees COTE A COTE. Sous 700 px il n'y a plus
+         qu'une colonne : ils ne separent plus rien, ils rognent l'accroche a 305 px
+         dans une colonne qui en offre 329, soit 29,9 signes par ligne — sous le
+         plancher de 30 que le contrôle telephone tient. Rendus, on remonte a 32. */
+      .card { padding-right: 0; }
     }
     .card:hover .shot,
     .card:focus-visible .shot { transform: scale(1.04); }
