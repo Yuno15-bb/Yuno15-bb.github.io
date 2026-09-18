@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
+import Pile from '../../components/Pile.astro';
 import { languages, ui, type Lang } from '../../i18n/ui';
 
 export async function getStaticPaths() {
@@ -30,6 +31,13 @@ const filters = [
 // public revient, le filtre revient tout seul.
 const publics = new Set(projects.flatMap((p) => p.data.audience));
 const filtreUtile = publics.size > 1;
+/* LA BANDE DE COMPÉTENCES SE DÉDUIT DES PROJETS, elle ne se recopie pas.
+   Écrite à la main, elle aurait vieilli au premier projet ajouté et on aurait affiché
+   une compétence que plus aucune étude ne prouve. Ici c'est l'union des piles réelles,
+   dans l'ordre où les projets se présentent — donc toujours vraie par construction.
+   Une technologie qui disparaît des projets disparaît de l'accueil le même jour. */
+const competences = [...new Set(projects.flatMap((p) => p.data.stack))];
+
 const email = 'sashapeellaertjuan@outlook.com';
 const mail = `mailto:${email}`;
 ---
@@ -66,6 +74,15 @@ const mail = `mailto:${email}`;
         <a class="btn hero__cta anim-in" href={mail}>{t['cta.contact']} →</a>
       </div>
     </div>
+  </section>
+
+  {/* Dylan, 18/09 : « je veux la même chose mais avec leurs vrais logos posés comme des
+      badges, ou différemment qui défile dans un petit panneau ». Les pages projet ont eu
+      les badges posés ; l'accueil reçoit le panneau qui défile, avec l'ensemble de ce que
+      les projets emploient. Il se place après le hero et avant les projets : on vient de
+      lire QUI, on lit AVEC QUOI, puis on entre dans les preuves. */}
+  <section class="container competences" aria-label={t['home.stack']}>
+    <Pile items={competences} titre={t['home.stack']} bandeau />
   </section>
 
   <section class="container work" aria-labelledby="work-title">
@@ -227,6 +244,10 @@ const mail = `mailto:${email}`;
 
     /* Pre-masquage anti-flash : uniquement quand l'intro est armee. */
     :global(:root[data-hero='armed']) .anim-in { opacity: 0; }
+
+    /* La bande ne crie pas : elle vit entre le hero et les projets, sans filet ni fond.
+       Le hero se termine déjà par --space-12 de vide ; on ne le double pas. */
+    .competences { margin-bottom: var(--space-8); }
 
     .work__head {
       display: flex; align-items: end; justify-content: space-between;

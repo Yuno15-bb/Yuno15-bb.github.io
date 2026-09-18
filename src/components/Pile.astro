@@ -31,21 +31,52 @@ interface Props {
   titre: string;
   /** true : le bloc défile tout seul horizontalement quand il déborde (petits écrans). */
   defilant?: boolean;
+  /**
+   * BANDEAU QUI DÉFILE TOUT SEUL — demandé par Dylan le 18/09 (« ou différemment qui
+   * défile dans un petit panneau »), posé sur l'accueil le 19/09. La piste est écrite
+   * DEUX FOIS bout à bout et translatée de sa moitié : quand l'animation reboucle, la
+   * seconde copie est exactement là où était la première, et la couture ne se voit pas.
+   * La copie est `aria-hidden` — un lecteur d'écran lit la liste une fois, pas deux.
+   */
+  bandeau?: boolean;
 }
-const { items, titre, defilant = true } = Astro.props;
+const { items, titre, defilant = true, bandeau = false } = Astro.props;
 const badges = items.map((nom) => ({ nom, slug: CATALOGUE[nom] ?? null }));
 ---
 
-<div class:list={['pile', { 'pile--defilante': defilant }]}>
+<div class:list={['pile', { 'pile--defilante': defilant && !bandeau, 'pile--bandeau': bandeau }]}>
   <p class="eyebrow pile__titre">{titre}</p>
-  <ul class="pile__liste" role="list">
-    {badges.map(({ nom, slug }) => (
-      <li class:list={['pile__badge', { 'pile__badge--nu': !slug }]}>
-        {slug && <span class="pile__logo" style={`-webkit-mask-image:url(/logos/${slug}.svg);mask-image:url(/logos/${slug}.svg)`} aria-hidden="true" />}
-        <span>{nom}</span>
-      </li>
-    ))}
-  </ul>
+  {bandeau ? (
+    <div class="pile__cadre">
+      <div class="pile__piste">
+        <ul class="pile__liste" role="list">
+          {badges.map(({ nom, slug }) => (
+            <li class:list={['pile__badge', { 'pile__badge--nu': !slug }]}>
+              {slug && <span class="pile__logo" style={`-webkit-mask-image:url(/logos/${slug}.svg);mask-image:url(/logos/${slug}.svg)`} aria-hidden="true" />}
+              <span>{nom}</span>
+            </li>
+          ))}
+        </ul>
+        <ul class="pile__liste" role="list" aria-hidden="true">
+          {badges.map(({ nom, slug }) => (
+            <li class:list={['pile__badge', { 'pile__badge--nu': !slug }]}>
+              {slug && <span class="pile__logo" style={`-webkit-mask-image:url(/logos/${slug}.svg);mask-image:url(/logos/${slug}.svg)`} aria-hidden="true" />}
+              <span>{nom}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  ) : (
+    <ul class="pile__liste" role="list">
+      {badges.map(({ nom, slug }) => (
+        <li class:list={['pile__badge', { 'pile__badge--nu': !slug }]}>
+          {slug && <span class="pile__logo" style={`-webkit-mask-image:url(/logos/${slug}.svg);mask-image:url(/logos/${slug}.svg)`} aria-hidden="true" />}
+          <span>{nom}</span>
+        </li>
+      ))}
+    </ul>
+  )}
 </div>
 
 <style>
@@ -103,4 +134,82 @@ const badges = items.map((nom) => ({ nom, slug: CATALOGUE[nom] ?? null }));
      Le repli coute quatre lignes, soit environ 150 px sur une page qui en fait 20 000 : le
      prix qu'on evitait etait negligeable, le defaut qu'il creait ne l'etait pas.
      La propriete `defilant` reste, elle ne change plus rien sur telephone. */
+
+  /* ============================================================
+     LE BANDEAU QUI DÉFILE — accueil, posé le 19/09.
+     Deux bandeaux réels mesurés le même jour à 1440 px, pour ne pas inventer les
+     valeurs : Sentry fait 64 px de haut, 46 logos de 30 px, une piste de 8 607 px
+     parcourue en 60 s, soit 143 px/s. Prisma fait 38 px de haut, 68 logos de 25 px,
+     12 279 px en 100 s, soit 123 px/s. Resend, lui, ne fait PAS défiler : treize
+     logos de 30 px posés sur une ligne fixe. Les trois sont en monochrome — c'est ce
+     qui fait lire la bande comme un seul objet au lieu d'un arc-en-ciel ; nos badges
+     le sont déjà, le logo suit la couleur du texte par masque.
+     On prend 100 px/s, sous les deux bandeaux observés : les nôtres portent un NOM à
+     côté du logo, et un mot qui défile se lit moins vite qu'un sigle.
+     La durée n'est pas écrite ici : elle est calculée au chargement depuis la largeur
+     réelle de la piste (script en bas), sinon la vitesse changerait avec le nombre de
+     badges et avec la largeur de l'écran.
+     ============================================================ */
+  .pile--bandeau { min-width: 0; }
+
+  /* Le cadre coupe, et fond aux deux bords : sans ce dégradé, un badge est tranché net
+     au ras de l'écran et la bande a l'air cassée plutôt qu'infinie. */
+  .pile__cadre {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+  .pile__piste {
+    display: flex;
+    width: max-content;
+    gap: 0.4rem;
+    animation: pile-defile var(--pile-duree, 40s) linear infinite;
+  }
+  /* Le survol suspend : on ne court pas après une étiquette qu'on veut lire. */
+  .pile__cadre:hover .pile__piste,
+  .pile__cadre:focus-within .pile__piste { animation-play-state: paused; }
+  .pile--bandeau .pile__liste { flex-wrap: nowrap; }
+
+  @keyframes pile-defile {
+    from { transform: translate3d(0, 0, 0); }
+    /* La piste porte deux copies : reculer d'exactement la moitié ramène la seconde
+       là où était la première. La couture ne se voit pas. */
+    to { transform: translate3d(calc(-50% - 0.2rem), 0, 0); }
+  }
+
+  /* « Réduire les animations » : la bande s'arrête et se replie sur plusieurs lignes.
+     Refuser le mouvement ne doit pas coûter le contenu — tout reste lisible, d'un coup. */
+  @media (prefers-reduced-motion: reduce) {
+    .pile__cadre {
+      overflow: visible;
+      -webkit-mask-image: none;
+      mask-image: none;
+    }
+    .pile__piste { animation: none; width: auto; flex-wrap: wrap; }
+    .pile--bandeau .pile__liste { flex-wrap: wrap; }
+    .pile--bandeau .pile__liste[aria-hidden='true'] { display: none; }
+  }
 </style>
+
+<script>
+  /* LA VITESSE EST CONSTANTE, PAS LA DURÉE. Une durée écrite en dur ferait défiler une
+     pile de six badges au ralenti et une pile de dix-huit en trombe, et changerait de
+     vitesse à chaque largeur d'écran. On mesure la piste et on en déduit le temps :
+     100 px par seconde, la valeur prise sous les bandeaux de Sentry (143) et de
+     Prisma (123), mesurés le 19/09.
+     `ResizeObserver` refait le calcul quand la largeur change — rotation du téléphone,
+     fenêtre redimensionnée, police qui arrive après coup. */
+  const VITESSE = 100; // px/s
+
+  const regler = (piste: HTMLElement) => {
+    const moitie = piste.scrollWidth / 2;
+    if (moitie > 0) piste.style.setProperty('--pile-duree', `${(moitie / VITESSE).toFixed(1)}s`);
+  };
+
+  document.querySelectorAll<HTMLElement>('.pile--bandeau .pile__piste').forEach((piste) => {
+    regler(piste);
+    /* Les polices arrivent après le premier rendu et changent la largeur des étiquettes. */
+    if (document.fonts?.ready) document.fonts.ready.then(() => regler(piste));
+    new ResizeObserver(() => regler(piste)).observe(piste);
+  });
+</script>
