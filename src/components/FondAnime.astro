@@ -114,14 +114,17 @@ const couleurs = {
         const api = G.create(cible, {
           preset: 'Prism',
           ...couleurs,
-          speed: 10,           // 30 dans l'ambiance d'origine
-          softness: 30,        // 47 — des bords plus nets, donc plus de présence
-          swirl: 62,           // 50
-          swirlIterations: 8,  // 16 — le réglage le plus cher du shader
-          /* Un shader plein écran en 2× sur un portable retina coûte cher pour un
-             dégradé mou : à 1,5 on divise le travail par presque deux sans que ça
-             se voie. cf. Brain : webgl-shader-wallpaper-gpu-overheating. */
-          maxPixelRatio: 1,
+          /* Dylan, 18/09 : « améliore la qualité du fond et fais-le défiler un peu plus
+             vite ». Trois valeurs remontent, et aucune ne revient à l'ambiance d'origine —
+             celle-ci faisait chauffer le GPU (cf. Brain : webgl-shader-wallpaper-gpu-overheating). */
+          speed: 18,            // 10 depuis le 07/09, 30 dans l'ambiance d'origine
+          softness: 30,         // 47 — des bords plus nets, donc plus de présence
+          swirl: 62,            // 50
+          swirlIterations: 12,  // 8 — c'est le réglage le plus cher du shader ; 16 à l'origine
+          /* Le vrai responsable du flou : à 1, un écran dense affiche un pixel du shader
+             pour quatre pixels réels, et les dégradés se rayent. 1,5 supprime les raies
+             pour la moitié du coût d'un rendu plein 2×. */
+          maxPixelRatio: 1.5,
         });
         /* « Réduire les animations » : la matière reste, elle cesse de bouger.
            Un fond qui coule en continu est exactement ce que ce réglage refuse. */

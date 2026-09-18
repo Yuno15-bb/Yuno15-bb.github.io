@@ -21,6 +21,10 @@
  * badge suit la couleur du texte sans qu'on duplique un logo par état.
  */
 import { LOGOS } from '../../scripts/logos-de-la-pile.mjs';
+// Le script est en JavaScript : TypeScript en deduit un objet aux clefs figees, et refuse
+// qu'on l'interroge avec un nom venu du contenu. On declare ce qu'il est vraiment — un
+// dictionnaire nom → logo, ou rien. (`astro check` l'a refuse le 18/09 ; `astro build`, non.)
+const CATALOGUE = LOGOS as Record<string, string | null>;
 
 interface Props {
   items: string[];
@@ -29,7 +33,7 @@ interface Props {
   defilant?: boolean;
 }
 const { items, titre, defilant = true } = Astro.props;
-const badges = items.map((nom) => ({ nom, slug: LOGOS[nom] ?? null }));
+const badges = items.map((nom) => ({ nom, slug: CATALOGUE[nom] ?? null }));
 ---
 
 <div class:list={['pile', { 'pile--defilante': defilant }]}>
