@@ -34,7 +34,7 @@ jobs:
       - run: npm ci
       - name: Build
         env:
-          SITE_URL: https://yuno15-bb.github.io
+          SITE_URL: https://peellaertech.com
         run: npm run build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3

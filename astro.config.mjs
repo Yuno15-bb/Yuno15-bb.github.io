@@ -4,7 +4,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 
 // Site public. Le workflow Pages fixe SITE_URL au build ; ce repli sert au dev local.
-const SITE = process.env.SITE_URL ?? 'https://yuno15-bb.github.io';
+const SITE = process.env.SITE_URL ?? 'https://peellaertech.com';
 
 // https://astro.build/config
 export default defineConfig({
