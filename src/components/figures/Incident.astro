@@ -77,10 +77,11 @@ const lignes: Array<[string, string, boolean]> = [
     display: grid;
     grid-template-columns: 11rem minmax(0, 1fr);
     gap: var(--space-3);
-    border-left: 1px solid var(--c-line-ui);
-    padding-left: var(--space-3);
+    border-top: 1px solid var(--c-line-ui);
+    padding-top: var(--space-2);
   }
-  .inc__ligne--fort { border-left-width: 2px; border-left-color: var(--c-ember); }
+  /* Filet en haut, comme les étapes de Flow — plus de liseré vertical coloré (banni le 09/09). */
+  .inc__ligne--fort { border-top-width: 2px; border-top-color: var(--c-ember); padding-top: calc(var(--space-2) - 1px); }
   .inc__label { color: var(--c-muted); margin: 0; padding-top: 0.25em; }
   .inc__ligne--fort .inc__label { color: var(--c-ember); }
   .inc__texte {
@@ -92,6 +93,6 @@ const lignes: Array<[string, string, boolean]> = [
   }
   .inc__ligne--fort .inc__texte { color: var(--c-fg); }
   @media (max-width: 640px) {
-    .inc__ligne { grid-template-columns: 1fr; gap: var(--space-1); padding-left: var(--space-2); }
+    .inc__ligne { grid-template-columns: 1fr; gap: var(--space-1); }
   }
 </style>

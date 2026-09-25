@@ -7,7 +7,7 @@ role: "Conception, architecture, extraction, publication"
 stack: ["Python", "Bash", "Electron", "WebGL", "GitHub Actions", "Apache 2.0"]
 annee: 2026
 resultat: "46 versions publiées sous Apache 2.0, installable en une commande — et un contrôle de fuite qui a le droit de bloquer toute publication."
-cover: "/projects/gmtr-ipad-18-09.webp"
+cover: "/projects/gmtr-ipad-24-09.webp"
 coverEntier: true
 featured: false
 ordre: 2
@@ -16,67 +16,44 @@ ordre: 2
 import Figure from '../../../components/Figure.astro';
 import Flow from '../../../components/figures/Flow.astro';
 import Duo from '../../../components/figures/Duo.astro';
-import Mac from '../../../components/figures/Mac.astro';
-import Anim from '../../../components/figures/Anim.astro';
 import MacBureau from '../../../components/figures/MacBureau.astro';
 import Appareils from '../../../components/figures/Appareils.astro';
 
 <Figure
   cadre={false}
-  legende="La même carte du tronc au même instant sur les deux écrans : 701 fiches, 2 881 liens, 21 régions. En bas, l'auto-test du démarrage et la colonne du code en train d'être écrit."
-  source="Captures d'un tronc de démonstration à la vraie densité, noms et chemins neutralisés avant la photo. Cadres officiels d'Apple, à l'échelle réelle."
+  legende="La même carte du tronc au même instant sur les deux écrans : 756 fiches, 3 072 liens, 21 régions. En bas, les régions par taille, le journal de ce qui est lu et écrit, et le code en train d'être écrit."
+  source="Captures du 24/09 sur un tronc de démonstration à la vraie densité, traduit en anglais, noms et chemins neutralisés avant la photo. Cadres officiels d'Apple, à l'échelle réelle."
 >
   <Appareils
-    src="/projects/gmtr-duo-18-09.webp"
+    src="/projects/gmtr-duo-24-09.webp"
     alt="La carte du tronc sur MacBook Pro et iPad"
   />
 </Figure>
 
-<Figure
-  cadre={false}
-  legende="Chaque point est une fiche, la distance dit la ressemblance. On clique : la fiche s'ouvre avec sa région, son résumé et ses liens. On demande le rangement : la carte se réorganise en anneau. On entre dans une famille : la carte se resserre dessus."
-  source="Filmé sur un tronc de démonstration à la vraie densité — 701 fiches, 2 881 liens, tous les noms neutralisés avant le tournage"
->
-  <Mac titre="GMTR — trunk map">
-    <Anim
-      src="/projects/gmtr-carte-18-09.mp4"
-      srcWebm="/projects/gmtr-carte-18-09.webm"
-      poster="/projects/gmtr-carte-18-09.webp"
-      largeur={1500}
-      hauteur={966}
-      description="La carte du tronc : sept cents fiches placées par ressemblance, en gris sur noir avec du vert pour ce qui est actif. On clique une fiche et un panneau donne sa région, son titre, son résumé et son nombre de liens ; la carte se réorganise en anneau pour la vue rangement ; on entre dans une famille et la carte se resserre dessus. En bas, l'auto-test du démarrage et le code en train d'être écrit."
-    />
-  </Mac>
-</Figure>
-
-<Figure
-  cadre={false}
-  legende="Pendant qu'un agent travaille, une pastille dans la barre de menu le nomme et dit ce qu'il fait ; au centre, le même coin agrandi. On l'ouvre, et les étapes de la tâche s'alignent dessous ; chaque genre de travail a sa couleur, jusqu'à « Done ». C'est la seule interface du moteur : tout le reste est du texte."
-  source="Filmé sur l'écran entier de ce Mac, en mode démonstration : interface en anglais, code inventé dans la bille. L'agrandissement au centre est ajouté au montage. Cadre officiel d'Apple."
->
-  <MacBureau
-    src="/projects/gmtr-bureau-25-09.mp4"
-    poster="/projects/gmtr-bureau-25-09.webp"
-    description="Le bureau d'un Mac. En haut à droite, la pastille GreyMatter dans la barre de menu et son panneau ouvert dessous ; au centre de l'écran, le même coin agrandi. Torrens range la carte, Anesidora écrit la synthèse, Torrens enregistre ; la bille de verre change de couleur avec le genre de travail. À la fin, « Done » et trois étapes."
-  />
-</Figure>
 ## À quoi ça sert
 
 Un agent en ligne de commande est brillant à l'intérieur d'une session et amnésique
 entre deux. GreyMatter lui donne une mémoire qui dure : ce qu'on résout une fois est
-distillé en fiche, rangé, relié, et resurgit tout seul à la session suivante.
+distillé en fiche, rangé, relié, et retrouvé à la session suivante.
 
 ## Ce que le moteur fait
 
 - **Distillation** : une session de travail devient des fiches propres — un fait par
   fiche, avec sa provenance et son degré de certitude.
-- **Rappel automatique** : à chaque question posée, les fiches pertinentes remontent
-  seules, sans qu'on ait à les chercher.
+- **Rappel à la demande** : on pose la question — un mot-clé, une phrase ou une
+  commande — et les fiches qui répondent remontent en moins de 50 millisecondes sur
+  mille fiches. Rien n'entre dans la conversation sans avoir été demandé.
 - **Arbre de connaissance** : les fiches se relient entre elles ; une leçon apprise sur
   un projet est trouvable depuis tous les autres.
-- **Agents de jardinage** : huit rôles spécialisés rangent, dédupliquent, contestent les
-  fiches périmées et réparent les liens cassés.
-- **Planète 3D** : le graphe complet se visualise en temps réel, continent par domaine.
+- **Quatre vaisseaux d'entretien** : huit missions étroites — distiller, ranger,
+  contester, relier, archiver, réparer, surveiller la machine, synthétiser — portées par
+  quatre agents aux noms de vaisseaux d'*Alien*. Chaque mission n'écrit que dans sa zone.
+- **La carte et la pastille** : tout le tronc en un nuage de points qu'on parcourt, et
+  une pastille dans la barre de menus qui dit quel agent travaille, et à quoi.
+
+Le paquet public en est à la version 1.28 : le rappel y est encore automatique et
+l'entretien y porte encore huit noms de rôles. La pastille, les vaisseaux et le rappel à
+la demande arrivent avec la prochaine version.
 
 ## Comment une session devient de la mémoire
 
@@ -86,11 +63,50 @@ distillé en fiche, rangé, relié, et resurgit tout seul à la session suivante
 >
   <Flow etapes={[
     { t: 'Le tronc', d: 'Des fichiers Markdown sur la machine : les fiches, la carte, l’état.' },
-    { t: 'À chaque question', d: 'Une recherche lexicale choisit les quelques fiches qui répondent et les glisse dans la question.' },
+    { t: 'Quand on demande', d: 'Une recherche lexicale choisit les quelques fiches qui répondent et les rend dans la conversation.' },
     { t: 'Pendant la session', d: 'Ce qui est écrit et ce qui est lu sont notés — la matière réelle du travail.' },
-    { t: 'À la fermeture', d: 'La session est archivée, puis les agents se réveillent : deux toujours, un troisième seulement si son capteur passe un seuil.', porte: true },
+    { t: 'À la fermeture', d: 'La session est archivée, puis distillée en fiches et rangée. Une autre mission ne se réveille que si son capteur passe un seuil — au plus une par passage.', porte: true },
   ]} />
 </Figure>
+
+## La carte
+
+<Figure
+  cadre={false}
+  legende="Chaque point est une fiche, rangée dans sa région. On entre dans une région : elle se déplie en sphère, ses familles tout autour. On survole une fiche, elle s'annonce à droite ; on clique, elle s'ouvre avec son texte et son nombre de liens."
+  source="Filmé le 24/09 sur l'écran entier de ce Mac, fenêtre à sa vraie taille, sur le tronc de démonstration anonymisé. Cadre officiel d'Apple."
+>
+  <MacBureau
+    src="/projects/gmtr-carte-24-09.mp4"
+    poster="/projects/gmtr-carte-24-09.webp"
+    description="Le bureau d'un Mac, et la fenêtre GMTR en verre au milieu. D'abord la carte entière : les régions de fiches en petits amas colorés, chacune avec son nombre. On entre dans la région claude-brain, qui se déplie en sphère entourée de ses familles ; on survole une fiche, son aperçu s'affiche à droite, puis on la clique et elle s'ouvre en entier avec ses 43 liens. On passe ensuite à une autre région. En bas, le tableau des régions, le journal du démarrage et le code en train d'être écrit."
+  />
+</Figure>
+
+## La pastille
+
+<Figure
+  cadre={false}
+  legende="Pendant qu'un agent travaille, une pastille dans la barre de menu le nomme et dit ce qu'il fait ; au centre, le même coin agrandi. On l'ouvre, et les étapes de la tâche s'alignent dessous ; chaque genre de travail a sa couleur, jusqu'à « Done ». Avec la carte, c'est la seule interface : tout le reste est du texte."
+  source="Filmé sur l'écran entier de ce Mac, en mode démonstration : interface en anglais, code inventé dans la bille. L'agrandissement au centre est ajouté au montage. Cadre officiel d'Apple."
+>
+  <MacBureau
+    src="/projects/gmtr-bureau-25-09.mp4"
+    poster="/projects/gmtr-bureau-25-09.webp"
+    description="Le bureau d'un Mac. En haut à droite, la pastille GreyMatter dans la barre de menu et son panneau ouvert dessous ; au centre de l'écran, le même coin agrandi. Torrens range la carte, Anesidora écrit la synthèse, Torrens enregistre ; la bille de verre change de couleur avec le genre de travail. À la fin, « Done » et trois étapes."
+  />
+</Figure>
+
+## Ce que la mesure a fait changer
+
+- **Le rappel automatique est coupé.** Jusqu'au 9 septembre, les fiches jugées
+  pertinentes étaient glissées d'office dans chaque question. Sur trente jours, 4 %
+  seulement étaient ensuite ouvertes — 139 sur 3 256. La recherche est restée, la
+  suggestion non demandée est partie ; un réglage la rétablit sans toucher au code.
+- **La pastille est devenue légère.** Au repos, elle prenait 28 % d'un cœur de
+  processeur, et 29 % de plus au programme qui dessine l'écran : chaque image par seconde
+  se payait deux fois. Chaque emplacement anime désormais à la cadence de ce qu'on y voit
+  bouger, et rien ne se dessine caché — au repos, 4 % et 20 %.
 
 ## Ce qui rend la publication possible
 
@@ -116,7 +132,7 @@ distillé en fiche, rangé, relié, et resurgit tout seul à la session suivante
 
 <Figure
   titre="Du carnet vivant au paquet public"
-  legende="Une chaîne à sens unique : rien ne remonte du dépôt public vers le carnet. Le contrôle de fuite a le droit de bloquer la publication, et il l'a déjà fait."
+  legende="Une chaîne à sens unique : rien ne remonte du dépôt public vers le carnet. Le contrôle de fuite relit tout l'historique du dépôt, pas seulement la dernière version, et la publication ne part que s'il est vert."
 >
   <Flow etapes={[
     { t: 'Le carnet vivant', d: 'Quatre mois de notes réelles : clients, adresses, chemins de machine.' },

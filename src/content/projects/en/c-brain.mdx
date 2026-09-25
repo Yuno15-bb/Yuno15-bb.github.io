@@ -7,7 +7,7 @@ role: "Design, architecture, extraction, publication"
 stack: ["Python", "Bash", "Electron", "WebGL", "GitHub Actions", "Apache 2.0"]
 annee: 2026
 resultat: "46 releases published under Apache 2.0, installable in one command — and a leak check that is allowed to block any publication."
-cover: "/projects/gmtr-ipad-18-09.webp"
+cover: "/projects/gmtr-ipad-24-09.webp"
 coverEntier: true
 featured: false
 ordre: 2
@@ -16,67 +16,44 @@ ordre: 2
 import Figure from '../../../components/Figure.astro';
 import Flow from '../../../components/figures/Flow.astro';
 import Duo from '../../../components/figures/Duo.astro';
-import Mac from '../../../components/figures/Mac.astro';
-import Anim from '../../../components/figures/Anim.astro';
 import MacBureau from '../../../components/figures/MacBureau.astro';
 import Appareils from '../../../components/figures/Appareils.astro';
 
 <Figure
   cadre={false}
-  legende="The same trunk map at the same instant on both screens: 701 notes, 2,881 links, 21 regions. At the bottom, the power-on self-test and the column of code being written right now."
-  source="Captures of a demonstration trunk at full density, names and paths neutralised before the photo. Official Apple bezels, at true relative scale."
+  legende="The same trunk map at the same instant on both screens: 756 notes, 3,072 links, 21 regions. At the bottom, the regions by size, the log of what is read and written, and the code being written right now."
+  source="Captured on 24/09 from a demonstration trunk at full density, translated into English, names and paths neutralised before the photo. Official Apple bezels, at true relative scale."
 >
   <Appareils
-    src="/projects/gmtr-duo-18-09.webp"
+    src="/projects/gmtr-duo-24-09.webp"
     alt="The trunk map on MacBook Pro and iPad"
   />
 </Figure>
 
-<Figure
-  cadre={false}
-  legende="Every dot is a note, and distance means resemblance. Click one: it opens with its region, its summary and its links. Ask for the filing: the map reorganises into a ring. Enter a family: the map closes in on it."
-  source="Filmed on a demonstration trunk at true density — 701 notes, 2,881 links, every name neutralised before filming"
->
-  <Mac titre="GMTR — trunk map">
-    <Anim
-      src="/projects/gmtr-carte-18-09.mp4"
-      srcWebm="/projects/gmtr-carte-18-09.webm"
-      poster="/projects/gmtr-carte-18-09.webp"
-      largeur={1500}
-      hauteur={966}
-      description="The trunk map: seven hundred notes placed by resemblance, in grey on black with green for whatever is live. A note is clicked and a panel gives its region, title, summary and link count; the map reorganises into a ring for the filing view; a family is entered and the map closes in on it. At the bottom, the power-on self-test and the code being written right now."
-    />
-  </Mac>
-</Figure>
-
-<Figure
-  cadre={false}
-  legende="While an agent works, a pill in the menu bar names it and says what it is doing; in the centre, the same corner enlarged. Open it and the steps of the run line up underneath; each kind of work has its own colour, up to “Done”. It is the engine's only interface: everything else is text."
-  source="Filmed on this Mac's full screen, in demonstration mode: English interface, invented code inside the orb. The enlargement in the centre is added in the edit. Official Apple frame."
->
-  <MacBureau
-    src="/projects/gmtr-bureau-25-09.mp4"
-    poster="/projects/gmtr-bureau-25-09.webp"
-    description="A Mac desktop. Top right, the GreyMatter pill in the menu bar with its panel open underneath; in the centre of the screen, the same corner enlarged. Torrens tidies the map, Anesidora writes the digest, Torrens commits; the glass orb changes colour with the kind of work. At the end, “Done” and three steps."
-  />
-</Figure>
 ## What it is for
 
 A command-line agent is brilliant inside a session and amnesiac between two. GreyMatter
 gives it memory that lasts: whatever is solved once is distilled into a note, filed,
-linked, and resurfaces on its own in the next session.
+linked, and found again in the next session.
 
 ## What the engine does
 
 - **Distillation**: a working session becomes clean notes — one fact per note, with its
   provenance and its degree of certainty.
-- **Automatic recall**: on every question asked, the relevant notes come back on their
-  own, with nothing to look up.
+- **Recall on demand**: ask — a keyword, a sentence or a command — and the notes that
+  answer come back in under 50 milliseconds across a thousand notes. Nothing enters the
+  conversation unless it was asked for.
 - **Knowledge tree**: notes link to each other; a lesson learned on one project is
   findable from every other.
-- **Gardening agents**: eight specialised roles file, de-duplicate, challenge stale notes
-  and repair broken links.
-- **3D planet**: the whole graph is visualised in real time, one continent per domain.
+- **Four maintenance ships**: eight narrow missions — distil, file, challenge, link,
+  archive, repair, watch the machine, synthesise — carried by four agents named after the
+  ships of *Alien*. Each mission writes only in its own zone.
+- **The map and the pill**: the whole trunk as a cloud of points you can walk through,
+  and a pill in the menu bar that says which agent is working, and on what.
+
+The public package is at version 1.28: recall there is still automatic and maintenance
+still carries eight role names. The pill, the ships and recall on demand ship with the
+next release.
 
 ## How a session becomes memory
 
@@ -86,11 +63,50 @@ linked, and resurfaces on its own in the next session.
 >
   <Flow etapes={[
     { t: 'The trunk', d: 'Plain Markdown files on the machine: the notes, the map, the state.' },
-    { t: 'On every prompt', d: 'A lexical search picks the few notes that answer, and pastes them into the question.' },
+    { t: 'When you ask', d: 'A lexical search picks the few notes that answer, and returns them into the conversation.' },
     { t: 'During the session', d: 'What is written and what is read are recorded — the real material of the work.' },
-    { t: 'At session end', d: 'The session is archived, then the agents wake: two always, a third only if its sensor crosses a threshold.', porte: true },
+    { t: 'At session end', d: 'The session is archived, then distilled into notes and filed. Another mission wakes only if its sensor crosses a threshold — at most one per pass.', porte: true },
   ]} />
 </Figure>
+
+## The map
+
+<Figure
+  cadre={false}
+  legende="Every dot is a note, filed in its region. Enter a region: it unfolds into a sphere, its families all around. Hover a note and it previews on the right; click and it opens with its text and its link count."
+  source="Filmed on 24/09 on this Mac's full screen, window at its true size, on the anonymised demonstration trunk. Official Apple frame."
+>
+  <MacBureau
+    src="/projects/gmtr-carte-24-09.mp4"
+    poster="/projects/gmtr-carte-24-09.webp"
+    description="A Mac desktop, with the glass GMTR window in the middle. First the whole map: the regions of notes as small coloured clusters, each with its count. The claude-brain region is entered and unfolds into a sphere ringed by its families; a note is hovered and its preview appears on the right, then it is clicked and opens in full with its 43 links. Then another region. At the bottom, the region table, the start-up log and the code being written right now."
+  />
+</Figure>
+
+## The pill
+
+<Figure
+  cadre={false}
+  legende="While an agent works, a pill in the menu bar names it and says what it is doing; in the centre, the same corner enlarged. Open it and the steps of the run line up underneath; each kind of work has its own colour, up to “Done”. Together with the map, it is the only interface: everything else is text."
+  source="Filmed on this Mac's full screen, in demonstration mode: English interface, invented code inside the orb. The enlargement in the centre is added in the edit. Official Apple frame."
+>
+  <MacBureau
+    src="/projects/gmtr-bureau-25-09.mp4"
+    poster="/projects/gmtr-bureau-25-09.webp"
+    description="A Mac desktop. Top right, the GreyMatter pill in the menu bar with its panel open underneath; in the centre of the screen, the same corner enlarged. Torrens tidies the map, Anesidora writes the digest, Torrens commits; the glass orb changes colour with the kind of work. At the end, “Done” and three steps."
+  />
+</Figure>
+
+## What measurement changed
+
+- **Automatic recall was switched off.** Until 9 September, the notes judged relevant were
+  pasted into every question unasked. Over thirty days, only 4% were then opened — 139 out
+  of 3,256. The search stayed, the unrequested suggestion went; one setting brings it back
+  without touching the code.
+- **The pill became light.** At rest it took 28% of a processor core, and another 29% from
+  the program that draws the screen: every frame per second was paid for twice. Each
+  element now animates at the pace of what visibly moves in it, and nothing draws while
+  hidden — at rest, 4% and 20%.
 
 ## What makes publication possible
 
@@ -116,7 +132,7 @@ linked, and resurfaces on its own in the next session.
 
 <Figure
   titre="From the living notebook to the public package"
-  legende="A one-way chain: nothing flows back from the public repository into the notebook. The leak check is allowed to block publication, and it already has."
+  legende="A one-way chain: nothing flows back from the public repository into the notebook. The leak check rereads the repository's whole history, not just the latest version, and publication leaves only when it is green."
 >
   <Flow etapes={[
     { t: 'The living notebook', d: 'Four months of real notes: clients, addresses, machine paths.' },

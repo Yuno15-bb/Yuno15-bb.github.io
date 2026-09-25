@@ -3,10 +3,10 @@
  * Duo — deux colonnes qui s'opposent : ce qui est permis / ce qui ne l'est pas,
  * avant / apres, ce qu'on ecrit / ce qu'on n'ecrit pas.
  *
- * Le filet a gauche de chaque ligne reprend l'idiome deja pose dans le site
- * (`.contact__inner`, `.project__nda`) : 1 px neutre, 2 px ember quand la colonne
- * porte l'accent. Une seule des deux colonnes peut le porter — sinon plus rien
- * ne ressort.
+ * Le filet est en HAUT de la colonne, comme sur les étapes de Flow : 1 px neutre,
+ * 2 px ember quand la colonne porte l'accent. Une seule des deux colonnes peut le
+ * porter — sinon plus rien ne ressort. Il était à gauche de chaque ligne jusqu'au
+ * 25/09 : c'est le liseré vertical coloré que Dylan a banni le 09/09.
  */
 interface Colonne {
   titre: string;
@@ -41,21 +41,17 @@ const cols: Array<[Colonne, boolean]> = [
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-6);
   }
+  .duo__col { border-top: 1px solid var(--c-line-ui); padding-top: var(--space-2); }
+  .duo__col--fort { border-top-width: 2px; border-top-color: var(--c-ember); padding-top: calc(var(--space-2) - 1px); }
   .duo__titre { color: var(--c-muted); margin-bottom: var(--space-3); }
   .duo__col--fort .duo__titre { color: var(--c-ember); }
   .duo__list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
   .duo__item {
-    border-left: 1px solid var(--c-line-ui);
-    padding-left: var(--space-2);
     color: var(--c-muted);
     font-size: var(--fs-200);
     line-height: 1.5;
   }
-  .duo__col--fort .duo__item {
-    border-left-width: 2px;
-    border-left-color: var(--c-ember);
-    color: var(--c-fg);
-  }
+  .duo__col--fort .duo__item { color: var(--c-fg); }
   @media (max-width: 760px) {
     .duo { grid-template-columns: 1fr; gap: var(--space-4); }
   }
