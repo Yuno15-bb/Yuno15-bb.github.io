@@ -18,8 +18,14 @@ const { Content } = await render(entry);
 const d = entry.data;
 const slug = entry.id.split('/')[1];
 import Pile from '../../../components/Pile.astro';
+import PageProduit from '../../../components/produit/PageProduit.astro';
+const produit = d.gabarit === 'produit';
 ---
-<Base title={`${d.titre} — Yuno15`} description={d.pitch} lang={lang} altPath={`/projects/${slug}`}>
+<Base title={`${d.titre} — Yuno15`} description={d.pitch} lang={lang} altPath={`/projects/${slug}`}
+      produit={produit ? d.ton : undefined}>
+  {produit ? (
+    <PageProduit lang={lang} ton={d.ton}><Content /></PageProduit>
+  ) : (
   <article class="project" data-slug={slug}>
     <div class="project__band">
       <div class="container">
@@ -54,6 +60,7 @@ import Pile from '../../../components/Pile.astro';
     </div>
 
   </article>
+  )}
 
   <style>
     .project { padding-block: 0 var(--space-8); }

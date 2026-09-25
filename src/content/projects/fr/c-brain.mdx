@@ -11,18 +11,37 @@ cover: "/projects/gmtr-ipad-24-09.webp"
 coverEntier: true
 featured: false
 ordre: 2
+gabarit: produit
+ton: jour
 ---
 
+import Ouverture from '../../../components/produit/Ouverture.astro';
+import Preuves from '../../../components/produit/Preuves.astro';
+import Section from '../../../components/produit/Section.astro';
+import Moment from '../../../components/produit/Moment.astro';
+import Capacites from '../../../components/produit/Capacites.astro';
+import AvantApres from '../../../components/produit/AvantApres.astro';
+import Installer from '../../../components/produit/Installer.astro';
+import Fabrication from '../../../components/produit/Fabrication.astro';
 import Figure from '../../../components/Figure.astro';
 import Flow from '../../../components/figures/Flow.astro';
-import Duo from '../../../components/figures/Duo.astro';
 import MacBureau from '../../../components/figures/MacBureau.astro';
 import Apercu from '../../../components/figures/Apercu.astro';
 
-<Figure
-  cadre={false}
-  legende="Chaque point est une fiche, rangée dans sa région. On entre dans une région : elle se déplie en sphère, ses familles tout autour. On survole une fiche, elle s'annonce à droite ; on l'ouvre, et son texte s'affiche avec son nombre de liens. La vue GRAPH tire ces liens jusqu'aux autres régions."
-  source="Filmé le 25/09 sur ce Mac, sur un tronc de démonstration à la vraie densité : fiches traduites en anglais, noms et chemins retirés, chaque demi-seconde relue avant publication. Seule la fenêtre est gardée."
+export const depot = 'https://github.com/Yuno15-bb/GreyMatter-engine';
+
+<Ouverture
+  logo={{ src: '/projects/gmtr-icone-22-09.png', alt: "Icône de l'app GreyMatter" }}
+  reperes={['Open source', 'Apache 2.0', 'macOS']}
+  titre="Une mémoire persistante pour Claude Code."
+  chapo="GreyMatter transforme chaque session en notes Markdown reliées et versionnées avec git, que votre agent retrouve d'une session à l'autre."
+  actions={[
+    { label: 'Voir sur GitHub', url: depot, plein: true },
+    { label: 'Installer', url: '#installer' },
+  ]}
+  pile={frontmatter.stack}
+  pileTitre="Stack"
+  legende="La carte : chaque point est une note, classée par région. Cliquez une région pour la déplier, une note pour lire son texte et ses liens. Démo filmée sur un dépôt de démonstration à densité réelle, en anglais, sans aucun nom."
 >
   <Apercu
     src="/projects/gmtr-carte-25-09.mp4"
@@ -31,125 +50,99 @@ import Apercu from '../../../components/figures/Apercu.astro';
     hauteur={1088}
     description="La fenêtre GMTR en verre sur un ciel de coucher de soleil. D'abord la carte entière : les régions en petits amas, chacune avec son nombre de fiches. On entre dans claude-brain, qui se déplie en sphère ; on survole deux fiches, leur aperçu s'affiche à droite, puis on en ouvre une : « Green sabotage has three possible causes ». La vue GRAPH déploie ses liens vers les autres régions. Retour à la carte, puis la région principles, où s'ouvre « Check at primary source, never assume ». En bas, en permanence : les régions par taille, le journal de ce qui est lu et écrit, et le code en cours."
   />
-</Figure>
+</Ouverture>
 
-<Figure
-  cadre={false}
-  legende="À l'ouverture, la fenêtre de GMTR se pose sur le bureau et son logo se construit pendant que le tronc se charge."
-  source="Filmé le 24/09 sur l'écran entier de ce Mac, fenêtre à sa vraie taille. Cadre officiel d'Apple."
+<Preuves items={[
+  { valeur: '46 versions', sens: 'publiées sous licence Apache 2.0, sur un dépôt public.' },
+  { valeur: '< 50 ms', sens: 'pour une recherche sur mille notes.' },
+  { valeur: '100 % local', sens: 'aucun compte, aucun serveur : des fichiers sur votre machine.' },
+  { valeur: '21 marqueurs', sens: 'de fuite vérifiés avant chaque publication. Un seul positif la bloque.' },
+]} />
+
+<Section
+  surtitre="Interfaces"
+  titre="Deux vues sur votre mémoire."
+  chapo="Tout le reste, ce sont des fichiers Markdown : vous les lisez, les corrigez et les versionnez comme du code."
 >
-  <MacBureau
-    src="/projects/gmtr-ouverture-24-09.mp4"
-    poster="/projects/gmtr-ouverture-24-09.webp"
-    description="Le bureau d'un Mac au coucher du soleil. Une petite fenêtre en verre apparaît au milieu ; trois barres blanches s'y empilent puis se changent en logo GMTR, et une barre de chargement se remplit dessous."
-  />
-</Figure>
+  <Moment surtitre="Lancement" titre="La carte se reconstruit depuis vos fichiers.">
+    <p slot="texte">Le logo s'assemble pendant la lecture des notes. La carte est recalculée à chaque lancement, elle reflète toujours l'état réel du dépôt.</p>
+    <MacBureau
+      src="/projects/gmtr-ouverture-24-09.mp4"
+      poster="/projects/gmtr-ouverture-24-09.webp"
+      description="Le bureau d'un Mac au coucher du soleil. Une petite fenêtre en verre apparaît au milieu ; trois barres blanches s'y empilent puis se changent en logo GMTR, et une barre de chargement se remplit dessous."
+    />
+  </Moment>
+  <Moment surtitre="Barre de menus" titre="Suivez vos agents en direct." badge="Prochaine version">
+    <p slot="texte">Chaque étape de la tâche s'affiche sous la pastille, colorée selon le type de travail, jusqu'à « Done ». Au repos, elle consomme 4 % d'un cœur CPU.</p>
+    <Apercu
+      src="/projects/gmtr-pastille-25-09.mp4"
+      poster="/projects/gmtr-pastille-25-09.webp"
+      largeur={1434}
+      hauteur={884}
+      description="Le coin droit de la barre de menus d'un Mac, la nuit. En haut à droite, la pastille GreyMatter et son panneau ouvert dessous ; en dessous, le même coin agrandi. Torrens range la carte, Anesidora écrit la synthèse, Torrens enregistre ; la bille de verre change de couleur avec le genre de travail. À la fin, « Done » et trois étapes."
+    />
+  </Moment>
+</Section>
 
-<Figure
-  cadre={false}
-  legende="Pendant qu'un agent travaille, une pastille dans la barre de menu le nomme et dit ce qu'il fait ; en dessous, le même coin agrandi. On l'ouvre, et les étapes de la tâche s'alignent dessous ; chaque genre de travail a sa couleur, jusqu'à « Done ». Avec la carte, c'est la seule interface : tout le reste est du texte."
-  source="Filmé sur ce Mac, en mode démonstration : interface en anglais, code inventé dans la bille. Seul le coin de l'écran où vit la pastille est gardé ; l'agrandissement est ajouté au montage."
+<Section
+  surtitre="Fonctionnalités"
+  titre="Ne réexpliquez plus rien à votre agent."
+  chapo="Claude Code repart de zéro à chaque session. GreyMatter garde ce qui a été appris et le rend disponible dans tous vos projets."
 >
-  <Apercu
-    src="/projects/gmtr-pastille-25-09.mp4"
-    poster="/projects/gmtr-pastille-25-09.webp"
-    largeur={1434}
-    hauteur={884}
-    description="Le coin droit de la barre de menus d'un Mac, la nuit. En haut à droite, la pastille GreyMatter et son panneau ouvert dessous ; en dessous, le même coin agrandi. Torrens range la carte, Anesidora écrit la synthèse, Torrens enregistre ; la bille de verre change de couleur avec le genre de travail. À la fin, « Done » et trois étapes."
-  />
-</Figure>
-
-## À quoi ça sert
-
-Un agent en ligne de commande est brillant à l'intérieur d'une session et amnésique
-entre deux. GreyMatter lui donne une mémoire qui dure : ce qu'on résout une fois est
-distillé en fiche, rangé, relié, et retrouvé à la session suivante.
-
-## Ce que le moteur fait
-
-- **Distillation** : une session de travail devient des fiches propres — un fait par
-  fiche, avec sa provenance et son degré de certitude.
-- **Rappel à la demande** : on pose la question — un mot-clé, une phrase ou une
-  commande — et les fiches qui répondent remontent en moins de 50 millisecondes sur
-  mille fiches. Rien n'entre dans la conversation sans avoir été demandé.
-- **Arbre de connaissance** : les fiches se relient entre elles ; une leçon apprise sur
-  un projet est trouvable depuis tous les autres.
-- **Quatre vaisseaux d'entretien** : huit missions étroites — distiller, ranger,
-  contester, relier, archiver, réparer, surveiller la machine, synthétiser — portées par
-  quatre agents aux noms de vaisseaux d'*Alien*. Chaque mission n'écrit que dans sa zone.
-- **La carte et la pastille** : tout le tronc en un nuage de points qu'on parcourt, et
-  une pastille dans la barre de menus qui dit quel agent travaille, et à quoi.
-
-Le paquet public en est à la version 1.28 : le rappel y est encore automatique et
-l'entretien y porte encore huit noms de rôles. La pastille, les vaisseaux et le rappel à
-la demande arrivent avec la prochaine version.
-
-## Comment une session devient de la mémoire
-
-<Figure
-  titre="Tout tourne sur la machine — rien ici n'est un service auquel on se connecte"
-  legende="Il n'y a pas de chef d'orchestre : chaque étape est accrochée à un moment de la session. C'est ce qui rend la mémoire gratuite à l'usage — on n'a jamais à penser à l'alimenter."
->
-  <Flow etapes={[
-    { t: 'Le tronc', d: 'Des fichiers Markdown sur la machine : les fiches, la carte, l’état.' },
-    { t: 'Quand on demande', d: 'Une recherche lexicale choisit les quelques fiches qui répondent et les rend dans la conversation.' },
-    { t: 'Pendant la session', d: 'Ce qui est écrit et ce qui est lu sont notés — la matière réelle du travail.' },
-    { t: 'À la fermeture', d: 'La session est archivée, puis distillée en fiches et rangée. Une autre mission ne se réveille que si son capteur passe un seuil — au plus une par passage.', porte: true },
+  <Capacites items={[
+    { titre: 'Distillation', texte: 'En fin de session, le transcript est découpé en notes : un fait par note, avec sa source et son niveau de certitude.' },
+    { titre: 'Recherche à la demande', texte: "Un mot-clé, une phrase ou brain recall : les notes pertinentes arrivent dans le contexte. Rien n'y entre sans avoir été demandé.", badge: "Prochaine version · la 1.28 injecte d'office" },
+    { titre: 'Notes liées entre projets', texte: "Une leçon apprise sur un projet est disponible dans tous les autres. Plus le dépôt grossit, plus les réponses sont précises." },
+    { titre: '8 agents de maintenance', texte: "Distiller, ranger, contester, relier, archiver, réparer, surveiller la machine, synthétiser. Chaque agent n'a le droit d'écrire que dans sa zone.", badge: 'Prochaine version · regroupés en 4 vaisseaux' },
+    { titre: 'Revue de fraîcheur', texte: "Une note jamais revérifiée entre dans une file de relecture, datée par l'historique git." },
+    { titre: 'Mises à jour avec retour arrière', texte: 'Le moteur se remplace en entier à chaque session, et brain update --rollback revient à la version précédente. Vos notes ne sont jamais modifiées.' },
   ]} />
-</Figure>
+</Section>
 
-## Ce que la mesure a fait changer
-
-- **Le rappel automatique est coupé.** Jusqu'au 9 septembre, les fiches jugées
-  pertinentes étaient glissées d'office dans chaque question. Sur trente jours, 4 %
-  seulement étaient ensuite ouvertes — 139 sur 3 256. La recherche est restée, la
-  suggestion non demandée est partie ; un réglage la rétablit sans toucher au code.
-- **La pastille est devenue légère.** Au repos, elle prenait 28 % d'un cœur de
-  processeur, et 29 % de plus au programme qui dessine l'écran : chaque image par seconde
-  se payait deux fois. Chaque emplacement anime désormais à la cadence de ce qu'on y voit
-  bouger, et rien ne se dessine caché — au repos, 4 % et 20 %.
-
-## Ce qui rend la publication possible
-
-<Figure
-  titre="Deux dossiers qui ne se mélangent jamais"
-  legende="La séparation n'est pas une convention de rangement : une mise à jour remplace entièrement le moteur, et n'a pas le droit d'écrire dans les notes."
+<Section
+  surtitre="Architecture"
+  titre="Branché sur les hooks de Claude Code."
+  chapo="Aucun compte, aucun service distant : chaque étape se déclenche sur un événement de la session."
 >
-  <Duo
-    a={{ titre: 'Le moteur — jetable, remplacé à chaque mise à jour', items: [
-      'Le code qui range, relie et retrouve',
-      'Les contrôles et les bancs de mesure',
-      "Les outils d'installation et de migration",
-    ] }}
-    b={{ titre: "Le tronc — il ne bouge que quand j'écris", items: [
-      'Quatre mois de notes, de leçons et de décisions',
-      'Les noms de clients, les adresses, les chemins',
-      "Ce qu'une mise à jour ne doit jamais toucher",
-    ] }}
+  <Figure>
+    <Flow etapes={[
+      { t: 'Le dépôt', d: 'Des fichiers Markdown versionnés avec git : notes, carte, état.' },
+      { t: 'À la demande', d: 'Une recherche lexicale sélectionne les notes pertinentes et les injecte dans la conversation.' },
+      { t: 'Pendant la session', d: 'Chaque fichier lu ou écrit est journalisé.' },
+      { t: 'Fin de session', d: 'Le transcript est archivé, distillé en notes, puis classé. Un agent de maintenance ne démarre que si son capteur dépasse un seuil, un seul par passage.', porte: true },
+    ]} />
+  </Figure>
+</Section>
+
+<Section
+  surtitre="Décisions produit"
+  titre="Deux fonctionnalités revues après mesure."
+  chapo="Si une fonctionnalité ne sert pas, elle est retirée, même quand c'était l'idée de départ."
+>
+  <AvantApres
+    libelles={{ avant: 'Avant', apres: 'Après' }}
+    items={[
+      { titre: 'Injection automatique', avant: '4 %', avantSens: "des notes injectées d'office étaient réellement ouvertes : 139 sur 3 256, en 30 jours.", apres: 'Sur demande', apresSens: "La recherche reste, l'injection non sollicitée est supprimée. Un réglage la réactive sans toucher au code." },
+      { titre: 'Pastille au repos', avant: '28 % + 29 %', avantSens: "d'un cœur CPU : la pastille, puis le processus macOS qui dessine l'écran. Chaque image était payée deux fois.", apres: '4 % + 20 %', apresSens: "Chaque zone s'anime à la cadence de ce qui bouge réellement, et rien n'est rendu quand la fenêtre est cachée." },
+    ]}
   />
-</Figure>
+</Section>
 
-## La chaîne qui protège le vécu
+<Installer
+  titre="Installer en deux commandes."
+  chapo="GreyMatter s'installe comme plugin Claude Code, puis se met à jour tout seul à chaque session."
+  lignes={['/plugin marketplace add Yuno15-bb/GreyMatter-engine', '/plugin install c-brain@c-brain']}
+  copier="Copier"
+  copie="Copié"
+  actions={[
+    { label: 'Code source sur GitHub', url: depot, plein: true },
+    { label: "Guide d'installation complet", url: `${depot}/blob/main/INSTALL.md` },
+  ]}
+  note="Chaque version passe par la CI : installation, désinstallation et rejeu de toutes les migrations, deux fois, avec zéro note perdue exigée. Version publique : 1.28. La pastille, les 4 vaisseaux et la recherche à la demande arrivent dans la suivante."
+/>
 
-<Figure
-  titre="Du carnet vivant au paquet public"
-  legende="Une chaîne à sens unique : rien ne remonte du dépôt public vers le carnet. Le contrôle de fuite relit tout l'historique du dépôt, pas seulement la dernière version, et la publication ne part que s'il est vert."
->
-  <Flow etapes={[
-    { t: 'Le carnet vivant', d: 'Quatre mois de notes réelles : clients, adresses, chemins de machine.' },
-    { t: 'Copie par liste blanche', d: "Ce qui n'est pas nommé ne sort pas." },
-    { t: 'Dépersonnalisation', d: 'Des règles rejouables retirent noms, numéros et chemins.' },
-    { t: 'Contrôle de fuite', d: '21 marqueurs. Un seul qui rougit et la publication est bloquée.', porte: true },
-    { t: 'Le paquet public', d: 'Le moteur, installable par quiconque. Jamais le vécu.' },
-  ]} />
-</Figure>
-
-## Comment il s'installe et se maintient
-
-- **Une commande** : le paquet s'installe comme extension d'un agent en ligne de commande.
-- **Chaque version est rejouée** par une intégration continue : installation complète,
-  désinstallation, et chaque migration passée **deux fois** — en exigeant qu'elle n'ait
-  mangé aucune fiche.
-- **46 versions publiées**, sous licence Apache 2.0, sur un dépôt public.
-
-Code source : [github.com/Yuno15-bb/GreyMatter-engine](https://github.com/Yuno15-bb/GreyMatter-engine)
+<Fabrication items={[
+  { terme: 'Rôle', valeur: frontmatter.role },
+  { terme: 'Cadre', valeur: `${frontmatter.contexte} · ${frontmatter.annee}` },
+  { terme: 'Résultat', valeur: frontmatter.resultat },
+]} />

@@ -1,0 +1,201 @@
+/* ============================================================
+   PAGE PRODUIT — direction « Swiss produit sur base Landmarks » (25/09/2026)
+
+   Dylan, 25/09 : « on refait toute la documentation de zéro, elle n'est pas bonne
+   comme présentation produit, même open source ; également refonte de style totale ».
+
+   D'OÙ VIENNENT LES CHOIX — onze pages produit relevées le 25/09 (Zed, Ghostty, Bun,
+   uv, Tauri, Supabase, Ollama, Basic Memory, Linear, Raycast, macOS), galerie dans
+   « DOCUMENTATION PROJETS (2026-09-25) ». Toutes ouvrent sur une promesse en grand
+   (46 à 78 px, contre 30 px chez nous), une phrase dessous, un ou deux boutons, et le
+   produit visible dès le premier écran. Le texte courant y tient 53 à 64 signes par
+   ligne ; le nôtre en tenait 86.
+
+   LES QUATRE LEVIERS
+   - Grille : un conteneur, un seul bord gauche par écran ; seule l'ouverture se centre.
+   - Couleur : un fond opaque, un texte, un gris, un accent (la braise du site).
+     Base Landmarks : le contenu est opaque, le verre n'existe que sur la navigation.
+   - Typographie : une grotesque (Inter) serrée pour les titres, la même au corps, une
+     chasse fixe pour ce qui se tape ou se mesure. Échelle 1,25 à partir de 17 px.
+   - Geste : des coins de 16 px, un filet d'un pixel, et une apparition au défilement.
+
+   Ce fichier remplace, sur ces pages seulement, la règle du 13/07 (« rien ne recouvre
+   le champ ») : le champ animé n'y est plus chargé du tout (Base.astro, prop `produit`).
+   ============================================================ */
+
+html[data-produit] {
+  /* --- Échelle d'espacement (base 4, avec son pas fin) --- */
+  --e-2: 2px; --e-4: 4px; --e-8: 8px; --e-12: 12px; --e-16: 16px;
+  --e-20: 20px; --e-24: 24px; --e-32: 32px; --e-40: 40px; --e-48: 48px;
+  /* LE RYTHME DE PAGE — un seul bouton : l'écart entre deux sections. */
+  --rythme: 120px;
+
+  /* --- Échelle typographique, rapport 1,25 à partir de 17 px --- */
+  --t-legende: 13px;
+  --t-petit: 15px;
+  --t-corps: 17px;
+  --t-grand: 21px;
+  --t-titre3: 27px;
+  --t-titre2: clamp(32px, 3vw, 42px);
+  --t-titre1: clamp(40px, 4.6vw, 65px);
+  --mesure: 62ch;
+  --page: 1200px;
+  --arrondi: 16px;
+  /* ⚠ La police mono du site (« JetBrains Mono ») n'est chargée nulle part : Chrome
+     retombait sur Courier. Ici, la pile système de GitHub — SF Mono sur Mac, Consolas
+     sous Windows, Liberation Mono sous Linux —, rien à télécharger. */
+  --font-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
+
+  /* --- Nuit (défaut) --- */
+  --p-fond: #0a0a0c;
+  --p-surface: #141417;
+  --p-surface-2: #1c1c20;
+  --p-texte: #f5f5f7;
+  --p-doux: #a1a1a8;
+  --p-filet: #26262b;
+  --p-filet-fort: #3d3d44;
+  --p-accent: #e8925a;
+  --p-bouton: #f5f5f7;
+  --p-bouton-texte: #0a0a0c;
+
+  /* Les composants partagés (Figure, Flow, Duo, Pile, Apercu) lisent les jetons du
+     site : on les rebranche ici, ils suivent le ton de la page sans être modifiés. */
+  --c-bg: var(--p-fond);
+  --c-surface: var(--p-surface);
+  --c-fg: var(--p-texte);
+  --c-muted: var(--p-doux);
+  --c-line: var(--p-filet);
+  --c-line-ui: var(--p-filet-fort);
+  --c-ember: var(--p-accent);
+  --c-accent: var(--p-accent);
+  --c-focus: var(--p-accent);
+
+  background: var(--p-fond);
+  color-scheme: dark;
+}
+html[data-produit='jour'] {
+  --p-fond: #fbfbfd;
+  --p-surface: #ffffff;
+  --p-surface-2: #f2f2f5;
+  --p-texte: #1d1d1f;
+  --p-doux: #6e6e73;       /* 4,9:1 sur le fond */
+  --p-filet: #e4e4e8;
+  --p-filet-fort: #c7c7cc;
+  --p-accent: #b4561e;     /* la braise, assombrie : 4,9:1 sur blanc */
+  --p-bouton: #1d1d1f;
+  --p-bouton-texte: #ffffff;
+  color-scheme: light;
+}
+html[data-produit] body { background: var(--p-fond); color: var(--p-texte); }
+
+@media (max-width: 760px) {
+  html[data-produit] { --rythme: 80px; }
+}
+
+/* ---------------- La page ---------------- */
+.produit {
+  font-family: var(--font-sans);
+  font-size: var(--t-corps);
+  line-height: 1.55;
+  padding-bottom: var(--rythme);
+}
+.produit__page {
+  width: min(var(--page), 100% - 2 * var(--e-24));
+  margin-inline: auto;
+}
+.produit p { max-width: var(--mesure); }
+.produit :where(h1, h2, h3) {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: var(--p-texte);
+  text-wrap: balance;
+}
+.produit__retour {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: var(--t-legende);
+  color: var(--p-doux);
+  margin-bottom: var(--e-24);
+}
+.produit__retour:hover { color: var(--p-texte); }
+
+/* ---------------- Une section ---------------- */
+.p-section { margin-top: var(--rythme); }
+.p-section__tete { margin-bottom: var(--e-48); }
+.p-surtitre {
+  font-family: var(--font-mono);
+  font-size: var(--t-legende);
+  letter-spacing: 0.04em;
+  color: var(--p-accent);
+  margin: 0 0 var(--e-12);
+}
+.p-section__titre {
+  font-size: var(--t-titre2);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  max-width: 22ch;
+}
+.p-section__chapo {
+  margin-top: var(--e-16);
+  font-size: var(--t-grand);
+  line-height: 1.45;
+  color: var(--p-doux);
+  max-width: 52ch;
+}
+
+/* ---------------- Boutons ---------------- */
+.p-boutons { display: flex; flex-wrap: wrap; gap: var(--e-12); }
+.p-bouton {
+  display: inline-flex; align-items: center; gap: var(--e-8);
+  height: 44px; padding-inline: var(--e-20);
+  border-radius: 999px;
+  font-size: var(--t-petit); font-weight: 600;
+  border: 1px solid var(--p-filet-fort);
+  color: var(--p-texte);
+  transition: background var(--dur-micro) ease, border-color var(--dur-micro) ease;
+}
+.p-bouton:hover { border-color: var(--p-doux); }
+.p-bouton--plein { background: var(--p-bouton); color: var(--p-bouton-texte); border-color: var(--p-bouton); }
+.p-bouton--plein:hover { background: color-mix(in srgb, var(--p-bouton) 86%, var(--p-fond)); }
+.p-bouton:focus-visible { outline: 2px solid var(--p-accent); outline-offset: 3px; }
+
+/* ---------------- Figures partagées, au style de la page ---------------- */
+.produit .fig__plate:not(.fig__plate--nu) {
+  border-radius: var(--arrondi);
+  background: var(--p-surface);
+  border-color: var(--p-filet);
+}
+.produit .fig__cap { color: var(--p-doux); font-size: var(--t-petit); }
+.produit .apercu { border-color: var(--p-filet-fort); }
+
+/* ---------------- Apparition au défilement ---------------- */
+/* `.p-anime` n'est posé que par le script : sans JavaScript, rien n'est caché. */
+@media (prefers-reduced-motion: no-preference) {
+  .p-anime .produit [data-apparait] {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 600ms var(--ease-out), transform 600ms var(--ease-out);
+  }
+  .p-anime .produit [data-apparait].est-visible { opacity: 1; transform: none; }
+}
+
+/* ---------------- Bascule nuit / jour (en-tête) ---------------- */
+/* L'icône suit le ton affiché, sans script : la lune la nuit, le soleil le jour. */
+.bascule-ton { cursor: pointer; font: inherit; }
+.bascule-ton__soleil { display: none; }
+html[data-produit='jour'] .bascule-ton__lune { display: none; }
+html[data-produit='jour'] .bascule-ton__soleil { display: block; }
+.bascule-ton:focus-visible { outline: 2px solid var(--p-accent); outline-offset: 3px; }
+/* Les pastilles de l'en-tête sont un verre clair pensé pour un fond sombre : en ton jour,
+   leur filet blanc disparaissait sur le blanc. Même verre, filet et reflet du ton. */
+html[data-produit='jour'] .gh {
+  border-color: var(--p-filet-fort);
+  background: linear-gradient(158deg, rgba(0,0,0,0.035), rgba(0,0,0,0.01));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 14px 30px -24px rgba(0,0,0,0.25);
+}
+/* Le passage d'un ton à l'autre se fond au lieu de claquer, une fois la page chargée. */
+@media (prefers-reduced-motion: no-preference) {
+  html.p-bascule, html.p-bascule body, html.p-bascule .produit * {
+    transition: background-color 300ms ease, color 300ms ease, border-color 300ms ease;
+  }
+}

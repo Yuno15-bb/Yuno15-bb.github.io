@@ -1,0 +1,32 @@
+---
+/**
+ * Preuves — la ligne de chiffres sous l'ouverture. Chaque chiffre porte sa phrase :
+ * un nombre seul ne dit pas ce qu'il prouve. Modèle observé : la ligne « OPEN SOURCE ·
+ * 2K+ STARS · 57K DOWNLOADS/MO » de Basic Memory, en plus lisible.
+ */
+interface Props { items: { valeur: string; sens: string }[]; }
+const { items } = Astro.props;
+---
+<dl class="preuves produit__page" data-apparait>
+  {items.map((p) => (
+    <div class="preuves__item">
+      <dt class="preuves__valeur">{p.valeur}</dt>
+      <dd class="preuves__sens">{p.sens}</dd>
+    </div>
+  ))}
+</dl>
+
+<style>
+  .preuves {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    margin-top: var(--rythme);
+    border-top: 1px solid var(--p-filet);
+  }
+  .preuves__item { padding: var(--e-24) var(--e-24) 0 0; }
+  .preuves__valeur {
+    font-size: var(--t-titre3); font-weight: 600; letter-spacing: -0.02em;
+    color: var(--p-texte);
+  }
+  .preuves__sens { margin: var(--e-8) 0 0; font-size: var(--t-petit); color: var(--p-doux); max-width: 26ch; }
+</style>

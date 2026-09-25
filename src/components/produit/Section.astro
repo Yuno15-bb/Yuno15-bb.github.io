@@ -1,0 +1,13 @@
+---
+/** Section — un chapitre de la page : surtitre, titre, chapeau, puis son contenu. */
+interface Props { id?: string; surtitre?: string; titre: string; chapo?: string; }
+const { id, surtitre, titre, chapo } = Astro.props;
+---
+<section class="p-section produit__page" id={id}>
+  <div class="p-section__tete" data-apparait>
+    {surtitre && <p class="p-surtitre">{surtitre}</p>}
+    <h2 class="p-section__titre">{titre}</h2>
+    {chapo && <p class="p-section__chapo">{chapo}</p>}
+  </div>
+  <slot />
+</section>

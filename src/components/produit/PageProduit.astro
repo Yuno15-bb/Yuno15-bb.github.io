@@ -1,0 +1,71 @@
+---
+/**
+ * PageProduit — l'enveloppe d'une page de présentation produit (gabarit « produit »).
+ *
+ * Le contenu entier vit dans le MDX du projet, écrit avec les briques de ce dossier :
+ * Ouverture, Preuves, Section, Moment, Capacites, AvantApres, Installer, Fabrication.
+ * Ajouter un produit reste « un MDX, zéro code ».
+ */
+import '../../styles/produit.css';
+import { ui, type Lang } from '../../i18n/ui';
+
+interface Props { lang: Lang; ton: 'nuit' | 'jour'; }
+const { lang } = Astro.props;
+const t = ui[lang];
+---
+<article class="produit">
+  <div class="produit__page">
+    <a class="produit__retour" href={`/${lang}/`}>{t['project.back']}</a>
+  </div>
+  <slot />
+</article>
+
+<script>
+  // Apparition au défilement : une seule observation, retirée dès que l'élément est vu.
+  const reduit = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const cibles = document.querySelectorAll<HTMLElement>('.produit [data-apparait]');
+  if (!reduit && 'IntersectionObserver' in window && cibles.length) {
+    document.documentElement.classList.add('p-anime');
+    const io = new IntersectionObserver((entrees) => {
+      entrees.forEach((e) => {
+        if (!e.isIntersecting) return;
+        e.target.classList.add('est-visible');
+        io.unobserve(e.target);
+      });
+    }, { rootMargin: '0px 0px -8% 0px' });
+    cibles.forEach((c) => io.observe(c));
+  }
+
+  // Bascule nuit / jour : le choix est gardé pour toutes les pages produit ; le script
+  // de <head> (layouts/Base.astro) le repose avant l'affichage à la visite suivante.
+  const racine = document.documentElement;
+  const bascule = document.querySelector<HTMLButtonElement>('.bascule-ton');
+  const libeller = () => {
+    if (!bascule) return;
+    const l = racine.dataset.produit === 'jour' ? bascule.dataset.libelleJour : bascule.dataset.libelleNuit;
+    if (l) { bascule.setAttribute('aria-label', l); bascule.title = l; }
+  };
+  libeller();
+  bascule?.addEventListener('click', () => {
+    const ton = racine.dataset.produit === 'jour' ? 'nuit' : 'jour';
+    racine.classList.add('p-bascule');
+    racine.dataset.produit = ton;
+    libeller();
+    try { localStorage.setItem('produit-ton', ton); } catch { /* stockage bloqué : le choix vaut pour cette page */ }
+    setTimeout(() => racine.classList.remove('p-bascule'), 350);
+  });
+
+  // Bouton « Copier » des commandes d'installation.
+  document.querySelectorAll<HTMLButtonElement>('[data-copier]').forEach((b) => {
+    b.addEventListener('click', async () => {
+      const cible = document.getElementById(b.dataset.copier ?? '');
+      if (!cible) return;
+      try {
+        await navigator.clipboard.writeText(cible.innerText.trim());
+        const avant = b.textContent;
+        b.textContent = b.dataset.fait ?? 'OK';
+        setTimeout(() => { b.textContent = avant; }, 1600);
+      } catch { /* presse-papiers refusé : la commande reste sélectionnable à la main */ }
+    });
+  });
+</script>

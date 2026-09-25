@@ -1,0 +1,74 @@
+---
+/**
+ * Installer — la fin de page : la commande à copier et les deux portes (code, guide).
+ * C'est l'appel final que les pages relevées posent toutes en bas.
+ */
+interface Action { label: string; url: string; plein?: boolean; }
+interface Props {
+  id?: string; titre: string; chapo: string; lignes: string[];
+  copier: string; copie: string; actions: Action[]; note?: string;
+}
+const { id = 'installer', titre, chapo, lignes, copier, copie, actions, note } = Astro.props;
+---
+<section class="inst produit__page" id={id} data-apparait>
+  <h2 class="inst__titre">{titre}</h2>
+  <p class="inst__chapo">{chapo}</p>
+  <div class="inst__code">
+    <pre id={`${id}-cmd`}><code>{lignes.join('\n')}</code></pre>
+    <button type="button" class="inst__copier" data-copier={`${id}-cmd`} data-fait={copie}>{copier}</button>
+  </div>
+  <div class="p-boutons inst__boutons">
+    {actions.map((a) => (
+      <a class:list={['p-bouton', a.plein && 'p-bouton--plein']} href={a.url} target="_blank" rel="noopener noreferrer">
+        {a.label}<span aria-hidden="true">↗</span>
+      </a>
+    ))}
+  </div>
+  {note && <p class="inst__note">{note}</p>}
+</section>
+
+<style>
+  .inst {
+    margin-top: var(--rythme);
+    padding: var(--e-48);
+    background: var(--p-surface);
+    border: 1px solid var(--p-filet);
+    border-radius: var(--arrondi);
+    display: grid; justify-items: center; text-align: center;
+    /* ⚠ Sans `minmax(0, 1fr)`, la colonne prend la largeur de la plus longue commande
+       (ligne insécable) : mesuré le 25/09, 155 px de débordement sur téléphone. */
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .inst__titre { font-size: var(--t-titre2); line-height: 1.1; letter-spacing: -0.025em; }
+  .inst__chapo { margin: var(--e-16) auto 0; color: var(--p-doux); font-size: var(--t-grand); max-width: 44ch; }
+  .inst__code {
+    margin-top: var(--e-32);
+    width: min(100%, 640px);
+    display: flex; align-items: center; gap: var(--e-16);
+    padding: var(--e-16) var(--e-16) var(--e-16) var(--e-24);
+    background: var(--p-fond);
+    border: 1px solid var(--p-filet-fort);
+    border-radius: 12px;
+    text-align: left;
+  }
+  .inst__code pre {
+    flex: 1; min-width: 0; margin: 0; overflow-x: auto;
+    font-family: var(--font-mono); font-size: var(--t-petit); line-height: 1.7;
+    color: var(--p-texte);
+  }
+  .inst__copier {
+    flex: none; height: 32px; padding-inline: var(--e-12);
+    border-radius: 8px; border: 1px solid var(--p-filet-fort);
+    background: var(--p-surface-2); color: var(--p-texte);
+    font: 600 var(--t-legende) var(--font-sans); cursor: pointer;
+  }
+  .inst__copier:focus-visible { outline: 2px solid var(--p-accent); outline-offset: 2px; }
+  .inst__boutons { justify-content: center; margin-top: var(--e-32); }
+  .inst__note { margin: var(--e-24) auto 0; font-size: var(--t-petit); color: var(--p-doux); max-width: 60ch; }
+  @media (max-width: 640px) {
+    .inst { padding: var(--e-32) var(--e-20); }
+    .inst__code { flex-direction: column; align-items: stretch; }
+    /* Sur téléphone la commande passe à la ligne au lieu d'être coupée au bord. */
+    .inst__code pre { white-space: pre-wrap; overflow-wrap: anywhere; font-size: var(--t-legende); }
+  }
+</style>

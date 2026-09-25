@@ -1,0 +1,22 @@
+---
+/** Fabrication — qui a fait le produit, et dans quel cadre. Le bloc portfolio, en pied. */
+interface Props { items: { terme: string; valeur: string }[]; }
+const { items } = Astro.props;
+---
+<dl class="fab produit__page" data-apparait>
+  {items.map((i) => (
+    <div><dt class="fab__terme">{i.terme}</dt><dd class="fab__valeur">{i.valeur}</dd></div>
+  ))}
+</dl>
+
+<style>
+  .fab {
+    margin-top: var(--rythme);
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--e-24);
+    padding-top: var(--e-24);
+    border-top: 1px solid var(--p-filet);
+  }
+  .fab__terme { font-family: var(--font-mono); font-size: var(--t-legende); color: var(--p-doux); }
+  .fab__valeur { margin: var(--e-8) 0 0; font-size: var(--t-petit); color: var(--p-texte); }
+</style>

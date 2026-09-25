@@ -27,6 +27,13 @@ const projects = defineCollection({
     nda: z.boolean().default(false), // client reel -> captures maquettees, aucune vraie data
     featured: z.boolean().default(false),
     ordre: z.number().int().default(100),
+    // GABARIT DE PAGE (25/09). « etude » : l'étude de cas d'origine, filets sur le champ
+    // animé. « produit » : une page de présentation produit — promesse, preuve, démonstration,
+    // installation —, sur fond opaque. Dylan, 25/09 : « on refait toute la documentation de
+    // zéro, elle n'est pas bonne comme présentation produit, même open source ».
+    gabarit: z.enum(['etude', 'produit']).default('etude'),
+    // Ton de la page produit : nuit (fond sombre) ou jour (fond clair).
+    ton: z.enum(['nuit', 'jour']).default('nuit'),
   }),
 });
 

@@ -9,8 +9,10 @@ interface Props {
   lang: Lang;
   /** Chemin equivalent dans l'autre langue, pour le switch (ex: "/projects/dgc-system"). */
   altPath?: string;
+  /** Page produit : pas de fond animé, fond opaque au ton demandé (voir styles/produit.css). */
+  produit?: 'nuit' | 'jour';
 }
-const { title, description = '', lang, altPath = '' } = Astro.props;
+const { title, description = '', lang, altPath = '', produit } = Astro.props;
 
 const other: Lang = lang === 'fr' ? 'en' : 'fr';
 const t = ui[lang];
@@ -18,7 +20,7 @@ const t = ui[lang];
 const contactHref = `/${lang}/#contact`;
 ---
 <!doctype html>
-<html lang={lang}>
+<html lang={lang} data-produit={produit}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -36,13 +38,19 @@ const contactHref = `/${lang}/#contact`;
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
+    {/* Page produit : le ton choisi par le visiteur (bouton soleil/lune de l'en-tête) est
+        posé AVANT le premier affichage, sinon la page s'afficherait une image dans le ton
+        par défaut puis basculerait. Le choix vaut pour toutes les pages produit. */}
+    {produit && <script is:inline>try{var t=localStorage.getItem('produit-ton');if(t==='nuit'||t==='jour')document.documentElement.dataset.produit=t}catch(e){}</script>}
   </head>
   <body>
     {/* Le champ d'étoiles a été RETIRÉ le 2026-09-07 : le fond animé le remplace,
         il ne se pose pas dessus. Deux fonds WebGL en même temps, c'étaient aussi
         deux boucles d'animation qui se disputaient la carte graphique. Le composant
         reste dans le dépôt — le remettre tient en une ligne. */}
-    <FondAnime />
+    {/* Sur une page produit, le contenu est opaque en plein cadre (base Landmarks) : le fond
+        animé n'y serait jamais vu, il ne tournerait que pour vider la batterie. */}
+    {!produit && <FondAnime />}
     <a class="skip-link" href="#main">{t['skip']}</a>
     <header class="container site-head">
       <a href={`/${lang}/`} class="wordmark" aria-label="Accueil / Home">Yuno<span class="accent">15</span></a>
@@ -72,6 +80,25 @@ const contactHref = `/${lang}/#contact`;
           <span class="lang-switch__mot">{languages[other]}</span>
           <span class="lang-switch__code" aria-hidden="true">{languageCodes[other]}</span>
         </a>
+        {/* Bascule nuit/jour, sur les pages produit seulement (Dylan, 25/09 : « les 2 couleurs
+            possibles avec icône de changement »). L'icône montre le ton ACTUEL, le nom accessible
+            dit l'action. Glyphes : Lucide « sun » et « moon », licence ISC. Le clic vit dans
+            components/produit/PageProduit.astro. */}
+        {produit && (
+          <button type="button" class="gh gh--seul bascule-ton"
+                  data-libelle-jour={t['ton.sombre']} data-libelle-nuit={t['ton.clair']}
+                  aria-label={produit === 'jour' ? t['ton.sombre'] : t['ton.clair']}
+                  title={produit === 'jour' ? t['ton.sombre'] : t['ton.clair']}>
+            <svg class="gh__mark bascule-ton__lune" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"
+                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+            </svg>
+            <svg class="gh__mark bascule-ton__soleil" viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"
+                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+            </svg>
+          </button>
+        )}
       </nav>
     </header>
 

@@ -1,0 +1,114 @@
+---
+/**
+ * Ouverture — le premier écran d'une page produit.
+ *
+ * L'ordre est celui des onze pages relevées le 25/09 : ce qu'on est (une ligne de
+ * repères), la promesse en grand, une phrase qui la précise, deux boutons, puis le
+ * produit lui-même, qui commence dans le premier écran au lieu d'arriver sous la ligne.
+ * La pile technique reste sous le titre (Dylan, 18/09 : « je les veux sous le titre
+ * toujours, et pour tous les projets ») : elle joue ici le rôle du bandeau de logos
+ * que Bun et Ollama posent sous leur promesse.
+ */
+import Pile from '../Pile.astro';
+
+interface Action { label: string; url: string; plein?: boolean; }
+interface Props {
+  /** L'icône de l'app, recadrée sur sa plaque (pas de marge transparente autour). */
+  logo?: { src: string; alt: string };
+  reperes: string[];
+  titre: string;
+  chapo: string;
+  actions: Action[];
+  pile: string[];
+  pileTitre: string;
+  legende?: string;
+}
+const { logo, reperes, titre, chapo, actions, pile, pileTitre, legende } = Astro.props;
+const externe = (u: string) => /^https?:/.test(u);
+---
+<header class="ouv produit__page">
+  {logo && <img class="ouv__logo" src={logo.src} alt={logo.alt} width="96" height="96" decoding="async" />}
+  <p class="ouv__reperes">
+    {reperes.map((r, i) => <span>{i > 0 && <span class="ouv__point" aria-hidden="true">·</span>}{r}</span>)}
+  </p>
+  <h1 class="ouv__titre">{titre}</h1>
+  <p class="ouv__chapo">{chapo}</p>
+  <div class="p-boutons ouv__boutons">
+    {actions.map((a) => (
+      <a class:list={['p-bouton', a.plein && 'p-bouton--plein']} href={a.url}
+         {...(externe(a.url) ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+        {a.label}{externe(a.url) ? <span aria-hidden="true">↗</span> : <span aria-hidden="true">↓</span>}
+      </a>
+    ))}
+  </div>
+  <div class="ouv__pile"><Pile items={pile} titre={pileTitre} /></div>
+  <figure class="ouv__visuel" data-apparait>
+    <slot />
+    {legende && <figcaption class="ouv__legende">{legende}</figcaption>}
+  </figure>
+</header>
+
+<style>
+  .ouv { text-align: center; padding-top: var(--e-24); }
+  /* L'icône de l'app au-dessus des repères, centrée, comme Ghostty pose la sienne au cœur
+     de son ouverture. La plaque est noire : sur le fond nuit, un filet d'un pixel qui suit
+     sa forme exacte (une ombre sur son contour, pas une bordure carrée) la détache ; sur le
+     fond jour, l'ombre portée d'une icône de macOS. */
+  .ouv__logo {
+    display: block; width: 96px; height: 96px;
+    margin: 0 auto var(--e-24);
+    filter: drop-shadow(0 0 1px var(--p-filet-fort)) drop-shadow(0 12px 24px rgba(0, 0, 0, 0.45));
+  }
+  :global(html[data-produit='jour']) .ouv__logo {
+    filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.18));
+  }
+  .ouv__reperes {
+    display: inline-flex; flex-wrap: wrap; justify-content: center; gap: var(--e-8);
+    margin: 0 auto var(--e-24);
+    padding: var(--e-4) var(--e-16);
+    border: 1px solid var(--p-filet);
+    border-radius: 999px;
+    font-family: var(--font-mono); font-size: var(--t-legende);
+    color: var(--p-doux);
+    max-width: none;
+  }
+  .ouv__point { margin-right: var(--e-8); color: var(--p-accent); }
+  .ouv__titre {
+    font-size: var(--t-titre1);
+    line-height: 1.04;
+    letter-spacing: -0.035em;
+    max-width: 20ch;
+    margin-inline: auto;
+  }
+  .ouv__chapo {
+    margin: var(--e-24) auto 0;
+    font-size: var(--t-grand);
+    line-height: 1.45;
+    color: var(--p-doux);
+    max-width: 44ch;
+  }
+  .ouv__boutons { justify-content: center; margin-top: var(--e-32); }
+  /* La pile se centre sous les boutons ; son titre « Stack » disparaît : les logos
+     parlent seuls, comme un bandeau de marques. Il reste lu par un lecteur d'écran. */
+  .ouv__pile { margin-top: var(--e-32); display: flex; justify-content: center; }
+  .ouv__pile :global(.pile__titre) {
+    position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0);
+  }
+  .ouv__pile :global(.pile__liste) { justify-content: center; }
+  .ouv__visuel { margin: var(--e-48) 0 0; }
+  .ouv__legende {
+    margin: var(--e-16) auto 0;
+    font-size: var(--t-petit);
+    color: var(--p-doux);
+    max-width: 60ch;
+  }
+  /* Sur téléphone, l'icône et les écarts descendent d'un cran sur l'échelle : sans ça,
+     l'icône poussait la vidéo sous le bord de l'écran (912 px pour un écran de 852). */
+  @media (max-width: 760px) {
+    .ouv__logo { width: 64px; height: 64px; margin-bottom: var(--e-16); }
+    .ouv__reperes { margin-bottom: var(--e-16); }
+    .ouv__chapo { margin-top: var(--e-16); }
+    .ouv__boutons, .ouv__pile { margin-top: var(--e-24); }
+    .ouv__visuel { margin-top: var(--e-32); }
+  }
+</style>

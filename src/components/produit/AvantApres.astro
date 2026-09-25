@@ -1,0 +1,60 @@
+---
+/**
+ * AvantApres — une décision prise sur une mesure : ce qu'on a mesuré, ce qu'on a
+ * changé, ce que ça donne. Le chiffre d'avant et celui d'après se lisent côte à côte.
+ */
+interface Cas { titre: string; avant: string; avantSens: string; apres: string; apresSens: string; }
+interface Props { items: Cas[]; libelles: { avant: string; apres: string }; }
+const { items, libelles } = Astro.props;
+---
+<div class="aa" data-apparait>
+  {items.map((c) => (
+    <article class="aa__cas">
+      <h3 class="aa__titre">{c.titre}</h3>
+      <div class="aa__paire">
+        <div>
+          <p class="aa__libelle">{libelles.avant}</p>
+          <p class="aa__chiffre aa__chiffre--avant">{c.avant}</p>
+          <p class="aa__sens">{c.avantSens}</p>
+        </div>
+        <span class="aa__fleche" aria-hidden="true">→</span>
+        <div>
+          <p class="aa__libelle">{libelles.apres}</p>
+          <p class="aa__chiffre">{c.apres}</p>
+          <p class="aa__sens">{c.apresSens}</p>
+        </div>
+      </div>
+    </article>
+  ))}
+</div>
+
+<style>
+  .aa { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--e-16); }
+  .aa__cas {
+    padding: var(--e-32);
+    background: var(--p-surface);
+    border: 1px solid var(--p-filet);
+    border-radius: var(--arrondi);
+  }
+  .aa__titre { font-size: var(--t-grand); letter-spacing: -0.01em; }
+  .aa__paire {
+    margin-top: var(--e-24);
+    display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    gap: var(--e-16); align-items: start;
+  }
+  .aa__libelle { margin: 0; font-family: var(--font-mono); font-size: var(--t-legende); color: var(--p-doux); }
+  .aa__chiffre {
+    margin: var(--e-4) 0 0;
+    font-size: var(--t-titre3); font-weight: 600; letter-spacing: -0.02em; line-height: 1.15;
+    white-space: nowrap;
+    color: var(--p-texte);
+  }
+  .aa__chiffre--avant { color: var(--p-doux); }
+  .aa__fleche { font-size: var(--t-titre3); color: var(--p-accent); padding-top: var(--e-24); }
+  .aa__sens { margin: var(--e-8) 0 0; font-size: var(--t-petit); color: var(--p-doux); }
+  @media (max-width: 900px) { .aa { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 480px) {
+    .aa__paire { grid-template-columns: minmax(0, 1fr); }
+    .aa__fleche { padding-top: 0; transform: rotate(90deg); justify-self: start; }
+  }
+</style>

@@ -11,18 +11,38 @@ cover: "/projects/gmtr-ipad-24-09.webp"
 coverEntier: true
 featured: false
 ordre: 2
+gabarit: produit
+ton: jour
 ---
 
+
+import Ouverture from '../../../components/produit/Ouverture.astro';
+import Preuves from '../../../components/produit/Preuves.astro';
+import Section from '../../../components/produit/Section.astro';
+import Moment from '../../../components/produit/Moment.astro';
+import Capacites from '../../../components/produit/Capacites.astro';
+import AvantApres from '../../../components/produit/AvantApres.astro';
+import Installer from '../../../components/produit/Installer.astro';
+import Fabrication from '../../../components/produit/Fabrication.astro';
 import Figure from '../../../components/Figure.astro';
 import Flow from '../../../components/figures/Flow.astro';
-import Duo from '../../../components/figures/Duo.astro';
 import MacBureau from '../../../components/figures/MacBureau.astro';
 import Apercu from '../../../components/figures/Apercu.astro';
 
-<Figure
-  cadre={false}
-  legende="Every dot is a note, filed in its region. Enter a region and it unfolds into a sphere, its families all around. Hover a note and it announces itself on the right; open it and its text appears with its number of links. The GRAPH view draws those links out to the other regions."
-  source="Filmed on 25/09 on this Mac, on a demonstration trunk at real density: notes translated into English, names and paths removed, every half-second reread before publishing. Only the window is kept."
+export const depot = 'https://github.com/Yuno15-bb/GreyMatter-engine';
+
+<Ouverture
+  logo={{ src: '/projects/gmtr-icone-22-09.png', alt: "GreyMatter app icon" }}
+  reperes={['Open source', 'Apache 2.0', 'macOS']}
+  titre="Persistent memory for Claude Code."
+  chapo="GreyMatter turns every session into linked Markdown notes, versioned with git, that your agent finds again from one session to the next."
+  actions={[
+    { label: 'View on GitHub', url: depot, plein: true },
+    { label: 'Install', url: '#installer' },
+  ]}
+  pile={frontmatter.stack}
+  pileTitre="Stack"
+  legende="The map: every dot is a note, grouped by region. Click a region to expand it, a note to read its text and links. Demo filmed on a sample repository at real density, with no names."
 >
   <Apercu
     src="/projects/gmtr-carte-25-09.mp4"
@@ -31,124 +51,99 @@ import Apercu from '../../../components/figures/Apercu.astro';
     hauteur={1088}
     description="The glass GMTR window against a sunset sky. First the whole map: the regions as small clusters, each with its number of notes. We enter claude-brain, which unfolds into a sphere; two notes are hovered and their preview appears on the right, then one is opened: “Green sabotage has three possible causes”. The GRAPH view spreads its links out to the other regions. Back to the map, then the principles region, where “Check at primary source, never assume” opens. Along the bottom, all the time: the regions by size, the log of what is read and written, and the code being written."
   />
-</Figure>
+</Ouverture>
 
-<Figure
-  cadre={false}
-  legende="On opening, the GMTR window settles on the desktop and its logo builds itself while the trunk loads."
-  source="Filmed on 24/09 on this Mac's full screen, window at its true size. Official Apple frame."
+<Preuves items={[
+  { valeur: '46 releases', sens: 'published under the Apache 2.0 licence, on a public repository.' },
+  { valeur: '< 50 ms', sens: 'per search across a thousand notes.' },
+  { valeur: '100% local', sens: 'no account, no server: files on your machine.' },
+  { valeur: '21 markers', sens: 'checked for leaks before every release. A single hit blocks it.' },
+]} />
+
+<Section
+  surtitre="Interfaces"
+  titre="Two views on your memory."
+  chapo="Everything else is Markdown: you read it, edit it and version it like code."
 >
-  <MacBureau
-    src="/projects/gmtr-ouverture-24-09.mp4"
-    poster="/projects/gmtr-ouverture-24-09.webp"
-    description="A Mac desktop at sunset. A small glass window appears in the middle; three white bars stack inside it, then turn into the GMTR logo, and a loading bar fills underneath."
-  />
-</Figure>
+  <Moment surtitre="Launch" titre="The map rebuilds from your files.">
+    <p slot="texte">The logo assembles while the notes load. The map is recomputed on every launch, so it always reflects the actual state of the repository.</p>
+    <MacBureau
+      src="/projects/gmtr-ouverture-24-09.mp4"
+      poster="/projects/gmtr-ouverture-24-09.webp"
+      description="A Mac desktop at sunset. A small glass window appears in the middle; three white bars stack inside it, then turn into the GMTR logo, and a loading bar fills underneath."
+    />
+  </Moment>
+  <Moment surtitre="Menu bar" titre="Watch your agents work, live." badge="Next release">
+    <p slot="texte">Each step of the task shows up under the pill, colour-coded by type of work, until “Done”. At idle it uses 4% of one CPU core.</p>
+    <Apercu
+      src="/projects/gmtr-pastille-25-09.mp4"
+      poster="/projects/gmtr-pastille-25-09.webp"
+      largeur={1434}
+      hauteur={884}
+      description="The right-hand corner of a Mac menu bar, at night. Top right, the GreyMatter pill with its panel open underneath; below, the same corner enlarged. Torrens tidies the map, Anesidora writes the digest, Torrens commits; the glass orb changes colour with the kind of work. At the end, “Done” and three steps."
+    />
+  </Moment>
+</Section>
 
-<Figure
-  cadre={false}
-  legende="While an agent works, a pill in the menu bar names it and says what it is doing; below, the same corner enlarged. Open it and the steps of the run line up underneath; each kind of work has its own colour, up to “Done”. Together with the map, it is the only interface: everything else is text."
-  source="Filmed on this Mac, in demonstration mode: English interface, invented code inside the orb. Only the corner of the screen where the pill lives is kept; the enlargement is added in the edit."
+<Section
+  surtitre="Features"
+  titre="Stop re-explaining things to your agent."
+  chapo="Claude Code starts from zero every session. GreyMatter keeps what was learned and makes it available across all your projects."
 >
-  <Apercu
-    src="/projects/gmtr-pastille-25-09.mp4"
-    poster="/projects/gmtr-pastille-25-09.webp"
-    largeur={1434}
-    hauteur={884}
-    description="The right-hand corner of a Mac menu bar, at night. Top right, the GreyMatter pill with its panel open underneath; below, the same corner enlarged. Torrens tidies the map, Anesidora writes the digest, Torrens commits; the glass orb changes colour with the kind of work. At the end, “Done” and three steps."
-  />
-</Figure>
-
-## What it is for
-
-A command-line agent is brilliant inside a session and amnesiac between two. GreyMatter
-gives it memory that lasts: whatever is solved once is distilled into a note, filed,
-linked, and found again in the next session.
-
-## What the engine does
-
-- **Distillation**: a working session becomes clean notes — one fact per note, with its
-  provenance and its degree of certainty.
-- **Recall on demand**: ask — a keyword, a sentence or a command — and the notes that
-  answer come back in under 50 milliseconds across a thousand notes. Nothing enters the
-  conversation unless it was asked for.
-- **Knowledge tree**: notes link to each other; a lesson learned on one project is
-  findable from every other.
-- **Four maintenance ships**: eight narrow missions — distil, file, challenge, link,
-  archive, repair, watch the machine, synthesise — carried by four agents named after the
-  ships of *Alien*. Each mission writes only in its own zone.
-- **The map and the pill**: the whole trunk as a cloud of points you can walk through,
-  and a pill in the menu bar that says which agent is working, and on what.
-
-The public package is at version 1.28: recall there is still automatic and maintenance
-still carries eight role names. The pill, the ships and recall on demand ship with the
-next release.
-
-## How a session becomes memory
-
-<Figure
-  titre="Everything runs on the machine — nothing here is a service you log into"
-  legende="There is no orchestrator: each stage hangs off a moment in the session. That is what makes the memory free to use — you never have to remember to feed it."
->
-  <Flow etapes={[
-    { t: 'The trunk', d: 'Plain Markdown files on the machine: the notes, the map, the state.' },
-    { t: 'When you ask', d: 'A lexical search picks the few notes that answer, and returns them into the conversation.' },
-    { t: 'During the session', d: 'What is written and what is read are recorded — the real material of the work.' },
-    { t: 'At session end', d: 'The session is archived, then distilled into notes and filed. Another mission wakes only if its sensor crosses a threshold — at most one per pass.', porte: true },
+  <Capacites items={[
+    { titre: 'Distillation', texte: 'At the end of a session, the transcript is split into notes: one fact per note, with its source and confidence level.' },
+    { titre: 'Search on demand', texte: 'A keyword, a sentence or brain recall: the relevant notes land in context. Nothing gets in unless you asked for it.', badge: 'Next release · 1.28 injects automatically' },
+    { titre: 'Notes linked across projects', texte: 'A lesson learned on one project is available in every other. The bigger the repository, the sharper the answers.' },
+    { titre: '8 maintenance agents', texte: 'Distil, file, challenge, link, archive, repair, watch the machine, synthesise. Each agent can only write to its own zone.', badge: 'Next release · grouped into 4 ships' },
+    { titre: 'Freshness review', texte: 'A note that was never re-checked enters a review queue, dated from the git history.' },
+    { titre: 'Updates with rollback', texte: 'The engine replaces itself on every session, and brain update --rollback returns to the previous version. Your notes are never modified.' },
   ]} />
-</Figure>
+</Section>
 
-## What measurement changed
-
-- **Automatic recall was switched off.** Until 9 September, the notes judged relevant were
-  pasted into every question unasked. Over thirty days, only 4% were then opened — 139 out
-  of 3,256. The search stayed, the unrequested suggestion went; one setting brings it back
-  without touching the code.
-- **The pill became light.** At rest it took 28% of a processor core, and another 29% from
-  the program that draws the screen: every frame per second was paid for twice. Each
-  element now animates at the pace of what visibly moves in it, and nothing draws while
-  hidden — at rest, 4% and 20%.
-
-## What makes publication possible
-
-<Figure
-  titre="Two folders that never mix"
-  legende="The split is not a filing convention: an update replaces the engine wholesale, and is not allowed to write into the notes."
+<Section
+  surtitre="Architecture"
+  titre="Built on Claude Code hooks."
+  chapo="No account, no remote service: every step fires on a session event."
 >
-  <Duo
-    a={{ titre: 'The engine — disposable, replaced on every update', items: [
-      'The code that files, links and retrieves',
-      'The checks and the measurement benches',
-      'The install and migration tooling',
-    ] }}
-    b={{ titre: 'The trunk — it only moves when I write', items: [
-      'Four months of notes, lessons and decisions',
-      'Client names, addresses, machine paths',
-      'What an update must never touch',
-    ] }}
+  <Figure>
+    <Flow etapes={[
+      { t: 'The repository', d: 'Markdown files versioned with git: notes, map, state.' },
+      { t: 'On demand', d: 'A lexical search selects the relevant notes and injects them into the conversation.' },
+      { t: 'During the session', d: 'Every file read or written is logged.' },
+      { t: 'Session end', d: 'The transcript is archived, distilled into notes, then filed. A maintenance agent only starts if its sensor crosses a threshold, one per pass.', porte: true },
+    ]} />
+  </Figure>
+</Section>
+
+<Section
+  surtitre="Product decisions"
+  titre="Two features, revisited after measuring."
+  chapo="If a feature isn't used, it goes, even when it was the original idea."
+>
+  <AvantApres
+    libelles={{ avant: 'Before', apres: 'After' }}
+    items={[
+      { titre: 'Automatic injection', avant: '4%', avantSens: 'of the notes injected unasked were actually opened: 139 out of 3,256, over 30 days.', apres: 'On demand', apresSens: 'Search stays, unsolicited injection is gone. One setting turns it back on without touching the code.' },
+      { titre: 'Pill at idle', avant: '28% + 29%', avantSens: 'of one CPU core: the pill, then the macOS process that draws the screen. Every frame was paid for twice.', apres: '4% + 20%', apresSens: 'Each area animates at the rate of what actually moves, and nothing renders while the window is hidden.' },
+    ]}
   />
-</Figure>
+</Section>
 
-## The chain that protects the lived record
+<Installer
+  titre="Install in two commands."
+  chapo="GreyMatter installs as a Claude Code plugin, then updates itself every session."
+  lignes={['/plugin marketplace add Yuno15-bb/GreyMatter-engine', '/plugin install c-brain@c-brain']}
+  copier="Copy"
+  copie="Copied"
+  actions={[
+    { label: 'Source code on GitHub', url: depot, plein: true },
+    { label: 'Full install guide', url: `${depot}/blob/main/INSTALL.md` },
+  ]}
+  note="Every release goes through CI: install, uninstall and a replay of every migration, twice, with zero lost notes required. Public version: 1.28. The pill, the 4 ships and search on demand ship in the next one."
+/>
 
-<Figure
-  titre="From the living notebook to the public package"
-  legende="A one-way chain: nothing flows back from the public repository into the notebook. The leak check rereads the repository's whole history, not just the latest version, and publication leaves only when it is green."
->
-  <Flow etapes={[
-    { t: 'The living notebook', d: 'Four months of real notes: clients, addresses, machine paths.' },
-    { t: 'Allow-list copy', d: 'What is not named does not leave.' },
-    { t: 'De-identification', d: 'Replayable rules strip names, numbers and paths.' },
-    { t: 'Leak check', d: '21 markers. One of them turning red blocks the publication.', porte: true },
-    { t: 'The public package', d: 'The engine, installable by anyone. Never the lived record.' },
-  ]} />
-</Figure>
-
-## How it installs and stays alive
-
-- **One command**: the package installs as an extension to a command-line agent.
-- **Every release is replayed** by continuous integration: full install, uninstall, and
-  every past migration run **twice** — with the requirement that it has eaten no note.
-- **46 releases published**, under the Apache 2.0 licence, on a public repository.
-
-Source code: [github.com/Yuno15-bb/GreyMatter-engine](https://github.com/Yuno15-bb/GreyMatter-engine)
+<Fabrication items={[
+  { terme: 'Role', valeur: frontmatter.role },
+  { terme: 'Context', valeur: `${frontmatter.contexte} · ${frontmatter.annee}` },
+  { terme: 'Result', valeur: frontmatter.resultat },
+]} />

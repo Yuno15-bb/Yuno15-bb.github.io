@@ -1,0 +1,37 @@
+---
+/** Capacites — ce que le produit fait, en cartes égales (grille bento sobre). */
+interface Props { items: { titre: string; texte: string; badge?: string }[]; }
+const { items } = Astro.props;
+---
+<ul class="capa" data-apparait>
+  {items.map((c) => (
+    <li class="capa__carte">
+      <h3 class="capa__titre">{c.titre}</h3>
+      <p class="capa__texte">{c.texte}</p>
+      {c.badge && <p class="capa__badge">{c.badge}</p>}
+    </li>
+  ))}
+</ul>
+
+<style>
+  .capa {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; gap: var(--e-16);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .capa__carte {
+    padding: var(--e-32) var(--e-24);
+    background: var(--p-surface);
+    border: 1px solid var(--p-filet);
+    border-radius: var(--arrondi);
+    display: flex; flex-direction: column; gap: var(--e-12);
+  }
+  .capa__titre { font-size: var(--t-grand); line-height: 1.2; letter-spacing: -0.01em; }
+  .capa__texte { margin: 0; color: var(--p-doux); font-size: var(--t-petit); line-height: 1.55; }
+  .capa__badge {
+    margin: auto 0 0; padding-top: var(--e-8);
+    font-family: var(--font-mono); font-size: var(--t-legende); color: var(--p-accent);
+  }
+  @media (max-width: 1000px) { .capa { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 640px)  { .capa { grid-template-columns: minmax(0, 1fr); } }
+</style>
