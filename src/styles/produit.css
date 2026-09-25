@@ -87,16 +87,20 @@ html[data-produit='jour'] {
   color-scheme: light;
 }
 html[data-produit] body { background: var(--p-fond); color: var(--p-texte); }
-/* L'accueil garde le fond animé (Base.astro, `fond`) : il est posé SOUS le corps de page
+/* L'accueil et les pages produit portent le fond animé (Base.astro, `fond`) : il est posé SOUS le corps de page
    (z-index -3). Un corps opaque le masquerait entièrement, d'où le corps transparent ; le
    fond uni reste sur <html>, visible avant que le shader ait peint sa première image. */
 html[data-produit][data-fond] body { background: transparent; }
 /* Le gris secondaire se lit SUR les bandes du champ, pas sur un fond uni : mesuré le 25/09
    (sonde texte/fond sur la page rendue), #6e6e73 tombait à 3,9:1 sur la bande pêche la plus
-   dense. Un cran plus sombre le jour, un cran plus clair la nuit : 4,5:1 partout, et la
-   hiérarchie avec le texte principal reste lisible. L'accueil seulement. */
-html[data-produit][data-fond] { --p-doux: #b8b8bf; }
-html[data-produit="jour"][data-fond] { --p-doux: #5e5e63; }
+   dense. Un cran plus sombre le jour, un cran plus clair la nuit (#b8b8bf ne tenait que 4,2:1
+   sur la bande cuivre des pages produit, d'où #c4c4ca) : 4,5:1 partout, et la
+   hiérarchie avec le texte principal reste lisible. Partout où le champ tourne. */
+html[data-produit][data-fond] { --p-doux: #c4c4ca; --p-accent: #f6ae80; }
+html[data-produit="jour"][data-fond] { --p-doux: #5e5e63; --p-accent: #9a4614; }
+/* La braise des surtitres, même mesure (25/09, pages produit avec le champ) : #b4561e tombait à
+   3,7:1 sur la bande pêche le jour, #e8925a à 3,8:1 sur la bande cuivre la nuit. Un cran plus
+   sombre le jour, plus clair la nuit : 4,9:1 sur la bande la plus dense de chaque ton. */
 
 @media (max-width: 760px) {
   html[data-produit] { --rythme: 80px; }

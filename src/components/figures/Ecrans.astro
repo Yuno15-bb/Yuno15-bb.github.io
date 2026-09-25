@@ -198,6 +198,12 @@ const { tel, telAlt, bureau, bureauAlt, fenetre = 'Field Ops', heure = '9:41', c
   .ec--clair .mc__barre { background: linear-gradient(#f0f0f3, #e3e3e8); border-bottom-color: #cfcfd6; }
   .ec--clair .mc__titre { color: rgba(0, 0, 0, 0.6); }
 
+  /* Page de jour : l'ombre noire à 45 % laissait une traînée grise sous les deux cadres, et la
+     légende posée dedans tombait à 2,5:1 (sonde texte/fond du 25/09, déjà vrai en ligne avant
+     le fond animé). Même ombre, trois fois plus légère : la légende repasse au-dessus de 4,5:1. */
+  :global(html[data-produit='jour']) .ip { box-shadow: 0 22px 50px rgba(0, 0, 0, 0.14), inset 0 0 0 1px rgba(255, 255, 255, 0.09); }
+  :global(html[data-produit='jour']) .mc { box-shadow: 0 22px 50px rgba(0, 0, 0, 0.14); }
+
   @media (max-width: 860px) {
     /* Le tableau de bord n'est plus lisible à cette largeur : le téléphone passe
        devant, à taille utile, et la fenêtre le suit. */

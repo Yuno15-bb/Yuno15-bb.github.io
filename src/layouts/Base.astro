@@ -11,9 +11,10 @@ interface Props {
   altPath?: string;
   /** Page produit : pas de fond animé, fond opaque au ton demandé (voir styles/produit.css). */
   produit?: 'nuit' | 'jour';
-  /** Garde le fond animé sur une page au ton produit, à ses couleurs jour/nuit : l'accueil
-      seulement (Dylan, 25/09 : « où est passée l'animation de fond ? possible de la remettre
-      et changer de couleur ? »). */
+  /** Garde le fond animé sur une page au ton produit, à ses couleurs jour/nuit. D'abord
+      l'accueil (Dylan, 25/09 : « où est passée l'animation de fond ? possible de la remettre
+      et changer de couleur ? »), puis toutes les pages produit (Dylan, 25/09 au soir, en voyant
+      l'accueil : « l'ensemble est incroyable, met le fond partout »). */
   fond?: boolean;
 }
 const { title, description = '', lang, altPath = '', produit, fond = false } = Astro.props;
@@ -52,8 +53,9 @@ const contactHref = `/${lang}/#contact`;
         il ne se pose pas dessus. Deux fonds WebGL en même temps, c'étaient aussi
         deux boucles d'animation qui se disputaient la carte graphique. Le composant
         reste dans le dépôt — le remettre tient en une ligne. */}
-    {/* Sur une page produit, le contenu est opaque en plein cadre (base Landmarks) : le fond
-        animé n'y serait jamais vu, il ne tournerait que pour vider la batterie. */}
+    {/* Sur une page produit, le fond animé ne tourne que si la page le demande (`fond`) :
+        les cartes et figures restent opaques par-dessus (base Landmarks), le champ se voit
+        entre les sections. */}
     {(!produit || fond) && <FondAnime />}
     <a class="skip-link" href="#main">{t['skip']}</a>
     <header class="container site-head">

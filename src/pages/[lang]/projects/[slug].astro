@@ -22,7 +22,7 @@ import PageProduit from '../../../components/produit/PageProduit.astro';
 const produit = d.gabarit === 'produit';
 ---
 <Base title={`${d.titre} — Yuno15`} description={d.pitch} lang={lang} altPath={`/projects/${slug}`}
-      produit={produit ? d.ton : undefined}>
+      produit={produit ? d.ton : undefined} fond>
   {produit ? (
     <PageProduit lang={lang} ton={d.ton}><Content /></PageProduit>
   ) : (
