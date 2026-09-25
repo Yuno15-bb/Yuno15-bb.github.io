@@ -18,6 +18,7 @@ import Flow from '../../../components/figures/Flow.astro';
 import Duo from '../../../components/figures/Duo.astro';
 import Mac from '../../../components/figures/Mac.astro';
 import Anim from '../../../components/figures/Anim.astro';
+import MacBureau from '../../../components/figures/MacBureau.astro';
 import Appareils from '../../../components/figures/Appareils.astro';
 
 <Figure
@@ -50,29 +51,14 @@ import Appareils from '../../../components/figures/Appareils.astro';
 
 <Figure
   cadre={false}
-  legende="While an agent works, a pill in the menu bar names it and says what it is doing. Open it and the steps of the run line up underneath; fold it and only the pill remains. It is the engine's only interface: everything else is text."
-  source="Filmed on this Mac's menu bar at real size, in demonstration mode: English interface, invented code inside the orb."
+  legende="While an agent works, a pill in the menu bar names it and says what it is doing; in the centre, the same corner enlarged. Open it and the steps of the run line up underneath; each kind of work has its own colour, up to “Done”. It is the engine's only interface: everything else is text."
+  source="Filmed on this Mac's full screen, in demonstration mode: English interface, invented code inside the orb. The enlargement in the centre is added in the edit. Official Apple frame."
 >
-  <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-4)">
-      <div style="width:100%;max-width:422px"><Mac titre="greymatter — menu bar">
-        <Anim
-          src="/projects/gmtr-pastille-25-09.mp4"
-          poster="/projects/gmtr-pastille-25-09.webp"
-          largeur={420}
-          hauteur={33}
-          description="The same pill with the panel folded away: idle, working, synthesizing, correcting, committing, then Done — each state in its own colour."
-        />
-      </Mac></div>
-      <div style="width:100%;max-width:502px"><Mac titre="greymatter — capsule">
-        <Anim
-          src="/projects/gmtr-capsule-25-09.mp4"
-          poster="/projects/gmtr-capsule-25-09.webp"
-          largeur={500}
-          hauteur={152}
-          description="An agent at work: the pill in the menu bar names it and says what it is doing, while the panel below lists the steps of the run — Torrens maps, Anesidora writes the digest, Torrens commits. The glass orb on the right changes colour with the kind of work. At the end, Done and three steps."
-        />
-      </Mac></div>
-  </div>
+  <MacBureau
+    src="/projects/gmtr-bureau-25-09.mp4"
+    poster="/projects/gmtr-bureau-25-09.webp"
+    description="A Mac desktop. Top right, the GreyMatter pill in the menu bar with its panel open underneath; in the centre of the screen, the same corner enlarged. Torrens tidies the map, Anesidora writes the digest, Torrens commits; the glass orb changes colour with the kind of work. At the end, “Done” and three steps."
+  />
 </Figure>
 ## What it is for
 

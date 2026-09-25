@@ -18,6 +18,7 @@ import Flow from '../../../components/figures/Flow.astro';
 import Duo from '../../../components/figures/Duo.astro';
 import Mac from '../../../components/figures/Mac.astro';
 import Anim from '../../../components/figures/Anim.astro';
+import MacBureau from '../../../components/figures/MacBureau.astro';
 import Appareils from '../../../components/figures/Appareils.astro';
 
 <Figure
@@ -50,29 +51,14 @@ import Appareils from '../../../components/figures/Appareils.astro';
 
 <Figure
   cadre={false}
-  legende="Pendant qu'un agent travaille, une pastille dans la barre de menu le nomme et dit ce qu'il fait. On l'ouvre, et les étapes de la tâche s'alignent dessous ; on la replie, et il ne reste que la pastille. C'est la seule interface du moteur : tout le reste est du texte."
-  source="Filmé dans la barre de menu de ce Mac, à taille réelle, en mode démonstration : interface en anglais, code inventé dans la bille."
+  legende="Pendant qu'un agent travaille, une pastille dans la barre de menu le nomme et dit ce qu'il fait ; au centre, le même coin agrandi. On l'ouvre, et les étapes de la tâche s'alignent dessous ; chaque genre de travail a sa couleur, jusqu'à « Done ». C'est la seule interface du moteur : tout le reste est du texte."
+  source="Filmé sur l'écran entier de ce Mac, en mode démonstration : interface en anglais, code inventé dans la bille. L'agrandissement au centre est ajouté au montage. Cadre officiel d'Apple."
 >
-  <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-4)">
-      <div style="width:100%;max-width:422px"><Mac titre="greymatter — barre de menu">
-        <Anim
-          src="/projects/gmtr-pastille-25-09.mp4"
-          poster="/projects/gmtr-pastille-25-09.webp"
-          largeur={420}
-          hauteur={33}
-          description="La même pastille, panneau replié : au repos, au travail, en synthèse, en correction, en enregistrement, puis « Done » — chaque état a sa couleur."
-        />
-      </Mac></div>
-      <div style="width:100%;max-width:502px"><Mac titre="greymatter — capsule">
-        <Anim
-          src="/projects/gmtr-capsule-25-09.mp4"
-          poster="/projects/gmtr-capsule-25-09.webp"
-          largeur={500}
-          hauteur={152}
-          description="Un agent au travail : la pastille dans la barre de menu le nomme et dit ce qu'il fait, et le panneau dessous aligne les étapes de la tâche — Torrens range la carte, Anesidora écrit la synthèse, Torrens enregistre. La bille de verre, à droite, change de couleur avec le genre de travail. À la fin, « Done » et trois étapes."
-        />
-      </Mac></div>
-  </div>
+  <MacBureau
+    src="/projects/gmtr-bureau-25-09.mp4"
+    poster="/projects/gmtr-bureau-25-09.webp"
+    description="Le bureau d'un Mac. En haut à droite, la pastille GreyMatter dans la barre de menu et son panneau ouvert dessous ; au centre de l'écran, le même coin agrandi. Torrens range la carte, Anesidora écrit la synthèse, Torrens enregistre ; la bille de verre change de couleur avec le genre de travail. À la fin, « Done » et trois étapes."
+  />
 </Figure>
 ## À quoi ça sert
 

@@ -1,0 +1,65 @@
+---
+/**
+ * MacBureau — une vidéo du bureau entier, posée dans le vrai MacBook Pro 14 d'Apple.
+ *
+ * Dylan, 25/09 : « on fait un visuel avec cadre mac pour montrer les deux ensemble sur un
+ * bureau » — la pastille et son panneau, à leur vraie place sur l'écran. Le cadre est l'image
+ * officielle d'Apple (Apple Design Resources, MacBook Pro M5 14" Space Black), recadrée sur
+ * l'appareil et jamais retouchée : voir ~/.claude/skills/_refs/presentation-produit/cadres-apple/.
+ *
+ * La vidéo passe DESSOUS, le cadre DESSUS : l'écran du cadre est transparent, ses coins
+ * arrondis et son encoche recouvrent la vidéo. Le champ de particules du site reste visible
+ * autour de l'appareil — une vidéo encadrée d'avance aurait dû porter un fond opaque.
+ *
+ * Les pourcentages sortent de ecrans.json : l'écran fait 3024 × 1964 à (390, 55) dans
+ * l'appareil recadré de 3803 × 2295. La vidéo doit être filmée au même rapport (1512 × 982).
+ */
+import Anim from './Anim.astro';
+
+interface Props {
+  src: string;
+  poster: string;
+  description: string;
+}
+const { src, poster, description } = Astro.props;
+---
+<div class="mbu">
+  <div class="mbu__ecran">
+    <Anim src={src} poster={poster} largeur={1512} hauteur={982} description={description} />
+  </div>
+  <img class="mbu__cadre" src="/projects/cadre-macbook-pro-14-noir.webp" alt="" aria-hidden="true" width="1902" height="1148" loading="lazy" decoding="async" />
+</div>
+
+<style>
+  .mbu {
+    position: relative;
+    width: 100%;
+    max-width: 1100px;
+    margin-inline: auto;
+    aspect-ratio: 3803 / 2295;
+  }
+  .mbu__ecran {
+    position: absolute;
+    /* Deux dixièmes de débord sous le cadre : au pixel près, l'arrondi du navigateur
+       laissait un filet du fond bleu entre la vidéo et le bord de l'écran (vu à 1440 px). */
+    left: 10.155%;
+    top: 2.297%;
+    width: 79.716%;
+    height: 85.777%;
+    overflow: hidden;
+    background: #000;
+  }
+  .mbu__ecran :global(video) {
+    width: 100%;
+    height: 100%;
+    max-width: none !important;
+    object-fit: cover;
+  }
+  .mbu__cadre {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+</style>
