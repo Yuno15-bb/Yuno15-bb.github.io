@@ -21,6 +21,32 @@ import Apercu from '../../../components/figures/Apercu.astro';
 
 <Figure
   cadre={false}
+  legende="Every dot is a note, filed in its region. Enter a region and it unfolds into a sphere, its families all around. Hover a note and it announces itself on the right; open it and its text appears with its number of links. The GRAPH view draws those links out to the other regions."
+  source="Filmed on 25/09 on this Mac, on a demonstration trunk at real density: notes translated into English, names and paths removed, every half-second reread before publishing. Only the window is kept."
+>
+  <Apercu
+    src="/projects/gmtr-carte-25-09.mp4"
+    poster="/projects/gmtr-carte-25-09.webp"
+    largeur={1600}
+    hauteur={1088}
+    description="The glass GMTR window against a sunset sky. First the whole map: the regions as small clusters, each with its number of notes. We enter claude-brain, which unfolds into a sphere; two notes are hovered and their preview appears on the right, then one is opened: “Green sabotage has three possible causes”. The GRAPH view spreads its links out to the other regions. Back to the map, then the principles region, where “Check at primary source, never assume” opens. Along the bottom, all the time: the regions by size, the log of what is read and written, and the code being written."
+  />
+</Figure>
+
+<Figure
+  cadre={false}
+  legende="On opening, the GMTR window settles on the desktop and its logo builds itself while the trunk loads."
+  source="Filmed on 24/09 on this Mac's full screen, window at its true size. Official Apple frame."
+>
+  <MacBureau
+    src="/projects/gmtr-ouverture-24-09.mp4"
+    poster="/projects/gmtr-ouverture-24-09.webp"
+    description="A Mac desktop at sunset. A small glass window appears in the middle; three white bars stack inside it, then turn into the GMTR logo, and a loading bar fills underneath."
+  />
+</Figure>
+
+<Figure
+  cadre={false}
   legende="While an agent works, a pill in the menu bar names it and says what it is doing; below, the same corner enlarged. Open it and the steps of the run line up underneath; each kind of work has its own colour, up to “Done”. Together with the map, it is the only interface: everything else is text."
   source="Filmed on this Mac, in demonstration mode: English interface, invented code inside the orb. Only the corner of the screen where the pill lives is kept; the enlargement is added in the edit."
 >
@@ -70,36 +96,6 @@ next release.
     { t: 'During the session', d: 'What is written and what is read are recorded — the real material of the work.' },
     { t: 'At session end', d: 'The session is archived, then distilled into notes and filed. Another mission wakes only if its sensor crosses a threshold — at most one per pass.', porte: true },
   ]} />
-</Figure>
-
-## Opening
-
-<Figure
-  cadre={false}
-  legende="On opening, the GMTR window settles on the desktop and its logo builds itself while the trunk loads."
-  source="Filmed on 24/09 on this Mac's full screen, window at its true size. Official Apple frame."
->
-  <MacBureau
-    src="/projects/gmtr-ouverture-24-09.mp4"
-    poster="/projects/gmtr-ouverture-24-09.webp"
-    description="A Mac desktop at sunset. A small glass window appears in the middle; three white bars stack inside it, then turn into the GMTR logo, and a loading bar fills underneath."
-  />
-</Figure>
-
-## The map
-
-<Figure
-  cadre={false}
-  legende="Every dot is a note, filed in its region. Enter a region and it unfolds into a sphere, its families all around. Hover a note and it announces itself on the right; open it and its text appears with its number of links. The GRAPH view draws those links out to the other regions."
-  source="Filmed on 25/09 on this Mac, on a demonstration trunk at real density: notes translated into English, names and paths removed, every half-second reread before publishing. Only the window is kept."
->
-  <Apercu
-    src="/projects/gmtr-carte-25-09.mp4"
-    poster="/projects/gmtr-carte-25-09.webp"
-    largeur={1600}
-    hauteur={1088}
-    description="The glass GMTR window against a sunset sky. First the whole map: the regions as small clusters, each with its number of notes. We enter claude-brain, which unfolds into a sphere; two notes are hovered and their preview appears on the right, then one is opened: “Green sabotage has three possible causes”. The GRAPH view spreads its links out to the other regions. Back to the map, then the principles region, where “Check at primary source, never assume” opens. Along the bottom, all the time: the regions by size, the log of what is read and written, and the code being written."
-  />
 </Figure>
 
 ## What measurement changed

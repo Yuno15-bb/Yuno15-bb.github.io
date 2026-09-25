@@ -21,6 +21,32 @@ import Apercu from '../../../components/figures/Apercu.astro';
 
 <Figure
   cadre={false}
+  legende="Chaque point est une fiche, rangée dans sa région. On entre dans une région : elle se déplie en sphère, ses familles tout autour. On survole une fiche, elle s'annonce à droite ; on l'ouvre, et son texte s'affiche avec son nombre de liens. La vue GRAPH tire ces liens jusqu'aux autres régions."
+  source="Filmé le 25/09 sur ce Mac, sur un tronc de démonstration à la vraie densité : fiches traduites en anglais, noms et chemins retirés, chaque demi-seconde relue avant publication. Seule la fenêtre est gardée."
+>
+  <Apercu
+    src="/projects/gmtr-carte-25-09.mp4"
+    poster="/projects/gmtr-carte-25-09.webp"
+    largeur={1600}
+    hauteur={1088}
+    description="La fenêtre GMTR en verre sur un ciel de coucher de soleil. D'abord la carte entière : les régions en petits amas, chacune avec son nombre de fiches. On entre dans claude-brain, qui se déplie en sphère ; on survole deux fiches, leur aperçu s'affiche à droite, puis on en ouvre une : « Green sabotage has three possible causes ». La vue GRAPH déploie ses liens vers les autres régions. Retour à la carte, puis la région principles, où s'ouvre « Check at primary source, never assume ». En bas, en permanence : les régions par taille, le journal de ce qui est lu et écrit, et le code en cours."
+  />
+</Figure>
+
+<Figure
+  cadre={false}
+  legende="À l'ouverture, la fenêtre de GMTR se pose sur le bureau et son logo se construit pendant que le tronc se charge."
+  source="Filmé le 24/09 sur l'écran entier de ce Mac, fenêtre à sa vraie taille. Cadre officiel d'Apple."
+>
+  <MacBureau
+    src="/projects/gmtr-ouverture-24-09.mp4"
+    poster="/projects/gmtr-ouverture-24-09.webp"
+    description="Le bureau d'un Mac au coucher du soleil. Une petite fenêtre en verre apparaît au milieu ; trois barres blanches s'y empilent puis se changent en logo GMTR, et une barre de chargement se remplit dessous."
+  />
+</Figure>
+
+<Figure
+  cadre={false}
   legende="Pendant qu'un agent travaille, une pastille dans la barre de menu le nomme et dit ce qu'il fait ; en dessous, le même coin agrandi. On l'ouvre, et les étapes de la tâche s'alignent dessous ; chaque genre de travail a sa couleur, jusqu'à « Done ». Avec la carte, c'est la seule interface : tout le reste est du texte."
   source="Filmé sur ce Mac, en mode démonstration : interface en anglais, code inventé dans la bille. Seul le coin de l'écran où vit la pastille est gardé ; l'agrandissement est ajouté au montage."
 >
@@ -70,36 +96,6 @@ la demande arrivent avec la prochaine version.
     { t: 'Pendant la session', d: 'Ce qui est écrit et ce qui est lu sont notés — la matière réelle du travail.' },
     { t: 'À la fermeture', d: 'La session est archivée, puis distillée en fiches et rangée. Une autre mission ne se réveille que si son capteur passe un seuil — au plus une par passage.', porte: true },
   ]} />
-</Figure>
-
-## L'ouverture
-
-<Figure
-  cadre={false}
-  legende="À l'ouverture, la fenêtre de GMTR se pose sur le bureau et son logo se construit pendant que le tronc se charge."
-  source="Filmé le 24/09 sur l'écran entier de ce Mac, fenêtre à sa vraie taille. Cadre officiel d'Apple."
->
-  <MacBureau
-    src="/projects/gmtr-ouverture-24-09.mp4"
-    poster="/projects/gmtr-ouverture-24-09.webp"
-    description="Le bureau d'un Mac au coucher du soleil. Une petite fenêtre en verre apparaît au milieu ; trois barres blanches s'y empilent puis se changent en logo GMTR, et une barre de chargement se remplit dessous."
-  />
-</Figure>
-
-## La carte
-
-<Figure
-  cadre={false}
-  legende="Chaque point est une fiche, rangée dans sa région. On entre dans une région : elle se déplie en sphère, ses familles tout autour. On survole une fiche, elle s'annonce à droite ; on l'ouvre, et son texte s'affiche avec son nombre de liens. La vue GRAPH tire ces liens jusqu'aux autres régions."
-  source="Filmé le 25/09 sur ce Mac, sur un tronc de démonstration à la vraie densité : fiches traduites en anglais, noms et chemins retirés, chaque demi-seconde relue avant publication. Seule la fenêtre est gardée."
->
-  <Apercu
-    src="/projects/gmtr-carte-25-09.mp4"
-    poster="/projects/gmtr-carte-25-09.webp"
-    largeur={1600}
-    hauteur={1088}
-    description="La fenêtre GMTR en verre sur un ciel de coucher de soleil. D'abord la carte entière : les régions en petits amas, chacune avec son nombre de fiches. On entre dans claude-brain, qui se déplie en sphère ; on survole deux fiches, leur aperçu s'affiche à droite, puis on en ouvre une : « Green sabotage has three possible causes ». La vue GRAPH déploie ses liens vers les autres régions. Retour à la carte, puis la région principles, où s'ouvre « Check at primary source, never assume ». En bas, en permanence : les régions par taille, le journal de ce qui est lu et écrit, et le code en cours."
-  />
 </Figure>
 
 ## Ce que la mesure a fait changer
