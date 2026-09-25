@@ -18,7 +18,6 @@ import Flow from '../../../components/figures/Flow.astro';
 import Duo from '../../../components/figures/Duo.astro';
 import Mac from '../../../components/figures/Mac.astro';
 import Anim from '../../../components/figures/Anim.astro';
-import Cote from '../../../components/figures/Cote.astro';
 import Appareils from '../../../components/figures/Appareils.astro';
 
 <Figure
@@ -37,33 +36,43 @@ import Appareils from '../../../components/figures/Appareils.astro';
   legende="Every dot is a note, and distance means resemblance. Click one: it opens with its region, its summary and its links. Ask for the filing: the map reorganises into a ring. Enter a family: the map closes in on it."
   source="Filmed on a demonstration trunk at true density — 701 notes, 2,881 links, every name neutralised before filming"
 >
-  <Cote>
-    <Fragment slot="large">
-      <Mac titre="GMTR — trunk map">
+  <Mac titre="GMTR — trunk map">
+    <Anim
+      src="/projects/gmtr-carte-18-09.mp4"
+      srcWebm="/projects/gmtr-carte-18-09.webm"
+      poster="/projects/gmtr-carte-18-09.webp"
+      largeur={1500}
+      hauteur={966}
+      description="The trunk map: seven hundred notes placed by resemblance, in grey on black with green for whatever is live. A note is clicked and a panel gives its region, title, summary and link count; the map reorganises into a ring for the filing view; a family is entered and the map closes in on it. At the bottom, the power-on self-test and the code being written right now."
+    />
+  </Mac>
+</Figure>
+
+<Figure
+  cadre={false}
+  legende="While an agent works, a pill in the menu bar names it and says what it is doing. Open it and the steps of the run line up underneath; fold it and only the pill remains. It is the engine's only interface: everything else is text."
+  source="Filmed on this Mac's menu bar at real size, in demonstration mode: English interface, invented code inside the orb."
+>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-4)">
+      <div style="width:100%;max-width:422px"><Mac titre="greymatter — menu bar">
         <Anim
-          src="/projects/gmtr-carte-18-09.mp4"
-          srcWebm="/projects/gmtr-carte-18-09.webm"
-          poster="/projects/gmtr-carte-18-09.webp"
-          largeur={1500}
-          hauteur={966}
-          description="The trunk map: seven hundred notes placed by resemblance, in grey on black with green for whatever is live. A note is clicked and a panel gives its region, title, summary and link count; the map reorganises into a ring for the filing view; a family is entered and the map closes in on it. At the bottom, the power-on self-test and the code being written right now."
+          src="/projects/gmtr-pastille-25-09.mp4"
+          poster="/projects/gmtr-pastille-25-09.webp"
+          largeur={420}
+          hauteur={33}
+          description="The same pill with the panel folded away: idle, working, synthesizing, correcting, committing, then Done — each state in its own colour."
         />
-      </Mac>
-    </Fragment>
-    <Fragment slot="etroit">
-      <Mac titre="greymatter — capsule" marge={7.5}>
+      </Mac></div>
+      <div style="width:100%;max-width:502px"><Mac titre="greymatter — capsule">
         <Anim
-          src="/projects/gmtr-capsule-20-09.mp4"
-          srcWebm="/projects/gmtr-capsule-20-09.webm"
-          poster="/projects/gmtr-capsule-20-09.webp"
-          largeur={450}
-          hauteur={450}
-          description="A glass orb sitting on the desktop, its material and hue changing with the family of work under way: inspection in blue, filing in green, transformation in violet, validation in red, then back to rest. The lines being written scroll inside it and the task in hand is named underneath."
+          src="/projects/gmtr-capsule-25-09.mp4"
+          poster="/projects/gmtr-capsule-25-09.webp"
+          largeur={500}
+          hauteur={152}
+          description="An agent at work: the pill in the menu bar names it and says what it is doing, while the panel below lists the steps of the run — Torrens maps, Anesidora writes the digest, Torrens commits. The glass orb on the right changes colour with the kind of work. At the end, Done and three steps."
         />
-      </Mac>
-      <p>The capsule sits in a corner of the screen and asks for nothing. The line underneath names the task in hand. It is the engine's only interface: everything else is text.</p>
-    </Fragment>
-  </Cote>
+      </Mac></div>
+  </div>
 </Figure>
 ## What it is for
 
