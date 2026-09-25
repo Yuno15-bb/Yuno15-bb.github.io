@@ -36,25 +36,6 @@ const t = ui[lang];
     cibles.forEach((c) => io.observe(c));
   }
 
-  // Bascule nuit / jour : le choix est gardé pour toutes les pages produit ; le script
-  // de <head> (layouts/Base.astro) le repose avant l'affichage à la visite suivante.
-  const racine = document.documentElement;
-  const bascule = document.querySelector<HTMLButtonElement>('.bascule-ton');
-  const libeller = () => {
-    if (!bascule) return;
-    const l = racine.dataset.produit === 'jour' ? bascule.dataset.libelleJour : bascule.dataset.libelleNuit;
-    if (l) { bascule.setAttribute('aria-label', l); bascule.title = l; }
-  };
-  libeller();
-  bascule?.addEventListener('click', () => {
-    const ton = racine.dataset.produit === 'jour' ? 'nuit' : 'jour';
-    racine.classList.add('p-bascule');
-    racine.dataset.produit = ton;
-    libeller();
-    try { localStorage.setItem('produit-ton', ton); } catch { /* stockage bloqué : le choix vaut pour cette page */ }
-    setTimeout(() => racine.classList.remove('p-bascule'), 350);
-  });
-
   // Bouton « Copier » des commandes d'installation.
   document.querySelectorAll<HTMLButtonElement>('[data-copier]').forEach((b) => {
     b.addEventListener('click', async () => {

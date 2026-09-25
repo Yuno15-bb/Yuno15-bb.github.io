@@ -1,6 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+// L'accueil prend la direction des pages produit (Dylan, 25/09 : « tout le portfolio ») :
+// fond opaque au ton choisi, arrivée en blanc, bascule soleil/lune, titres en Inter.
+import '../../styles/produit.css';
 import ProjectCard from '../../components/ProjectCard.astro';
 import Pile from '../../components/Pile.astro';
 import { COMPETENCES, LOGOS } from '../../data/logos.ts';
@@ -49,7 +52,7 @@ const competences = COMPETENCES.filter((nom) => CATALOGUE_LOGOS[nom]);
 const email = 'sashapeellaertjuan@outlook.com';
 const mail = `mailto:${email}`;
 ---
-<Base title={`Yuno15 — ${t['site.role']}`} description={t['home.intro']} lang={lang} altPath="/">
+<Base title={`Yuno15 — ${t['site.role']}`} description={t['home.intro']} lang={lang} altPath="/" produit="jour" fond>
   {/* Garde progressive : n'arme l'intro que si JS + pas de reduced-motion. Failsafe 1.6s. */}
   <script is:inline>
     (function () {
@@ -63,10 +66,9 @@ const mail = `mailto:${email}`;
   </script>
 
   <section class="hero" id="hero">
-    <div class="intro-wipe" aria-hidden="true"></div>
     <div class="container hero__inner">
-      {/* Le bloc de texte repose sur une vitre (liquid glass) : elle floute le fond WebGL
-          derrière elle → lisibilité + profondeur, même langage que les cartes projet. */}
+      {/* Aucune vitre ici : c'est du contenu, et le verre ne porte que la navigation
+          (base Landmarks). Le texte pose sur le fond opaque de la page. */}
       <div class="hero__panel">
         {/* Decision du 25/08/2026 : nom civil affiche, Yuno15 conserve comme
             marque. Un recruteur doit pouvoir relier le site a une personne. */}
@@ -78,7 +80,7 @@ const mail = `mailto:${email}`;
             production chez un vrai client depuis mai 2026 ; les deux études de cas le
             disent déjà, chiffres à l'appui, et le titre n'a pas besoin qu'on le double.
             Ne pas le remettre sans lui. */}
-        <a class="btn hero__cta anim-in" href={mail}>{t['cta.contact']} →</a>
+        <a class="p-bouton p-bouton--plein hero__cta anim-in" href={mail}>{t['cta.contact']} →</a>
       </div>
     </div>
   </section>
@@ -116,6 +118,7 @@ const mail = `mailto:${email}`;
             pitch={p.data.pitch}
             audience={p.data.audience}
             annee={p.data.annee}
+            contexte={p.data.contexte}
             cover={p.data.cover}
             cover2={p.data.cover2}
             coverEntier={p.data.coverEntier}
@@ -133,7 +136,7 @@ const mail = `mailto:${email}`;
 
     {/* Panneau qui se deplie reellement (accordeon accessible), au lieu d'un mailto muet. */}
     <button
-      class="btn btn--primary"
+      class="p-bouton p-bouton--plein"
       type="button"
       id="contact-toggle"
       aria-expanded="false"
@@ -149,7 +152,7 @@ const mail = `mailto:${email}`;
         <div class="contact__row">
           <a class="contact__mail" href={mail}>{email}</a>
           <button
-            class="btn contact__copy"
+            class="p-bouton contact__copy"
             type="button"
             id="contact-copy"
             data-copy={email}
@@ -164,11 +167,14 @@ const mail = `mailto:${email}`;
   </section>
 
   <style>
-    /* Hero — direction « champ spatial » : AUCUNE boite. Le texte pose
-       directement sur le champ de particules, tenu par un filet et du vide.
+    /* Hero : AUCUNE boite. Le texte pose directement sur le fond de la page,
+       tenu par un filet et du vide.
        C'est la mise en page qui porte, plus un contenant. */
-    .hero { position: relative; margin-bottom: var(--space-12); }
-    .hero__inner { position: relative; padding-block: var(--space-8) var(--space-12); }
+    /* Sous le hero, UN seul vide : le rythme des pages produit (120 px, 80 sur téléphone).
+       Il y en avait deux de 96 px empilés (marge + rembourrage), soit 192 px de bande
+       morte entre le bouton et la bande de compétences (mesure du 25/09). */
+    .hero { position: relative; margin-bottom: var(--rythme); }
+    .hero__inner { position: relative; padding-block: var(--space-8) 0; }
 
     .hero__panel {
       position: relative;
@@ -193,24 +199,37 @@ const mail = `mailto:${email}`;
       background: var(--c-line-ui);
       transform: translateX(-50%);
     }
-    .hero__name {
-      font-family: var(--font-display, var(--font-serif, serif));
-      font-size: var(--fs-300);
-      color: var(--c-fg);
-      letter-spacing: -0.01em;
-      margin-bottom: var(--space-2);
+    /* Une seule famille, comme les pages produit : Inter 600 pour tout ce qui titre. */
+    .hero__name, .hero h1, .work h2, .contact h2 {
+      font-family: var(--font-sans);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: var(--p-texte);
     }
+    .hero__name {
+      font-size: var(--t-grand);
+      margin-bottom: var(--e-8);
+    }
+    /* Le rôle en pastille, comme les repères de l'ouverture d'une page produit. */
     .hero__eyebrow {
+      display: inline-flex;
+      padding: var(--e-4) var(--e-16);
+      border: 1px solid var(--p-filet);
+      border-radius: 999px;
       font-family: var(--font-mono);
-      font-size: var(--fs-100);
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: var(--c-ember);
+      font-size: var(--t-legende);
+      color: var(--p-doux);
+      max-width: none;
     }
     /* Type-as-image : le titre EST la composition. Plus rien ne le contient. */
     .hero h1 {
-      font-size: clamp(var(--fs-500), 3.6vw, var(--fs-700));
-      max-width: 20ch;
+      /* Plus petit que le titre d'une page produit (65 px) : la promesse fait deux phrases,
+         et à 65 px sur 20 signes elle tenait cinq lignes et poussait tout le reste hors
+         du premier écran (mesure du 25/09 à 1440 × 900). */
+      font-size: clamp(36px, 4vw, 56px);
+      line-height: 1.08;
+      text-wrap: balance;
+      max-width: 22ch;
       /* `p`/`h1` heritent d'un max-width global : sans margin-inline auto le texte
          serait centre DANS une boite restee a gauche. */
       margin-inline: auto;
@@ -223,18 +242,10 @@ const mail = `mailto:${email}`;
          sous la dernière ligne et se collait à elle. --space-8 lui rend le vide que le
          sous-titre occupait. */
       margin-top: var(--space-8);
-      background: var(--c-ember); color: var(--c-accent-ink); border-color: var(--c-ember);
-      font-weight: 600;
     }
-    .hero__cta:hover { background: transparent; color: var(--c-ember); border-color: var(--c-ember); }
-
-    /* Wipe d'intro : voile clair sur le champ orage. Cachee par defaut (no-JS safe). */
-    .intro-wipe {
-      position: absolute; inset: 0; z-index: 5;
-      background: var(--c-fg);
-      transform: scaleY(0); transform-origin: top;
-      pointer-events: none;
-    }
+    /* LE VOILE D'INTRO A ÉTÉ RETIRÉ le 25/09 : il balayait l'écran de la couleur du texte,
+       donc en noir sur la page blanche, alors que Dylan veut « un écran blanc d'entrée ».
+       La frappe lettre par lettre reste. */
     /* LES TROIS CARRÉS DÉCORATIFS ONT ÉTÉ SUPPRIMÉS le 18/09 (Dylan : « supprime les
        3 carré de couleurs »). Ils étaient posés en haut à droite du hero et n'étaient
        déjà affichés que sur grand écran. Ne pas les remettre sans lui. */
@@ -243,7 +254,7 @@ const mail = `mailto:${email}`;
     :global(:root[data-hero='armed']) .anim-in { opacity: 0; }
 
     /* La bande ne crie pas : elle vit entre le hero et les projets, sans filet ni fond.
-       Le hero se termine déjà par --space-12 de vide ; on ne le double pas. */
+       Le hero se termine déjà par le rythme de page ; on ne le double pas. */
     .competences { margin-bottom: var(--space-8); }
 
     .work__head {
@@ -270,7 +281,7 @@ const mail = `mailto:${email}`;
       font-size: var(--fs-200);
       max-width: 48ch;
     }
-    .contact .btn { margin-top: var(--space-1); }
+    .contact .p-bouton { margin-top: var(--space-1); }
     .contact__chev { transition: transform var(--dur-micro) var(--ease-out); }
     #contact-toggle[aria-expanded='true'] .contact__chev { transform: rotate(180deg); }
 
@@ -280,6 +291,7 @@ const mail = `mailto:${email}`;
       display: grid; gap: var(--space-2);
       padding: var(--space-4);
       border: 1px solid var(--c-line);
+      border-radius: var(--arrondi);
       background: var(--c-surface);
       max-width: 34rem;
     }
@@ -291,7 +303,7 @@ const mail = `mailto:${email}`;
       border-bottom: 1px solid var(--c-line);
     }
     .contact__mail:hover { color: var(--c-ember); border-color: var(--c-ember); }
-    .contact__copy { padding: 0.45em 0.9em; }
+    .contact__copy { height: 36px; padding-inline: var(--e-16); }
     .contact__status { color: var(--c-ember); min-height: 1.2em; }
 
     @media (max-width: 720px) {
@@ -308,7 +320,6 @@ const mail = `mailto:${email}`;
     const root = document.documentElement;
     if (root.getAttribute('data-hero') === 'armed') {
       const q = (s: string) => document.querySelector<HTMLElement>(s);
-      const wipe = q('.intro-wipe');
       const eyebrow = q('.hero__eyebrow');
       const title = q('#hero-title');
       const cta = q('.hero__cta');
@@ -356,10 +367,8 @@ const mail = `mailto:${email}`;
           splits.forEach((s) => s.revert());
         },
       })
-        .set(wipe, { scaleY: 1, transformOrigin: 'bottom' })
-        .to(wipe, { scaleY: 0, transformOrigin: 'top', duration: 0.5, ease: 'power4.inOut' })
         // chaque caractère apparaît l'un après l'autre — cadence posée, lisible
-        .to(cEyebrow, { opacity: 1, duration: 0.01, stagger: 0.035 }, '-=0.2')
+        .to(cEyebrow, { opacity: 1, duration: 0.01, stagger: 0.035 }, 0.15)
         .to(cTitle, { opacity: 1, duration: 0.01, stagger: 0.024 }, '-=0.05')
         .to(cta, { opacity: 1, y: 0, duration: 0.4, ease: 'power3.out' }, '-=0.1');
     }

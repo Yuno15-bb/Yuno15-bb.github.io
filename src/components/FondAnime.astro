@@ -72,8 +72,37 @@ const couleurs = palette(intensite);
    l'éviter.
    ============================================================ */
 const couleursEtroit = palette(intensiteEtroit);
+
+/* ============================================================
+   LES PAGES AU TON PRODUIT — jour et nuit, à la braise (Dylan, 25/09 : « où est passée
+   l'animation de fond ? possible de la remettre et changer de couleur ? »).
+   Même matière, mêmes réglages de mouvement ; seules les trois couleurs changent. Le
+   bleu devient la braise du site (--p-accent) et chaque couleur est MÉLANGÉE vers le
+   fond de son ton plutôt qu'assombrie : sur le fond blanc, assombrir salirait. La
+   force de chaque ton est tenue par la lisibilité du texte gris posé dessus, mesurée
+   sur la page rendue (voir le compte rendu du 25/09 dans la fiche de reprise).
+   ============================================================ */
+const melange = (hex: string, fond: string, k: number) => {
+  const rvb = (h: string) => { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
+  const a = rvb(hex), b = rvb(fond);
+  return '#' + a.map((v, i) => Math.round(b[i] + (v - b[i]) * k).toString(16).padStart(2, '0')).join('');
+};
+const BRAISE = '#e8925a';
+const tons = {
+  jour: (k: number) => ({ color1: '#fbfbfd', color2: melange(BRAISE, '#fbfbfd', k), color3: melange('#f4b58c', '#fbfbfd', k * 0.6) }),
+  nuit: (k: number) => ({ color1: '#0a0a0c', color2: melange(BRAISE, '#0a0a0c', k), color3: melange('#ffe4d0', '#0a0a0c', k * 0.42) }),
+};
+const FORCE = { jour: 0.3, jourEtroit: 0.22, nuit: 0.4, nuitEtroit: 0.3 };
+const parTon = {
+  jour: JSON.stringify(tons.jour(FORCE.jour)),
+  jourEtroit: JSON.stringify(tons.jour(FORCE.jourEtroit)),
+  nuit: JSON.stringify(tons.nuit(FORCE.nuit)),
+  nuitEtroit: JSON.stringify(tons.nuit(FORCE.nuitEtroit)),
+};
 ---
-<div class="fond-anime" aria-hidden="true" data-couleurs={JSON.stringify(couleurs)} data-couleurs-etroit={JSON.stringify(couleursEtroit)}>
+<div class="fond-anime" aria-hidden="true" data-couleurs={JSON.stringify(couleurs)} data-couleurs-etroit={JSON.stringify(couleursEtroit)}
+  data-couleurs-jour={parTon.jour} data-couleurs-jour-etroit={parTon.jourEtroit}
+  data-couleurs-nuit={parTon.nuit} data-couleurs-nuit-etroit={parTon.nuitEtroit}>
   <div class="fond-anime__gbg"></div>
 </div>
 
@@ -134,12 +163,19 @@ const couleursEtroit = palette(intensiteEtroit);
            l'écran étroit choisit sa palette. 720 px est la borne déjà utilisée par le
            reste du site pour « téléphone ». */
         const etroit = matchMedia('(max-width: 720px)').matches;
-        const couleurs = JSON.parse(
-          (etroit ? hote.dataset.couleursEtroit : hote.dataset.couleurs) || '{}',
-        );
+        /* Sur une page au ton produit, la palette suit le ton affiché (jour ou nuit) ;
+           ailleurs, la palette d'origine. */
+        const racine = document.documentElement;
+        const couleursDuTon = () => {
+          const ton = racine.dataset.produit;
+          const cle = ton === 'jour' || ton === 'nuit'
+            ? `couleurs${ton === 'jour' ? 'Jour' : 'Nuit'}${etroit ? 'Etroit' : ''}`
+            : etroit ? 'couleursEtroit' : 'couleurs';
+          return JSON.parse(hote.dataset[cle] || '{}');
+        };
         const api = G.create(cible, {
           preset: 'Prism',
-          ...couleurs,
+          ...couleursDuTon(),
           /* Dylan, 18/09 : « améliore la qualité du fond et fais-le défiler un peu plus
              vite ». Trois valeurs remontent, et aucune ne revient à l'ambiance d'origine —
              celle-ci faisait chauffer le GPU (cf. Brain : webgl-shader-wallpaper-gpu-overheating). */
@@ -150,13 +186,35 @@ const couleursEtroit = palette(intensiteEtroit);
           /* Le vrai responsable du flou : à 1, un écran dense affiche un pixel du shader
              pour quatre pixels réels, et les dégradés se rayent. 1,5 supprime les raies
              pour la moitié du coût d'un rendu plein 2×. */
-          maxPixelRatio: 1.5,
+          /* Sous le cran de zoom des pages produit (produit.css), la boîte mesure 1/0,85
+             fois l'écran : le plafond suit, sinon le shader peindrait 38 % de pixels en trop. */
+          maxPixelRatio: 1.5 * (parseFloat(getComputedStyle(racine).zoom) || 1),
         });
         /* « Réduire les animations » : la matière reste, elle cesse de bouger.
            Un fond qui coule en continu est exactement ce que ce réglage refuse. */
         if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
           setTimeout(() => api.stop && api.stop(), 120);
         }
+        /* Le bouton soleil/lune change le ton sans recharger : les couleurs glissent vers
+           celles du nouveau ton en 350 ms, le temps de la transition du reste de la page. */
+        const rvb = (h: string) => { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
+        const hex = (c: number[]) => '#' + c.map((v) => Math.round(v).toString(16).padStart(2, '0')).join('');
+        let glisse = 0;
+        new MutationObserver(() => {
+          const de = { ...api.settings }, vers = couleursDuTon(), t0 = performance.now();
+          cancelAnimationFrame(glisse);
+          const pas = (now: number) => {
+            const k = Math.min(1, (now - t0) / 350);
+            const suite: Record<string, string> = {};
+            for (const c of ['color1', 'color2', 'color3']) {
+              const a = rvb(de[c]), b = rvb(vers[c]);
+              suite[c] = hex(a.map((v, i) => v + (b[i] - v) * k));
+            }
+            api.set(suite);
+            if (k < 1) glisse = requestAnimationFrame(pas);
+          };
+          glisse = requestAnimationFrame(pas);
+        }).observe(racine, { attributes: true, attributeFilter: ['data-produit'] });
       })
       .catch(() => { /* pas de WebGL2, ou fichier absent : la nuit du site reste. */ });
   }

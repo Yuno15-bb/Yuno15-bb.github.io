@@ -3,7 +3,8 @@
 // Redirection faite a la main plutot que par `redirectToDefaultLocale`, dont le
 // meta-refresh a 2 s laisse un ecran blanc au visiteur. Ici : `location.replace`
 // des le parse (instantane, et sans polluer l'historique), meta-refresh a 0 s en
-// filet si le JS est coupe, et un vrai lien si les deux echouent.
+// filet si le JS est coupe, et un vrai lien si les deux echouent. Fond blanc : on arrive
+// en blanc sur tout le site (Dylan, 25/09), la porte ne doit pas flasher en noir.
 ---
 <!doctype html>
 <html lang="en">
@@ -15,7 +16,7 @@
     <meta name="robots" content="noindex" />
     <script is:inline>location.replace('/en/');</script>
   </head>
-  <body style="background:#0a0b14;color:#e9e7f2;font-family:system-ui,sans-serif;padding:2rem">
-    <a href="/en/" style="color:#d8804a">Continue to the site →</a>
+  <body style="background:#fbfbfd;color:#1d1d1f;font-family:system-ui,sans-serif;padding:2rem">
+    <a href="/en/" style="color:#b4561e">Continue to the site →</a>
   </body>
 </html>

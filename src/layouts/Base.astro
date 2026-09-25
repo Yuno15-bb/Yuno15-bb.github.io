@@ -11,8 +11,12 @@ interface Props {
   altPath?: string;
   /** Page produit : pas de fond animé, fond opaque au ton demandé (voir styles/produit.css). */
   produit?: 'nuit' | 'jour';
+  /** Garde le fond animé sur une page au ton produit, à ses couleurs jour/nuit : l'accueil
+      seulement (Dylan, 25/09 : « où est passée l'animation de fond ? possible de la remettre
+      et changer de couleur ? »). */
+  fond?: boolean;
 }
-const { title, description = '', lang, altPath = '', produit } = Astro.props;
+const { title, description = '', lang, altPath = '', produit, fond = false } = Astro.props;
 
 const other: Lang = lang === 'fr' ? 'en' : 'fr';
 const t = ui[lang];
@@ -20,7 +24,7 @@ const t = ui[lang];
 const contactHref = `/${lang}/#contact`;
 ---
 <!doctype html>
-<html lang={lang} data-produit={produit}>
+<html lang={lang} data-produit={produit} data-fond={fond ? '' : undefined}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -50,7 +54,7 @@ const contactHref = `/${lang}/#contact`;
         reste dans le dépôt — le remettre tient en une ligne. */}
     {/* Sur une page produit, le contenu est opaque en plein cadre (base Landmarks) : le fond
         animé n'y serait jamais vu, il ne tournerait que pour vider la batterie. */}
-    {!produit && <FondAnime />}
+    {(!produit || fond) && <FondAnime />}
     <a class="skip-link" href="#main">{t['skip']}</a>
     <header class="container site-head">
       <a href={`/${lang}/`} class="wordmark" aria-label="Accueil / Home">Yuno<span class="accent">15</span></a>
@@ -82,8 +86,8 @@ const contactHref = `/${lang}/#contact`;
         </a>
         {/* Bascule nuit/jour, sur les pages produit seulement (Dylan, 25/09 : « les 2 couleurs
             possibles avec icône de changement »). L'icône montre le ton ACTUEL, le nom accessible
-            dit l'action. Glyphes : Lucide « sun » et « moon », licence ISC. Le clic vit dans
-            components/produit/PageProduit.astro. */}
+            dit l'action. Glyphes : Lucide « sun » et « moon », licence ISC. Le clic est dans le
+            script en bas de ce fichier : l'accueil a le bouton aussi, sans PageProduit. */}
         {produit && (
           <button type="button" class="gh gh--seul bascule-ton"
                   data-libelle-jour={t['ton.sombre']} data-libelle-nuit={t['ton.clair']}
@@ -108,7 +112,7 @@ const contactHref = `/${lang}/#contact`;
 
     <footer class="container site-foot eyebrow">
       <span>© {new Date().getFullYear()} Elliass Peellaert · Yuno15</span>
-      <span>Astro · direction champ spatial</span>
+      <span>{produit && !fond ? 'Astro · Inter' : 'Astro · Inter · champ animé'}</span>
     </footer>
 
     <style>
@@ -126,11 +130,13 @@ const contactHref = `/${lang}/#contact`;
            haut sur un telephone, pour un probleme de 16 px. */
         gap: var(--space-3);
       }
+      /* La marque passe à la police des titres produit (Dylan, 25/09 : « remettre à jour
+         la typo de Yuno ») : elle était restée dans l'ancienne police à empattements. */
       .wordmark {
-        font-family: var(--font-display);
+        font-family: var(--font-sans);
         font-weight: 600;
         font-size: var(--fs-400);
-        letter-spacing: var(--tracking-tight);
+        letter-spacing: -0.02em;
       }
       .site-nav { display: flex; align-items: center; gap: var(--space-4); }
 
@@ -229,5 +235,25 @@ const contactHref = `/${lang}/#contact`;
         border-top: 1px solid var(--c-line);
       }
     </style>
+    <script>
+    // Bascule nuit / jour : le choix est gardé pour toutes les pages au ton produit ; le
+    // script du <head> le repose avant l'affichage à la visite suivante.
+    const racine = document.documentElement;
+    const bascule = document.querySelector<HTMLButtonElement>('.bascule-ton');
+    const libeller = () => {
+      if (!bascule) return;
+      const l = racine.dataset.produit === 'jour' ? bascule.dataset.libelleJour : bascule.dataset.libelleNuit;
+      if (l) { bascule.setAttribute('aria-label', l); bascule.title = l; }
+    };
+    libeller();
+    bascule?.addEventListener('click', () => {
+      const ton = racine.dataset.produit === 'jour' ? 'nuit' : 'jour';
+      racine.classList.add('p-bascule');
+      racine.dataset.produit = ton;
+      libeller();
+      try { localStorage.setItem('produit-ton', ton); } catch { /* stockage bloqué : le choix vaut pour cette page */ }
+      setTimeout(() => racine.classList.remove('p-bascule'), 350);
+    });
+    </script>
   </body>
 </html>

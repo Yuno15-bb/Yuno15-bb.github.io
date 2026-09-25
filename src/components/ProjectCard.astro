@@ -8,12 +8,14 @@ interface Props {
   pitch: string;
   audience: string[];
   annee: number;
+  contexte?: string;   // « Projet client · anonymisé » : dit ce qu'est le projet, là où
+                       // le public (« business ») ne disait rien au visiteur
   cover?: string;      // chemin image dans /public — active la carte "media"
   cover2?: string;     // seconde maquette, posee A COTE de la premiere (diptyque)
   coverEntier?: boolean; // montrer la vignette EN ENTIER (aucun rognage, aucun voile)
   tilt?: number;       // rotationFactor du tilt 3D (0 = pas de tilt)
 }
-const { lang, slug, titre, pitch, audience, annee, cover, cover2, coverEntier = false, tilt = 0 } = Astro.props;
+const { lang, slug, titre, pitch, audience, annee, contexte, cover, cover2, coverEntier = false, tilt = 0 } = Astro.props;
 const tiltAttrs = tilt > 0 ? { 'data-tilt': String(tilt), 'data-tilt-reverse': '' } : {};
 ---
 <a
@@ -40,7 +42,7 @@ const tiltAttrs = tilt > 0 ? { 'data-tilt': String(tilt), 'data-tilt-reverse': '
   )}
   <div class="card__meta eyebrow">
     <span>{annee}</span>
-    <span>{audience.join(' · ')}</span>
+    <span>{contexte ?? audience.join(' · ')}</span>
   </div>
   <h3 class="card__title">{titre}</h3>
   <p class="card__pitch">{pitch}</p>
@@ -50,46 +52,45 @@ const tiltAttrs = tilt > 0 ? { 'data-tilt': String(tilt), 'data-tilt-reverse': '
     .card {
       position: relative;
       display: grid;
+      /* UNE colonne tenue à la largeur de la carte. Mesure du 25/09 : la vignette (boîte à
+         rapport fixe) réclamait une largeur tirée de la HAUTEUR de la carte ; quand
+         l'accroche passait sur plus de lignes, la colonne débordait de 9 px et la carte de
+         gauche se décalait de sa voisine. `minmax(0, 1fr)` coupe ce calcul. */
+      grid-template-columns: minmax(0, 1fr);
+      /* Les lignes aussi sont tenues. Les deux cartes d'une rangée ont la même hauteur ; la
+         plus courte répartissait son vide entre TOUTES ses lignes (5 px chacune), et son
+         titre tombait plus bas que celui de sa voisine. Le vide va à l'accroche seule
+         (1fr), la flèche reste en bas. Ordre : vignette, méta, titre, accroche, flèche. */
+      grid-template-rows: auto auto 1fr auto;
       gap: var(--space-2);
       /* padding CONSTANT : plus aucun décalage du texte au survol */
       padding: var(--space-4) var(--space-3) var(--space-4) 0;
       border-top: 2px solid var(--c-fg);
       transition: border-color var(--dur-trans) var(--ease-out);
     }
-    /* le contenu passe AU-DESSUS de la vitre */
+    /* le contenu reste au-dessus de la carte pendant le tilt 3D */
     .card > * { position: relative; z-index: 1; }
 
-    /* Direction « champ spatial » : pas de vitre au survol. Une nappe QUASI
-       INEXISTANTE (5 % de la nuit) + un flou leger : au survol on doit sentir la
-       surface, pas la voir. Monter cette valeur = retomber dans le bloc plein. */
-    .card::before {
-      content: '';
-      position: absolute;
-      inset: 0 calc(var(--space-3) * -1) 0 calc(var(--space-3) * -1);
-      z-index: 0;
-      background: color-mix(in srgb, var(--c-bg) 5%, transparent);
-      -webkit-backdrop-filter: blur(5px) saturate(1.1);
-      backdrop-filter: blur(5px) saturate(1.1);
-      border-bottom: 1px solid var(--c-line);
-      opacity: 0;
-      transition: opacity var(--dur-trans) var(--ease-out);
-    }
-    .card:hover::before,
-    .card:focus-visible::before { opacity: 1; }
+    /* LA NAPPE FLOUTÉE DU SURVOL A ÉTÉ RETIRÉE le 25/09 : c'était du verre sur une carte
+       de contenu, ce que la base Landmarks interdit (le verre ne porte que la navigation). */
 
     /* Le filet du haut passe a l'accent : le seul signal de survol necessaire. */
     .card:hover, .card:focus-visible { border-color: var(--c-ember); }
     .card:hover .card__go { color: var(--c-ember); transform: translateX(6px); }
 
     @media (prefers-reduced-motion: reduce) {
-      .card::before { transition: opacity 1ms; }
       .card:hover .card__go { transform: none; }
     }
-    .card__meta { display: flex; justify-content: space-between; color: var(--c-muted); }
+    /* Écart minimum : sur téléphone, « 2026 » touchait « PERSONAL PROJECT · OPEN SOURCE »
+       (mesure du 25/09 à 393 px) — `space-between` ne garantit rien quand la ligne est pleine. */
+    .card__meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0 var(--space-2); color: var(--c-muted); }
     .card__title {
       /* Le titre de carte doit rester SOUS le titre de section : a fs-600 il
          rivalisait avec lui et la carte se lisait comme une page entiere. */
       font-size: clamp(var(--fs-300), 2vw, var(--fs-500));
+      font-family: var(--font-sans);
+      font-weight: 600;
+      letter-spacing: -0.015em;
     }
     .card__pitch { color: var(--c-muted); }
     .card__go {
@@ -105,7 +106,7 @@ const tiltAttrs = tilt > 0 ? { 'data-tilt': String(tilt), 'data-tilt-reverse': '
     }
 
     /* ---- Carte "media" : image de couverture en tête ---- */
-    .card--media { padding-top: var(--space-3); }
+    .card--media { padding-top: var(--space-3); grid-template-rows: auto auto auto 1fr auto; }
     /* Vignette VERTICALE : la maquette telephone, en entier.
        Ni cadre ni fond — le PNG porte sa propre transparence (canal alpha), donc
        le champ de particules passe autour du telephone sans aucun artifice. */

@@ -1,272 +1,216 @@
 ---
 titre: "Field Operations Platform"
-pitch: "A field operations system for a roofing company — built for roofs with no signal, then broken by them. Every failure it hit became a rule a machine now re-checks."
+pitch: "The job-tracking app of a roofing company: reports are filled in on the roof in airplane mode, followed live by the office and sent to the client as a PDF."
 audience: ["business"]
 contexte: "Client work · anonymized"
 role: "Product design, field UX, full-stack development"
-stack: ["PWA", "JavaScript", "Service Worker", "Supabase", "PostgreSQL", "RLS", "GPS", "PDF", "Python", "FastAPI", "Claude", "Gmail", "Microsoft Graph"]
+stack: ["PWA", "JavaScript", "Supabase", "PostgreSQL", "Python", "FastAPI", "Claude"]
 annee: 2026
 resultat: "69 invariant tests, each one born from a production bug. The office sees the job the same day instead of three days later."
 nda: true
 featured: true
-ordre: 1
+ordre: 2
 cover: "/projects/fo-etage-18-09.webp"
 coverEntier: true
+gabarit: produit
+ton: jour
 ---
 
+import Ouverture from '../../../components/produit/Ouverture.astro';
+import Preuves from '../../../components/produit/Preuves.astro';
+import Section from '../../../components/produit/Section.astro';
+import Moment from '../../../components/produit/Moment.astro';
+import Capacites from '../../../components/produit/Capacites.astro';
+import AvantApres from '../../../components/produit/AvantApres.astro';
+import Fabrication from '../../../components/produit/Fabrication.astro';
 import Figure from '../../../components/Figure.astro';
 import Flow from '../../../components/figures/Flow.astro';
 import Appareils from '../../../components/figures/Appareils.astro';
+import Ecrans from '../../../components/figures/Ecrans.astro';
 import Duo from '../../../components/figures/Duo.astro';
 import Mac from '../../../components/figures/Mac.astro';
 import Incident from '../../../components/figures/Incident.astro';
-import Systeme from '../../../components/figures/Systeme.astro';
 import FicheProposition from '../../../components/figures/FicheProposition.astro';
 
-<Figure
-  cadre={false}
-  legende="The same dashboard at the same moment, and both themes in one glance: the office runs it dark, the technician switches to light when he is on a roof in full sun."
-  source="Screenshots of the app in production, demo mode — branding, places and data neutralised. Official Apple bezels, at true relative scale."
+export const etiquettes = ['The assumption', 'What happened', 'Why', 'What changed', 'The proof'];
+
+<Ouverture
+  reperes={['Client work', 'PWA', 'Offline']}
+  titre="A field app that works with no signal."
+  chapo="Technicians fill in their report on the roof, in airplane mode. The office gets it the same day and sends it to the client as a PDF."
+  actions={[
+    { label: 'Architecture', url: '#architecture', plein: true },
+    { label: 'Get in touch', url: '/en/#contact' },
+  ]}
+  pile={frontmatter.stack}
+  pileTitre="Stack"
+  legende="The same dashboard at the same moment: the office in dark mode on a Mac, the technician in light mode on an iPad. Screenshots of the app in production, demo mode: branding, places and data neutralised."
 >
   <Appareils
     src="/projects/fo-duo-18-09.webp"
-    alt="The same dashboard at the same moment on MacBook Pro in dark theme and iPad in light theme"
+    alt="The same dashboard at the same moment on a MacBook Pro in dark mode and an iPad in light mode"
   />
-</Figure>
+</Ouverture>
 
-## The job, before any of this existed
+<Preuves items={[
+  { valeur: '69 invariants', sens: 'Tests each born from a production bug, reading the shipped code.' },
+  { valeur: 'Same day', sens: 'the office sees the job, instead of three days of re-typing before.' },
+  { valeur: 'Airplane mode', sens: 'for the whole report. Only the sync needs a network.' },
+  { valeur: '1 minute', sens: 'between two mailbox reads by the agent. Every write waits for a human to approve it.' },
+]} />
 
-A roofer climbs onto a roof, opens a paper sheet, and writes down what he finds: the state
-of the ridge, the verges, the covering, the flashing, every pipe and vent coming through.
-He photographs what matters. He comes down. Three days later, somebody at the office types
-the sheet into a computer, calls him to ask what a word meant, and turns it into a report
-the client will read.
-
-That is the whole problem, and it is not a data-entry problem. **The information is born
-in the one place where there is no network**, by someone wearing gloves, on a screen he
-cannot read in full sun, and it has to survive the trip back intact — because at the end
-of it a client receives a document, and that document has to say what the roofer actually
-saw.
-
-A plain CRUD app does not survive that trip. It assumes the network is there when you
-press save, that nobody else is editing the same record, and that a green response means
-the data landed. On a roof, all three assumptions are false.
-
-## The four conditions that shaped everything
-
-These are not all the constraints. They are the ones that each forced a structural
-decision — the rest were details.
-
-<Figure
-  titre="Constraint → decision"
-  legende="Read it as a chain: each line on the left made the line on the right non-negotiable."
+<Section
+  surtitre="Interfaces"
+  titre="The phone on the roof, the dashboard at the office."
+  chapo="Both screens read the same database. What the technician validates shows up on the office map as soon as their phone is back online."
 >
-  <Duo
-    accent="b"
-    a={{ titre: 'What the field imposes', items: [
-      'No signal is the normal case, not the exception — cellars, roofs, rural sites',
-      'Hardened Android phones several years old, whose own camera app often refuses to open from a browser',
-      'Two people editing the same job at once: the technician offline on the roof, the office live at a desk',
-      'The output is a document a client reads — what goes in has to come out',
-    ] }}
-    b={{ titre: 'What it forces the architecture to be', items: [
-      'Every write lands on the phone first and joins a queue; the network is never on the critical path',
-      'The camera lives inside the app, through the browser, never delegated to the phone',
-      'Merge field by field, with a written rule for who wins — and a conflict that is never silent',
-      'A test that checks the shape of the output is not enough: it has to check the input comes back out',
-    ] }}
-  />
-</Figure>
+  <Figure
+    cadre={false}
+    legende="Left, the technician's home screen: the current job, the route, the next jobs. Right, the office: today's counters, crews on the map, the month planner."
+    source="Screenshots of the app in production, demo mode. Places and data neutralised."
+  >
+    <Ecrans
+      tel="/projects/terrain-tel-clair-04-09.jpg"
+      telAlt="The technician's phone"
+      bureau="/projects/terrain-bureau-clair-04-09.jpg"
+      bureauAlt="The office dashboard"
+      clair
+    />
+  </Figure>
+  <Moment surtitre="Review" titre="The agent proposes, a person approves.">
+    <p slot="texte">Signed quotes, invoices and claims arrive by email. The agent extracts the fields, each one stays editable, and nothing is written to the database until someone clicks the button on the right. Reconstructed interface, fictional data.</p>
+    <Mac titre="Field Ops — Filing">
+      <FicheProposition />
+    </Mac>
+  </Moment>
+</Section>
 
-## How it all fits together
-
-<Figure
-  titre="The four parts, and the rule that governs each crossing"
-  legende="The arrows are not decoration: each one carries the rule that governs that crossing. The two in amber are the only places where something can be refused — a queue waiting for the network, and a person clicking."
+<Section
+  surtitre="Features"
+  titre="From the roof survey to the client report."
+  chapo="Fifteen steps at most per report, and only the ones that apply to that type of job."
 >
-  <Systeme parties={[
-    { nom: 'The field', items: ['The technician’s phone', 'Survey, photos, sketch, position', 'Works in airplane mode'],
-      lien: 'Nothing leaves without going through the local queue', garde: true },
-    { nom: 'The data', items: ['One database per company, isolated row by row', 'Photos in private storage', 'Merging happens field by field'],
-      lien: 'The office reads the same row, live' },
-    { nom: 'The office', items: ['Crew map, counters, planner', 'Directory of sites and managing agents', 'The client report as a PDF'],
-      lien: 'The agent proposes, it never writes', garde: true },
-    { nom: 'Automation', items: ['Two mailboxes re-read every minute', 'Quotes, invoices, complaints extracted from PDFs', 'Everything lands in a proposal queue'] },
+  <Capacites items={[
+    { titre: 'Offline first', texte: 'Every entry is written to the phone first and joins a local queue. Saving never waits for the network.' },
+    { titre: 'Field-level merge', texte: 'The offline technician and the live office edit the same record. A written rule decides who wins, and a conflict is always flagged.' },
+    { titre: 'Built-in camera', texte: "Photos are taken in the app, through the browser. On the field's rugged Android phones, the system camera often refused to open." },
+    { titre: 'Client report as PDF', texte: 'The office generates the report in one step, from the fields and photos of the survey.' },
+    { titre: 'Per-company isolation', texte: "Every database row belongs to one company (PostgreSQL Row Level Security). A check verifies it with a real technician account." },
+    { titre: 'Encrypted backups', texte: 'Encrypted off-machine copies, with a restore verified byte for byte. The app installs from the browser, no app store needed.' },
   ]} />
-</Figure>
+</Section>
 
-### How a finding travels
-
-<Figure
-  titre="From the roof to the client's report"
-  legende="The only step that touches the network is the fourth. Everything before it works with the phone in airplane mode."
+<Section
+  id="architecture"
+  surtitre="Architecture"
+  titre="The path of a report."
+  chapo="Only the fourth step touches the network. Everything before it works in airplane mode."
 >
-  <Flow etapes={[
-    { t: 'On the roof', d: 'The technician fills in, photographs, confirms. Fifteen steps at most, only the ones that apply to this job type.' },
-    { t: 'Written on the phone', d: 'Immediately — the record in local storage, the photos in a local database of their own.', porte: true },
-    { t: 'The queue', d: 'The change waits its turn, with a revision number that changes at every edit.' },
-    { t: 'The signal returns', d: 'The queue replays in order. Before each write it re-reads the server row and merges field by field.' },
-    { t: 'The office', d: 'Live map, counters for the day, month planner — and the client report as a PDF, in one gesture.' },
-  ]} />
-</Figure>
+  <Figure>
+    <Flow etapes={[
+      { t: 'On the roof', d: 'The technician fills in, photographs and validates the steps for that type of job.' },
+      { t: 'Written to the phone', d: 'Immediately: the record in local storage, the photos in a dedicated local database.', porte: true },
+      { t: 'The queue', d: 'The change waits its turn, with a revision number that changes on every edit.' },
+      { t: 'Back online', d: "The queue replays in order. Before each write, it re-reads the server's row and merges field by field." },
+      { t: 'The office', d: "The map, today's counters and the planner update, and the client report comes out as a PDF." },
+    ]} />
+  </Figure>
+</Section>
 
-Alongside it, an agent watches two mailboxes: signed quotes, invoices and complaints used
-to be re-typed by hand into the client records. It reads them, opens the PDFs, extracts the
-figures — and stops. **It never writes into the live database.** Everything it produces
-lands in a queue where a person re-reads it and clicks.
-
-<Figure
-  cadre={false}
-  legende="The review screen: every field was extracted from the email, every field stays editable, and the button on the right is what triggers the write. In amber, the one field corrected by hand."
-  source="Reconstructed interface — fictional data (client confidentiality)"
+<Section
+  surtitre="Email agent"
+  titre="A read-only agent on the client database."
+  chapo="It reads two mailboxes every minute and prepares proposals. Its only allowed write: setting a job's status to “scheduled”."
 >
-  <Mac titre="Field Ops — Filing">
-    <FicheProposition />
-  </Mac>
-</Figure>
+  <Figure>
+    <Duo
+      a={{ titre: 'What the agent does on its own', items: [
+        'Read two mailboxes every minute and sort each message',
+        'Open attached PDFs and extract client, references, amounts and dates',
+        "Query the client's database, read-only",
+        'Draft a reply, left unsent',
+      ] }}
+      b={{ titre: 'What it is not allowed to do', items: [
+        "Write to the client's database",
+        'Send an email',
+        'Create a record nobody has reviewed',
+        'Delete or overwrite existing data',
+      ] }}
+    />
+  </Figure>
+</Section>
 
-## Where it broke
-
-The interesting part of this project is not that it was built. It is that it went into the
-hands of people on roofs, broke in ways the design had not imagined, and that each break
-left a rule behind. What follows is not a bug list — these four are the ones that changed
-how the system is built.
-
-<Figure
-  titre="1 — “I came back and everything had gone”"
-  legende="The first real report from the field, and the one that set the standard for all the others: losing work done on a roof is not an acceptable failure mode."
+<Section
+  surtitre="Production incidents"
+  titre="Four failures, and what they changed."
+  chapo="Each one left a written check that can be replayed."
 >
-  <Incident
-    labels={['The assumption', 'What happened', 'Why', 'What changed', 'The proof']}
-    titre="A technician lost a report he had already filled in"
-    quand="Reported from a site, July"
-    hypothese="The draft was saved at every keystroke and at every photo. So the work was safe: coming back to the app would obviously bring it back."
-    panne="He left the app during a report. On his return he was on the home screen, at the beginning, and the photos of the draft were gone too."
-    cause="Five faults, none of them individually unacceptable, chained: a cache serving an older version, photo storage that had become private, a race between two operations, expired image addresses, and a fragile sync. The draft did exist — but reopening it required tapping a button he never saw, and the photo was still being written to the local database when he closed the app."
-    correctif="Reopening the app on an active draft now reopens the report at the saved step, no button to find. The photo is written to local storage and awaited before the draft that references it is saved. And the draft is saved on the way out of the app, not only on the way in."
-    preuve="The chain is now covered by invariant tests that read the source itself, and the deployed version is checked by fetching the live service worker rather than trusting the deploy."
+  <Figure titre="01 · Lost draft">
+    <Incident
+      labels={etiquettes}
+      titre="A technician lost a report they had already filled in"
+      quand="July, back from a job site"
+      hypothese="The draft was saved on every entry and every photo. Coming back to the app should find it."
+      panne="They left the app during a report. On return they were on the home screen, and the draft's photos were gone."
+      cause="Five defects chained together: a cache serving a stale version, photo storage that had become private, a race between two operations, expired image URLs and a fragile sync. The draft existed, but reopening it required a button they never saw, and the photo was still being written to the local database when they left the app."
+      correctif="Reopening the app on an active draft reopens the report at the saved step. The draft waits for its photos to finish writing before it is saved, and it is also saved when the app is left."
+      preuve="Invariant tests cover the chain by reading the shipped source. The live version is checked by downloading the deployed service worker."
+    />
+  </Figure>
+  <Figure titre="02 · Invisible photos">
+    <Incident
+      labels={etiquettes}
+      titre="Every photo disappeared, with no data lost"
+      quand="July, reported as “no photos on a job”"
+      hypothese="Photo storage is private: the app signs temporary URLs to display them, and keeps a public URL as a fallback."
+      panne="Every photo disappeared at once, for every user, with no error message."
+      cause="On private storage, a public URL returns an error: the fallback had never worked. All URLs were signed in one batched call whose failure was swallowed. A single transient network error emptied the whole display, while every file and every row was intact."
+      correctif="Valid signed URLs are kept across reloads, the display rebuilds from them at startup, and signing runs in small isolated batches: a failed batch only blocks its own photos."
+      preuve="A three-layer diagnosis, written and replayable: does the row exist, does the file exist, does signing work. Three yeses mean nothing is lost and the defect is in the display."
+    />
+  </Figure>
+  <Figure titre="03 · Sync queue">
+    <Incident
+      labels={etiquettes}
+      titre="An entry typed during a sync disappeared"
+      quand="July, found by an adversarial audit"
+      hypothese="Send pending records one by one, then rewrite what remains in the queue. The code had run that way for months."
+      panne="Anything typed during a sync could be lost. The server had one version, the screen another, and no send was left to close the gap."
+      cause="Read the queue, send, rewrite the queue: the network separates those three moments, and the rewrite erased entries added in between. The existing timestamp could not detect it, because it is deliberately kept on re-queue for conflict detection."
+      correctif="Every entry carries a revision counter that changes on every edit. On acknowledgement the queue is re-read, and a send's result is only applied if the revision has not changed. Whatever was added during the send stays in the queue."
+      preuve="The merge rule lives between two markers in the source, and a script tests exactly that zone: moving the code without moving the test makes the script fail."
+    />
+  </Figure>
+  <Figure titre="04 · False success">
+    <Incident
+      labels={etiquettes}
+      titre="A button said “done” and deleted nothing"
+      quand="Found while writing a test against the real database"
+      hypothese="The database isolates data per company, row by row. The rules were written and reviewed."
+      panne="A reset button reported success every time and removed no rows, for weeks. Nothing failed, so nobody noticed."
+      cause="When a delete matches no security policy, PostgreSQL returns no error: the query succeeds and deletes zero rows. From the app, a silent refusal looks exactly like success."
+      correctif="Isolation is checked with a real technician account on the real database: the check creates a throwaway record and tests what that account can and cannot reach."
+      preuve="The check runs with a technician's rights and fails if a rule is missing, the very case it was written for."
+    />
+  </Figure>
+</Section>
+
+<Section
+  surtitre="Product decisions"
+  titre="Two diagnoses settled by a measurement."
+  chapo="Before changing the code, measure what is actually happening."
+>
+  <AvantApres
+    libelles={{ avant: 'Measured', apres: 'Decided' }}
+    items={[
+      { titre: 'Duplicate jobs', avant: '0 of 55', avantSens: 'duplicate IDs, and zero shared IDs across 181 calendar events. Deduplication was working.', apres: 'Upstream', apresSens: 'The duplicates came from calendars where an appointment deleted and re-created gets a new ID. The fix was made at the source; the merge did not change.' },
+      { titre: 'Test coverage', avant: '3 areas', avantSens: 'tested: startup, service worker, offline. A total block at step 5 went unnoticed for weeks.', apres: 'Input = output', apresSens: 'A check verifies that what is entered comes out in the report. When it was added, it found five defects in one pass.' },
+    ]}
   />
-</Figure>
+</Section>
 
-<Figure
-  titre="2 — Every photo, gone at once, for everyone"
-  legende="The incident that separated “the data is lost” from “the screen cannot draw it” — two words apart, and a completely different repair."
->
-  <Incident
-    labels={['The assumption', 'What happened', 'Why', 'What changed', 'The proof']}
-    titre="All the photos disappeared, and nothing was lost"
-    quand="Reported as “no photos on one job”, July"
-    hypothese="Photo storage is private, so the app signs temporary addresses to display them — and a public address was kept alongside as a fallback, just in case."
-    panne="Every photo vanished at once, for every user. Not one job: all of them, with no error on screen."
-    cause="On private storage a public address answers with an error — the fallback was dead, and had been from the start. All the addresses were signed in a single grouped call whose failure was being swallowed. One transient hiccup was therefore enough to empty the entire display, with no recourse — while every file and every row sat intact."
-    correctif="Valid signed addresses are kept so they survive a reload, the display is rebuilt from them at start-up, and signing happens in small isolated batches: a batch that fails now deprives only itself."
-    preuve="A three-layer diagnostic, written down and repeatable: does the row exist, does the file exist, does the signature work. If all three answer yes, nothing is lost — and the answer is in the display, not the data."
-  />
-</Figure>
-
-<Figure
-  titre="3 — The queue that quietly ate what you typed"
-  legende="No crash, no error, no red anywhere. This is the failure mode an offline-first app has to be designed against, and the reason the queue carries a revision number."
->
-  <Incident
-    labels={['The assumption', 'What happened', 'Why', 'What changed', 'The proof']}
-    titre="A write made during a sync disappeared without trace"
-    quand="Found by an adversarial audit, July"
-    hypothese="Send the queued records one by one, then write back what is left. Straightforward, and it had worked for months."
-    panne="Anything typed while a sync was running could vanish. The server held one version, the screen showed another, and no retry existed any more."
-    cause="Reading the queue, sending over the network and writing the queue back are not one instant — the network sits in the middle. Writing back the remainder overwrites a queue that has moved on since. Worse: the obvious way to detect it, the existing timestamp, was deliberately kept unchanged on re-queue so that conflicts could be detected. It could not see a content change."
-    correctif="The flush no longer overwrites — it reconciles. Every entry carries a revision counter that changes at every single edit; at acknowledgement the queue is re-read and an outcome is applied only if the revision still matches. Anything queued during the flush is preserved untouched."
-    preuve="The merge rule lives between two markers in the source, and a script tests exactly that region — so moving the code without moving the test is caught."
-  />
-</Figure>
-
-<Figure
-  titre="4 — A green answer that did nothing"
-  legende="The clearest reason this project stopped trusting green: a control that cannot go red proves nothing at all."
->
-  <Incident
-    labels={['The assumption', 'What happened', 'Why', 'What changed', 'The proof']}
-    titre="A button that answered “done” for weeks, and deleted nothing"
-    quand="Found by writing a test against the real database"
-    hypothese="The database enforces per-company isolation, row by row. The rules were written and reviewed, so they were in force."
-    panne="A reset button reported success every time and removed nothing. For weeks. Nobody noticed, because nothing failed."
-    cause="When a delete has no matching security policy, the database does not refuse — it answers “no content, all good” and removes zero rows. Success and “silently forbidden” look identical from the outside."
-    correctif="Isolation is no longer verified by reading the rules. A check signs in as a real technician account against the real database, creates a throwaway record, and asserts what that account can and cannot reach."
-    preuve="The check runs with the rights of a technician, never an owner, and would go red on a missing policy — which is exactly the case it was written to catch."
-  />
-</Figure>
-
-## What “it works” means here
-
-<Figure
-  titre="The rule the test file states about itself"
-  legende="Verbatim from the header of the invariant test file — it is the sentence that describes how this system is maintained."
->
-  <Duo
-    accent="a"
-    a={{ titre: 'What the invariants are for', items: [
-      'Every production bug found by hand earns an invariant here, so it never comes back',
-      '69 of them today — none of them tests a crash',
-      'They test contradictions: two places in the code that must agree, and stopped agreeing',
-      'They read the shipped source itself, not a copy that can drift',
-    ] }}
-    b={{ titre: 'What the tests before them could not see', items: [
-      'They only covered boot, the service worker and offline mode',
-      'They let a total blockage at step 5 through for weeks',
-      'They let a survey that never left the phone through for weeks',
-      'Nothing crashed — a well-formed output was checked, never that the input came back out',
-    ] }}
-  />
-</Figure>
-
-Three habits came out of those four incidents, and they now apply to everything added to
-the system.
-
-- **A control that cannot go red proves nothing.** When a guard is written, it gets
-  deliberately broken to check it reacts — the second leak found in the demo dataset was
-  closed with four sensors, each sabotaged and kept.
-- **Green tests are not proof the data survived.** Checking that an output is well formed
-  is not checking that what was typed in comes back out; that single missing check, added
-  once, brought down five live defects in one pass.
-- **Look upstream before blaming the code.** A wave of duplicate jobs looked like broken
-  deduplication. Measured: zero duplicate identifiers across 55, zero same client on the
-  same day, zero shared identifier across 181 calendar events. The duplicates came from
-  people deleting and re-creating appointments in their calendar, which hands out a fresh
-  identifier every time. The fix belonged upstream, not in the merge.
-
-## What the agent is allowed to do
-
-<Figure
-  titre="The boundary, spelled out"
-  legende="The single write exception is narrow and written down in plain sight: one status field may move to « scheduled », nothing else."
->
-  <Duo
-    a={{ titre: 'What the agent does on its own', items: [
-      'Read two mailboxes, every minute, and classify every message',
-      'Open PDF attachments and extract client, references, amounts, dates',
-      "Query the client's database — read-only",
-      'Draft a reply, left unsent',
-    ] }}
-    b={{ titre: 'What it is not allowed to do', items: [
-      "Write into the client's live database",
-      'Send an email on their behalf',
-      'Create a record nobody has re-read',
-      'Delete or overwrite existing data',
-    ] }}
-  />
-</Figure>
-
-That boundary is not caution for its own sake. An earlier version of this pipeline
-re-created every proposal it had already handled, because its only real guard against
-double-processing was whether an email still looked unread — an external flag that can
-reset itself, and whose update could fail in silence. The lasting fix was a durable
-registry of what has been processed, written on every success and read before every run.
-
-## Operations
-
-- **Per-company isolation** at the database level, designed in from the start rather than
-  bolted on later — and verified against the real database, not against the rules on paper.
-- **Encrypted off-machine backups**, with restoration verified byte for byte.
-- **Installable from the browser**, with no app store in the way.
-- **Keyboard operable**, contrast meeting the AA threshold — an app that has to be read
-  in full sunlight.
+<Fabrication items={[
+  { terme: 'Role', valeur: frontmatter.role },
+  { terme: 'Context', valeur: `${frontmatter.contexte} · ${frontmatter.annee}` },
+  { terme: 'Result', valeur: frontmatter.resultat },
+]} />

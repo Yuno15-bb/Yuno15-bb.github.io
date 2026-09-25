@@ -87,9 +87,30 @@ html[data-produit='jour'] {
   color-scheme: light;
 }
 html[data-produit] body { background: var(--p-fond); color: var(--p-texte); }
+/* L'accueil garde le fond animé (Base.astro, `fond`) : il est posé SOUS le corps de page
+   (z-index -3). Un corps opaque le masquerait entièrement, d'où le corps transparent ; le
+   fond uni reste sur <html>, visible avant que le shader ait peint sa première image. */
+html[data-produit][data-fond] body { background: transparent; }
+/* Le gris secondaire se lit SUR les bandes du champ, pas sur un fond uni : mesuré le 25/09
+   (sonde texte/fond sur la page rendue), #6e6e73 tombait à 3,9:1 sur la bande pêche la plus
+   dense. Un cran plus sombre le jour, un cran plus clair la nuit : 4,5:1 partout, et la
+   hiérarchie avec le texte principal reste lisible. L'accueil seulement. */
+html[data-produit][data-fond] { --p-doux: #b8b8bf; }
+html[data-produit="jour"][data-fond] { --p-doux: #5e5e63; }
 
 @media (max-width: 760px) {
   html[data-produit] { --rythme: 80px; }
+}
+
+/* LE CRAN DE ZOOM — Dylan, 25/09, capture de la page GreyMatter à l'appui : « dézoom d'1
+   point pour arriver à cette vue générale ». Un cran de Safari vers le bas, c'est 85 % :
+   mesuré sur sa capture, l'icône de 96 px et l'interligne du titre y tombent à 0,85.
+   `zoom` fait exactement ce que fait le navigateur — tout rétrécit d'un coup, texte,
+   espacements, images — sans toucher à une seule valeur de l'échelle. C'est la même
+   décision que la racine à 90 % du 05/09 (tokens.css), prise pour le format produit qui
+   est en px. Bureau seulement : sur un téléphone il n'y a pas de plein écran à dézoomer. */
+@media (min-width: 1024px) {
+  html[data-produit] { zoom: 0.85; }
 }
 
 /* ---------------- La page ---------------- */
@@ -167,6 +188,10 @@ html[data-produit] body { background: var(--p-fond); color: var(--p-texte); }
 }
 .produit .fig__cap { color: var(--p-doux); font-size: var(--t-petit); }
 .produit .apercu { border-color: var(--p-filet-fort); }
+
+/* Les fiches d'incident gardaient la police de titre du site (à empattements) :
+   sur ces pages, tous les titres sont en Inter. */
+.produit .inc .inc__titre { font-family: var(--font-sans); font-weight: 600; letter-spacing: -0.015em; }
 
 /* ---------------- Apparition au défilement ---------------- */
 /* `.p-anime` n'est posé que par le script : sans JavaScript, rien n'est caché. */
