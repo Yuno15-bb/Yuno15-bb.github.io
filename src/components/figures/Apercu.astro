@@ -28,7 +28,7 @@ const { src, poster, largeur, hauteur, description } = Astro.props;
 
 <style>
   .apercu {
-    max-width: 1100px;
+    max-width: calc(1100px * var(--ecran-echelle));
     margin-inline: auto;
     border: 1px solid var(--c-line-ui);
     border-radius: 16px;

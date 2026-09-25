@@ -30,6 +30,9 @@ const { titre = 'Field Ops', clair = false, marge = 0 } = Astro.props;
 
 <style>
   .mcw {
+    /* La planche entière mesurait 1210 px (à 1470 px de large, 25/09) : voir --ecran-echelle. */
+    max-width: calc(1210px * var(--ecran-echelle));
+    margin-inline: auto;
     border: 1px solid #2a2a30;
     border-radius: 12px;
     overflow: hidden;

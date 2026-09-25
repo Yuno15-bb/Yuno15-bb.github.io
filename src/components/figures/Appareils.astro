@@ -32,6 +32,9 @@ const { src, alt } = Astro.props;
   .appareils {
     display: block;
     width: 100%;
+    /* La planche entière mesurait 1210 px (à 1470 px de large, 25/09) : voir --ecran-echelle. */
+    max-width: calc(1210px * var(--ecran-echelle));
+    margin-inline: auto;
     height: auto;
   }
 </style>

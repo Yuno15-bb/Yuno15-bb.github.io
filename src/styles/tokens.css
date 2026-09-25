@@ -76,6 +76,12 @@ html { font-size: 90%; }
 
   --radius: 0px;
 
+  /* Écrans de présentation — UN seul bouton pour tous les cadres d'appareil (Apercu,
+     MacBureau, Appareils, Mac). Dylan, 25/09 : « c'est trop grand ça prend trop de largeur
+     réduit de 1/4 », puis « tous les écrans de présentation ». Chaque cadre multiplie sa
+     largeur d'avant par ce facteur ; sur téléphone ils restent à 100 %, la borne ne mord pas. */
+  --ecran-echelle: 0.75;
+
   /* --- Motion (tokens partages avec /motion et /gsap) --- */
   --dur-micro: 180ms;
   --dur-trans: 420ms;

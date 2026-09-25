@@ -34,7 +34,7 @@ const { src, poster, description } = Astro.props;
   .mbu {
     position: relative;
     width: 100%;
-    max-width: 1100px;
+    max-width: calc(1100px * var(--ecran-echelle));
     margin-inline: auto;
     aspect-ratio: 3803 / 2295;
   }
