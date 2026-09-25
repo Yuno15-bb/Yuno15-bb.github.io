@@ -15,6 +15,8 @@
    - Grille : un conteneur, un seul bord gauche par écran ; seule l'ouverture se centre.
    - Couleur : un fond opaque, un texte, un gris, un accent (la braise du site).
      Base Landmarks : le contenu est opaque, le verre n'existe que sur la navigation.
+     Exception voulue par Dylan le 25/09 : les cartes de texte passent en verre là où le
+     champ animé tourne dessous (« Cartes en verre », plus bas).
    - Typographie : une grotesque (Inter) serrée pour les titres, la même au corps, une
      chasse fixe pour ce qui se tape ou se mesure. Échelle 1,25 à partir de 17 px.
    - Geste : des coins de 16 px, un filet d'un pixel, et une apparition au défilement.
@@ -191,6 +193,42 @@ html[data-produit="jour"][data-fond] { --p-doux: #5e5e63; --p-accent: #9a4614; }
   border-color: var(--p-filet);
 }
 .produit .fig__cap { color: var(--p-doux); font-size: var(--t-petit); }
+
+/* ---------------- Cartes en verre ----------------
+   Décision Dylan, 25/09 : « applique à toutes les cartes de ce type un fond transparent liquid
+   glass qu'on a dans nos ressources ». La recette est celle du kit landmarks-web (`.lm-verre`,
+   ~/.claude/skills/_refs/landmarks-web) : voile teinté, filet clair, reflet en haut, flou
+   saturé. ⚠ Le kit réserve le verre à la navigation (« Don't use Liquid Glass in the content
+   layer ») : c'est une exception voulue, sur les cartes du même habit (capacités, avant/après,
+   installation, plaques de figures), et seulement où le champ animé passe dessous — sur un fond
+   uni, le verre ne floute rien. */
+html[data-produit][data-fond] {
+  --p-verre: rgb(30 30 32 / 62%);
+  --p-verre-ligne: rgb(255 255 255 / 13%);
+  --p-verre-reflet: inset 0 1px 0 rgb(255 255 255 / 12%);
+  --p-verre-ombre: 0 10px 34px rgb(0 0 0 / 38%), 0 1px 3px rgb(0 0 0 / 30%);
+}
+html[data-produit='jour'][data-fond] {
+  --p-verre: rgb(250 250 252 / 68%);
+  --p-verre-ligne: rgb(255 255 255 / 85%);
+  --p-verre-reflet: inset 0 1px 0 rgb(255 255 255 / 90%);
+  --p-verre-ombre: 0 10px 34px rgb(0 0 0 / 10%), 0 1px 3px rgb(0 0 0 / 6%);
+}
+html[data-produit][data-fond] :is(.capa__carte, .aa__cas, .inst, .fig__plate:not(.fig__plate--nu)) {
+  background: var(--p-verre);
+  border-color: var(--p-verre-ligne);
+  box-shadow: var(--p-verre-ombre), var(--p-verre-reflet);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  backdrop-filter: blur(24px) saturate(180%);
+}
+/* « Réduire la transparence » (réglage d'accessibilité d'Apple) : la carte redevient opaque. */
+@media (prefers-reduced-transparency: reduce) {
+  html[data-produit][data-fond] :is(.capa__carte, .aa__cas, .inst, .fig__plate:not(.fig__plate--nu)) {
+    background: var(--p-surface);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
 .produit .apercu { border-color: var(--p-filet-fort); }
 
 /* Les fiches d'incident gardaient la police de titre du site (à empattements) :

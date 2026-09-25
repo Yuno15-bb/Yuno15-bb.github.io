@@ -54,8 +54,8 @@ const contactHref = `/${lang}/#contact`;
         deux boucles d'animation qui se disputaient la carte graphique. Le composant
         reste dans le dépôt — le remettre tient en une ligne. */}
     {/* Sur une page produit, le fond animé ne tourne que si la page le demande (`fond`) :
-        les cartes et figures restent opaques par-dessus (base Landmarks), le champ se voit
-        entre les sections. */}
+        le champ se voit entre les sections et, depuis le 25/09, à travers les cartes en verre
+        (décision Dylan, voir « Cartes en verre » dans styles/produit.css). */}
     {(!produit || fond) && <FondAnime />}
     <a class="skip-link" href="#main">{t['skip']}</a>
     <header class="container site-head">
