@@ -15,6 +15,8 @@ interface Action { label: string; url: string; plein?: boolean; }
 interface Props {
   /** L'icône de l'app, recadrée sur sa plaque (pas de marge transparente autour). */
   logo?: { src: string; alt: string };
+  /** Une annonce courte, en tête des repères et en couleur d'accent (« V2 bientôt »). */
+  annonce?: string;
   reperes: string[];
   titre: string;
   chapo: string;
@@ -23,13 +25,14 @@ interface Props {
   pileTitre: string;
   legende?: string;
 }
-const { logo, reperes, titre, chapo, actions, pile, pileTitre, legende } = Astro.props;
+const { logo, annonce, reperes, titre, chapo, actions, pile, pileTitre, legende } = Astro.props;
 const externe = (u: string) => /^https?:/.test(u);
 ---
 <header class="ouv produit__page">
   {logo && <img class="ouv__logo" src={logo.src} alt={logo.alt} width="96" height="96" decoding="async" />}
   <p class="ouv__reperes">
-    {reperes.map((r, i) => <span>{i > 0 && <span class="ouv__point" aria-hidden="true">·</span>}{r}</span>)}
+    {annonce && <span class="ouv__annonce">{annonce}</span>}
+    {reperes.map((r, i) => <span>{(i > 0 || annonce) && <span class="ouv__point" aria-hidden="true">·</span>}{r}</span>)}
   </p>
   <h1 class="ouv__titre">{titre}</h1>
   <p class="ouv__chapo">{chapo}</p>
@@ -73,6 +76,7 @@ const externe = (u: string) => /^https?:/.test(u);
     max-width: none;
   }
   .ouv__point { margin-right: var(--e-8); color: var(--p-accent); }
+  .ouv__annonce { color: var(--p-accent); font-weight: 600; }
   .ouv__titre {
     font-size: var(--t-titre1);
     line-height: 1.04;

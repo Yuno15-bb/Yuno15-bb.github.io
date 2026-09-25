@@ -19,6 +19,10 @@ export default defineConfig({
     '/fr/projects/dgc-system': '/fr/projects/field-operations-platform',
     '/en/projects/ai-operations-agent': '/en/projects/field-operations-platform',
     '/fr/projects/ai-operations-agent': '/fr/projects/field-operations-platform',
+    // La page GreyMatter s'appelait « c-brain », l'ancien nom du projet. Dylan, 25/09 :
+    // « doit s'appeler GreyMatter ». L'ancienne adresse (CV, profil GitHub) renvoie ici.
+    '/en/projects/c-brain': '/en/projects/greymatter',
+    '/fr/projects/c-brain': '/fr/projects/greymatter',
   },
   // i18n natif EN + FR. Les deux langues sont prefixees (/en, /fr).
   // ⚠ C'est CE defaultLocale qui decide de la redirection de la racine `/`,

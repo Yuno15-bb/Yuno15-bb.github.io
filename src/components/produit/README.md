@@ -2,7 +2,7 @@
 
 Validé par Dylan le 25/09/2026 sur la page GreyMatter : « ce format est absolument incroyable, on
 garde absolument et on enregistre pour les prochaines ». Toute nouvelle page de projet se fait
-avec ces briques. Exemple complet : `src/content/projects/fr/c-brain.mdx` (et `en/`).
+avec ces briques. Exemple complet : `src/content/projects/fr/greymatter.mdx` (et `en/`).
 
 ## Passer une page au format
 

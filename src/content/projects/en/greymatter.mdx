@@ -33,7 +33,8 @@ export const depot = 'https://github.com/Yuno15-bb/GreyMatter-engine';
 
 <Ouverture
   logo={{ src: '/projects/gmtr-icone-22-09.png', alt: "GreyMatter app icon" }}
-  reperes={['Open source', 'Apache 2.0', 'macOS']}
+  annonce="V2 release soon"
+  reperes={['Open source', 'macOS']}
   titre="Persistent memory for Claude Code."
   chapo="GreyMatter turns every session into linked Markdown notes, versioned with git, that your agent finds again from one session to the next."
   actions={[
@@ -73,7 +74,7 @@ export const depot = 'https://github.com/Yuno15-bb/GreyMatter-engine';
       description="A Mac desktop at sunset. A small glass window appears in the middle; three white bars stack inside it, then turn into the GMTR logo, and a loading bar fills underneath."
     />
   </Moment>
-  <Moment surtitre="Menu bar" titre="Watch your agents work, live." badge="Next release">
+  <Moment surtitre="Menu bar" titre="Watch your agents work, live." badge="V2 · soon">
     <p slot="texte">Each step of the task shows up under the pill, colour-coded by type of work, until “Done”. At idle it uses 4% of one CPU core.</p>
     <Apercu
       src="/projects/gmtr-pastille-25-09.mp4"
@@ -92,9 +93,9 @@ export const depot = 'https://github.com/Yuno15-bb/GreyMatter-engine';
 >
   <Capacites items={[
     { titre: 'Distillation', texte: 'At the end of a session, the transcript is split into notes: one fact per note, with its source and confidence level.' },
-    { titre: 'Search on demand', texte: 'A keyword, a sentence or brain recall: the relevant notes land in context. Nothing gets in unless you asked for it.', badge: 'Next release · 1.28 injects automatically' },
+    { titre: 'Search on demand', texte: 'A keyword, a sentence or brain recall: the relevant notes land in context. Nothing gets in unless you asked for it.', badge: 'V2 · soon · 1.28 injects automatically' },
     { titre: 'Notes linked across projects', texte: 'A lesson learned on one project is available in every other. The bigger the repository, the sharper the answers.' },
-    { titre: '8 maintenance agents', texte: 'Distil, file, challenge, link, archive, repair, watch the machine, synthesise. Each agent can only write to its own zone.', badge: 'Next release · grouped into 4 ships' },
+    { titre: '8 maintenance agents', texte: 'Distil, file, challenge, link, archive, repair, watch the machine, synthesise. Each agent can only write to its own zone.', badge: 'V2 · soon · grouped into 4 ships' },
     { titre: 'Freshness review', texte: 'A note that was never re-checked enters a review queue, dated from the git history.' },
     { titre: 'Updates with rollback', texte: 'The engine replaces itself on every session, and brain update --rollback returns to the previous version. Your notes are never modified.' },
   ]} />
