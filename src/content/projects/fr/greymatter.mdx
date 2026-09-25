@@ -35,7 +35,7 @@ export const depot = 'https://github.com/Yuno15-bb/GreyMatter-engine';
   annonce="V2 bientôt"
   reperes={['Open source', 'macOS']}
   titre="Une mémoire persistante pour Claude Code."
-  chapo="GreyMatter transforme chaque session en notes Markdown reliées et versionnées avec git, que votre agent retrouve d'une session à l'autre."
+  chapo="GreyMatter transforme chaque session en notes Markdown reliées et versionnées avec git, que votre agent retrouve d'une session à l'autre. Conçu pour Claude Code, utilisable avec d'autres agents en ligne de commande."
   actions={[
     { label: 'Voir sur GitHub', url: depot, plein: true },
     { label: 'Installer', url: '#installer' },
@@ -92,9 +92,9 @@ export const depot = 'https://github.com/Yuno15-bb/GreyMatter-engine';
 >
   <Capacites items={[
     { titre: 'Distillation', texte: 'En fin de session, le transcript est découpé en notes : un fait par note, avec sa source et son niveau de certitude.' },
-    { titre: 'Recherche à la demande', texte: "Un mot-clé, une phrase ou brain recall : les notes pertinentes arrivent dans le contexte. Rien n'y entre sans avoir été demandé.", badge: "V2 · bientôt · la 1.28 injecte d'office" },
+    { titre: 'Recherche à la demande', texte: "Un mot-clé, une phrase ou brain recall : les notes pertinentes arrivent dans le contexte. Rien n'y entre sans avoir été demandé.", badge: "Publiée (1.28) : d'office · V2 bientôt : sur demande" },
     { titre: 'Notes liées entre projets', texte: "Une leçon apprise sur un projet est disponible dans tous les autres. Plus le dépôt grossit, plus les réponses sont précises." },
-    { titre: '8 agents de maintenance', texte: "Distiller, ranger, contester, relier, archiver, réparer, surveiller la machine, synthétiser. Chaque agent n'a le droit d'écrire que dans sa zone.", badge: 'V2 · bientôt · regroupés en 4 vaisseaux' },
+    { titre: '8 agents de maintenance', texte: "Distiller, ranger, contester, relier, archiver, réparer, surveiller la machine, synthétiser. Chaque agent n'a le droit d'écrire que dans sa zone.", badge: 'Publiée (1.28) : 8 agents · V2 bientôt : en 4 vaisseaux' },
     { titre: 'Revue de fraîcheur', texte: "Une note jamais revérifiée entre dans une file de relecture, datée par l'historique git." },
     { titre: 'Mises à jour avec retour arrière', texte: 'Le moteur se remplace en entier à chaque session, et brain update --rollback revient à la version précédente. Vos notes ne sont jamais modifiées.' },
   ]} />
@@ -123,7 +123,7 @@ export const depot = 'https://github.com/Yuno15-bb/GreyMatter-engine';
   <AvantApres
     libelles={{ avant: 'Avant', apres: 'Après' }}
     items={[
-      { titre: 'Injection automatique', avant: '4 %', avantSens: "des notes injectées d'office étaient réellement ouvertes : 139 sur 3 256, en 30 jours.", apres: 'Sur demande', apresSens: "La recherche reste, l'injection non sollicitée est supprimée. Un réglage la réactive sans toucher au code." },
+      { titre: 'Injection automatique', avant: '4 %', avantSens: "des notes injectées d'office étaient réellement ouvertes : 139 sur 3 256, en 30 jours.", apres: 'Sur demande', apresSens: "Les notes arrivent toujours, quand on les demande : avec elles, l'agent réussissait 10 questions de test sur 10. Un réglage remet l'envoi d'office." },
       { titre: 'Pastille au repos', avant: '28 % + 29 %', avantSens: "d'un cœur CPU : la pastille, puis le processus macOS qui dessine l'écran. Chaque image était payée deux fois.", apres: '4 % + 20 %', apresSens: "Chaque zone s'anime à la cadence de ce qui bouge réellement, et rien n'est rendu quand la fenêtre est cachée." },
     ]}
   />

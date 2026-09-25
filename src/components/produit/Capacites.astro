@@ -8,7 +8,7 @@ const { items } = Astro.props;
     <li class="capa__carte">
       <h3 class="capa__titre">{c.titre}</h3>
       <p class="capa__texte">{c.texte}</p>
-      {c.badge && <p class="capa__badge">{c.badge}</p>}
+      {c.badge && <p class="capa__badge">{c.badge.split(' · ').map((l) => <span>{l}</span>)}</p>}
     </li>
   ))}
 </ul>
@@ -32,6 +32,9 @@ const { items } = Astro.props;
     margin: auto 0 0; padding-top: var(--e-8);
     font-family: var(--font-mono); font-size: var(--t-legende); color: var(--p-accent);
   }
+  /* Une ligne par version (« Publiée (1.28) : … » puis « V2 bientôt : … ») : laissées au retour
+     à la ligne libre, les deux se coupaient au milieu d'une phrase dans une carte de 290 px. */
+  .capa__badge span { display: block; }
   @media (max-width: 1000px) { .capa { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 640px)  { .capa { grid-template-columns: minmax(0, 1fr); } }
 </style>

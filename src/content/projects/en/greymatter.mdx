@@ -36,7 +36,7 @@ export const depot = 'https://github.com/Yuno15-bb/GreyMatter-engine';
   annonce="V2 release soon"
   reperes={['Open source', 'macOS']}
   titre="Persistent memory for Claude Code."
-  chapo="GreyMatter turns every session into linked Markdown notes, versioned with git, that your agent finds again from one session to the next."
+  chapo="GreyMatter turns every session into linked Markdown notes, versioned with git, that your agent finds again from one session to the next. Built for Claude Code, usable with other command-line agents."
   actions={[
     { label: 'View on GitHub', url: depot, plein: true },
     { label: 'Install', url: '#installer' },
@@ -93,9 +93,9 @@ export const depot = 'https://github.com/Yuno15-bb/GreyMatter-engine';
 >
   <Capacites items={[
     { titre: 'Distillation', texte: 'At the end of a session, the transcript is split into notes: one fact per note, with its source and confidence level.' },
-    { titre: 'Search on demand', texte: 'A keyword, a sentence or brain recall: the relevant notes land in context. Nothing gets in unless you asked for it.', badge: 'V2 · soon · 1.28 injects automatically' },
+    { titre: 'Search on demand', texte: 'A keyword, a sentence or brain recall: the relevant notes land in context. Nothing gets in unless you asked for it.', badge: 'Released (1.28): automatic · V2, soon: on request' },
     { titre: 'Notes linked across projects', texte: 'A lesson learned on one project is available in every other. The bigger the repository, the sharper the answers.' },
-    { titre: '8 maintenance agents', texte: 'Distil, file, challenge, link, archive, repair, watch the machine, synthesise. Each agent can only write to its own zone.', badge: 'V2 · soon · grouped into 4 ships' },
+    { titre: '8 maintenance agents', texte: 'Distil, file, challenge, link, archive, repair, watch the machine, synthesise. Each agent can only write to its own zone.', badge: 'Released (1.28): 8 agents · V2, soon: in 4 ships' },
     { titre: 'Freshness review', texte: 'A note that was never re-checked enters a review queue, dated from the git history.' },
     { titre: 'Updates with rollback', texte: 'The engine replaces itself on every session, and brain update --rollback returns to the previous version. Your notes are never modified.' },
   ]} />
@@ -124,7 +124,7 @@ export const depot = 'https://github.com/Yuno15-bb/GreyMatter-engine';
   <AvantApres
     libelles={{ avant: 'Before', apres: 'After' }}
     items={[
-      { titre: 'Automatic injection', avant: '4%', avantSens: 'of the notes injected unasked were actually opened: 139 out of 3,256, over 30 days.', apres: 'On demand', apresSens: 'Search stays, unsolicited injection is gone. One setting turns it back on without touching the code.' },
+      { titre: 'Automatic injection', avant: '4%', avantSens: 'of the notes injected unasked were actually opened: 139 out of 3,256, over 30 days.', apres: 'On demand', apresSens: 'Notes still arrive, when asked for: with them, the agent got 10 out of 10 test questions right. One setting restores automatic sending.' },
       { titre: 'Pill at idle', avant: '28% + 29%', avantSens: 'of one CPU core: the pill, then the macOS process that draws the screen. Every frame was paid for twice.', apres: '4% + 20%', apresSens: 'Each area animates at the rate of what actually moves, and nothing renders while the window is hidden.' },
     ]}
   />
