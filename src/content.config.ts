@@ -33,6 +33,9 @@ const projects = defineCollection({
     // zéro, elle n'est pas bonne comme présentation produit, même open source ».
     gabarit: z.enum(['etude', 'produit']).default('etude'),
     // Ton de la page produit : nuit (fond sombre) ou jour (fond clair).
+    // Dylan, 25/09 : « theme base = noir le rendu est meilleur mais on laisse l'option de
+    // switch ». Toutes les pages partent en nuit (l'accueil aussi) ; le bouton lune/soleil
+    // reste, et le choix du visiteur est gardé d'une page à l'autre.
     ton: z.enum(['nuit', 'jour']).default('nuit'),
   }),
 });
