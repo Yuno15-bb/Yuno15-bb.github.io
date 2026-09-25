@@ -10,7 +10,7 @@ Dans l'en-tête du MDX :
 
 ```yaml
 gabarit: produit   # sans ce champ, la page garde l'ancien gabarit « étude »
-ton: nuit          # ton par défaut ; le visiteur bascule avec le bouton soleil/lune
+ton: jour          # on arrive en blanc (Dylan, 25/09) ; le visiteur bascule avec le bouton soleil/lune
 ```
 
 Puis le corps, dans cet ordre (tiré de onze pages de devs relevées le 25/09, galerie dans
@@ -30,6 +30,10 @@ Puis le corps, dans cet ordre (tiré de onze pages de devs relevées le 25/09, g
 `PageProduit` enveloppe le tout (branché par `pages/[lang]/projects/[slug].astro`) : lien retour,
 apparition au défilement, copie, bascule nuit/jour. La direction visuelle et les jetons sont dans
 `src/styles/produit.css`.
+
+Pas de section sur nos coulisses (comment le dépôt public est extrait, le contrôle de fuite) :
+Dylan l'a retirée de GreyMatter, « je doute que la partie publications soit nécessaire d'être
+publiée ». Une preuve d'une ligne peut rester dans `Preuves`.
 
 ## Contrôles avant de pousser
 
