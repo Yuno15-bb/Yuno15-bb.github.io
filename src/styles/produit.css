@@ -199,7 +199,8 @@ html[data-produit="jour"][data-fond] { --p-doux: #5e5e63; --p-accent: #9a4614; }
    glass qu'on a dans nos ressources ». La recette est celle du kit landmarks-web (`.lm-verre`,
    ~/.claude/skills/_refs/landmarks-web) : voile teinté, filet clair, reflet en haut, flou
    saturé. ⚠ Le kit réserve le verre à la navigation (« Don't use Liquid Glass in the content
-   layer ») : c'est une exception voulue, sur les cartes du même habit (capacités, avant/après,
+   layer ») : c'est une exception voulue — Dylan : « c'est pour le portfolio donc exceptionnel ».
+   Elle vaut sur les cartes du même habit (capacités, avant/après,
    installation, plaques de figures), et seulement où le champ animé passe dessous — sur un fond
    uni, le verre ne floute rien. */
 html[data-produit][data-fond] {
