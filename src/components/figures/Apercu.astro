@@ -1,0 +1,44 @@
+---
+/**
+ * Apercu — un coin d'écran filmé, dans un simple filet à coins arrondis.
+ *
+ * Dylan, 25/09 : « on a pas besoin de prendre tout le mac pour afficher un aperçu zoomé »,
+ * et le nouveau cadre « doit avoir des bords arrondis (cadre ligne simple minimaliste) ».
+ * Quand la vidéo ne montre qu'un coin de l'écran, le MacBook entier (<MacBureau>) coûtait
+ * les deux tiers de la place à du décor. Ici : un filet, un arrondi, rien d'autre.
+ *
+ * C'est une exception écrite à la règle du 04/09 (« une capture de présentation se montre
+ * TOUJOURS dans un cadre d'appareil ») et au --radius: 0 du site : elle vaut pour un
+ * aperçu recadré, pas pour une capture d'écran entière.
+ */
+import Anim from './Anim.astro';
+
+interface Props {
+  src: string;
+  poster: string;
+  largeur: number;
+  hauteur: number;
+  description: string;
+}
+const { src, poster, largeur, hauteur, description } = Astro.props;
+---
+<div class="apercu">
+  <Anim src={src} poster={poster} largeur={largeur} hauteur={hauteur} description={description} />
+</div>
+
+<style>
+  .apercu {
+    max-width: 1100px;
+    margin-inline: auto;
+    border: 1px solid var(--c-line-ui);
+    border-radius: 16px;
+    overflow: hidden;
+    background: #000;
+  }
+  .apercu :global(video) {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: none !important;
+  }
+</style>

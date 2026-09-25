@@ -17,16 +17,19 @@ import Figure from '../../../components/Figure.astro';
 import Flow from '../../../components/figures/Flow.astro';
 import Duo from '../../../components/figures/Duo.astro';
 import MacBureau from '../../../components/figures/MacBureau.astro';
+import Apercu from '../../../components/figures/Apercu.astro';
 
 <Figure
   cadre={false}
-  legende="Pendant qu'un agent travaille, une pastille dans la barre de menu le nomme et dit ce qu'il fait ; au centre, le même coin agrandi. On l'ouvre, et les étapes de la tâche s'alignent dessous ; chaque genre de travail a sa couleur, jusqu'à « Done ». Avec la carte, c'est la seule interface : tout le reste est du texte."
-  source="Filmé sur l'écran entier de ce Mac, en mode démonstration : interface en anglais, code inventé dans la bille. L'agrandissement au centre est ajouté au montage. Cadre officiel d'Apple."
+  legende="Pendant qu'un agent travaille, une pastille dans la barre de menu le nomme et dit ce qu'il fait ; en dessous, le même coin agrandi. On l'ouvre, et les étapes de la tâche s'alignent dessous ; chaque genre de travail a sa couleur, jusqu'à « Done ». Avec la carte, c'est la seule interface : tout le reste est du texte."
+  source="Filmé sur ce Mac, en mode démonstration : interface en anglais, code inventé dans la bille. Seul le coin de l'écran où vit la pastille est gardé ; l'agrandissement est ajouté au montage."
 >
-  <MacBureau
-    src="/projects/gmtr-bureau-25-09.mp4"
-    poster="/projects/gmtr-bureau-25-09.webp"
-    description="Le bureau d'un Mac. En haut à droite, la pastille GreyMatter dans la barre de menu et son panneau ouvert dessous ; au centre de l'écran, le même coin agrandi. Torrens range la carte, Anesidora écrit la synthèse, Torrens enregistre ; la bille de verre change de couleur avec le genre de travail. À la fin, « Done » et trois étapes."
+  <Apercu
+    src="/projects/gmtr-pastille-25-09.mp4"
+    poster="/projects/gmtr-pastille-25-09.webp"
+    largeur={1434}
+    hauteur={884}
+    description="Le coin droit de la barre de menus d'un Mac, la nuit. En haut à droite, la pastille GreyMatter et son panneau ouvert dessous ; en dessous, le même coin agrandi. Torrens range la carte, Anesidora écrit la synthèse, Torrens enregistre ; la bille de verre change de couleur avec le genre de travail. À la fin, « Done » et trois étapes."
   />
 </Figure>
 
