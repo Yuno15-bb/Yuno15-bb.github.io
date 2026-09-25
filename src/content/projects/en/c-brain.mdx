@@ -17,16 +17,16 @@ import Figure from '../../../components/Figure.astro';
 import Flow from '../../../components/figures/Flow.astro';
 import Duo from '../../../components/figures/Duo.astro';
 import MacBureau from '../../../components/figures/MacBureau.astro';
-import Appareils from '../../../components/figures/Appareils.astro';
 
 <Figure
   cadre={false}
-  legende="The same trunk map at the same instant on both screens: 756 notes, 3,072 links, 21 regions. At the bottom, the regions by size, the log of what is read and written, and the code being written right now."
-  source="Captured on 24/09 from a demonstration trunk at full density, translated into English, names and paths neutralised before the photo. Official Apple bezels, at true relative scale."
+  legende="While an agent works, a pill in the menu bar names it and says what it is doing; in the centre, the same corner enlarged. Open it and the steps of the run line up underneath; each kind of work has its own colour, up to “Done”. Together with the map, it is the only interface: everything else is text."
+  source="Filmed on this Mac's full screen, in demonstration mode: English interface, invented code inside the orb. The enlargement in the centre is added in the edit. Official Apple frame."
 >
-  <Appareils
-    src="/projects/gmtr-duo-24-09.webp"
-    alt="The trunk map on MacBook Pro and iPad"
+  <MacBureau
+    src="/projects/gmtr-bureau-25-09.mp4"
+    poster="/projects/gmtr-bureau-25-09.webp"
+    description="A Mac desktop. Top right, the GreyMatter pill in the menu bar with its panel open underneath; in the centre of the screen, the same corner enlarged. Torrens tidies the map, Anesidora writes the digest, Torrens commits; the glass orb changes colour with the kind of work. At the end, “Done” and three steps."
   />
 </Figure>
 
@@ -69,31 +69,17 @@ next release.
   ]} />
 </Figure>
 
-## The map
+## Opening
 
 <Figure
   cadre={false}
-  legende="Every dot is a note, filed in its region. Enter a region: it unfolds into a sphere, its families all around. Hover a note and it previews on the right; click and it opens with its text and its link count."
-  source="Filmed on 24/09 on this Mac's full screen, window at its true size, on the anonymised demonstration trunk. Official Apple frame."
+  legende="On opening, the GMTR window settles on the desktop and its logo builds itself while the trunk loads."
+  source="Filmed on 24/09 on this Mac's full screen, window at its true size. Official Apple frame."
 >
   <MacBureau
-    src="/projects/gmtr-carte-24-09.mp4"
-    poster="/projects/gmtr-carte-24-09.webp"
-    description="A Mac desktop, with the glass GMTR window in the middle. First the whole map: the regions of notes as small coloured clusters, each with its count. The claude-brain region is entered and unfolds into a sphere ringed by its families; a note is hovered and its preview appears on the right, then it is clicked and opens in full with its 43 links. Then another region. At the bottom, the region table, the start-up log and the code being written right now."
-  />
-</Figure>
-
-## The pill
-
-<Figure
-  cadre={false}
-  legende="While an agent works, a pill in the menu bar names it and says what it is doing; in the centre, the same corner enlarged. Open it and the steps of the run line up underneath; each kind of work has its own colour, up to “Done”. Together with the map, it is the only interface: everything else is text."
-  source="Filmed on this Mac's full screen, in demonstration mode: English interface, invented code inside the orb. The enlargement in the centre is added in the edit. Official Apple frame."
->
-  <MacBureau
-    src="/projects/gmtr-bureau-25-09.mp4"
-    poster="/projects/gmtr-bureau-25-09.webp"
-    description="A Mac desktop. Top right, the GreyMatter pill in the menu bar with its panel open underneath; in the centre of the screen, the same corner enlarged. Torrens tidies the map, Anesidora writes the digest, Torrens commits; the glass orb changes colour with the kind of work. At the end, “Done” and three steps."
+    src="/projects/gmtr-ouverture-24-09.mp4"
+    poster="/projects/gmtr-ouverture-24-09.webp"
+    description="A Mac desktop at sunset. A small glass window appears in the middle; three white bars stack inside it, then turn into the GMTR logo, and a loading bar fills underneath."
   />
 </Figure>
 

@@ -17,16 +17,16 @@ import Figure from '../../../components/Figure.astro';
 import Flow from '../../../components/figures/Flow.astro';
 import Duo from '../../../components/figures/Duo.astro';
 import MacBureau from '../../../components/figures/MacBureau.astro';
-import Appareils from '../../../components/figures/Appareils.astro';
 
 <Figure
   cadre={false}
-  legende="La même carte du tronc au même instant sur les deux écrans : 756 fiches, 3 072 liens, 21 régions. En bas, les régions par taille, le journal de ce qui est lu et écrit, et le code en train d'être écrit."
-  source="Captures du 24/09 sur un tronc de démonstration à la vraie densité, traduit en anglais, noms et chemins neutralisés avant la photo. Cadres officiels d'Apple, à l'échelle réelle."
+  legende="Pendant qu'un agent travaille, une pastille dans la barre de menu le nomme et dit ce qu'il fait ; au centre, le même coin agrandi. On l'ouvre, et les étapes de la tâche s'alignent dessous ; chaque genre de travail a sa couleur, jusqu'à « Done ». Avec la carte, c'est la seule interface : tout le reste est du texte."
+  source="Filmé sur l'écran entier de ce Mac, en mode démonstration : interface en anglais, code inventé dans la bille. L'agrandissement au centre est ajouté au montage. Cadre officiel d'Apple."
 >
-  <Appareils
-    src="/projects/gmtr-duo-24-09.webp"
-    alt="La carte du tronc sur MacBook Pro et iPad"
+  <MacBureau
+    src="/projects/gmtr-bureau-25-09.mp4"
+    poster="/projects/gmtr-bureau-25-09.webp"
+    description="Le bureau d'un Mac. En haut à droite, la pastille GreyMatter dans la barre de menu et son panneau ouvert dessous ; au centre de l'écran, le même coin agrandi. Torrens range la carte, Anesidora écrit la synthèse, Torrens enregistre ; la bille de verre change de couleur avec le genre de travail. À la fin, « Done » et trois étapes."
   />
 </Figure>
 
@@ -69,31 +69,17 @@ la demande arrivent avec la prochaine version.
   ]} />
 </Figure>
 
-## La carte
+## L'ouverture
 
 <Figure
   cadre={false}
-  legende="Chaque point est une fiche, rangée dans sa région. On entre dans une région : elle se déplie en sphère, ses familles tout autour. On survole une fiche, elle s'annonce à droite ; on clique, elle s'ouvre avec son texte et son nombre de liens."
-  source="Filmé le 24/09 sur l'écran entier de ce Mac, fenêtre à sa vraie taille, sur le tronc de démonstration anonymisé. Cadre officiel d'Apple."
+  legende="À l'ouverture, la fenêtre de GMTR se pose sur le bureau et son logo se construit pendant que le tronc se charge."
+  source="Filmé le 24/09 sur l'écran entier de ce Mac, fenêtre à sa vraie taille. Cadre officiel d'Apple."
 >
   <MacBureau
-    src="/projects/gmtr-carte-24-09.mp4"
-    poster="/projects/gmtr-carte-24-09.webp"
-    description="Le bureau d'un Mac, et la fenêtre GMTR en verre au milieu. D'abord la carte entière : les régions de fiches en petits amas colorés, chacune avec son nombre. On entre dans la région claude-brain, qui se déplie en sphère entourée de ses familles ; on survole une fiche, son aperçu s'affiche à droite, puis on la clique et elle s'ouvre en entier avec ses 43 liens. On passe ensuite à une autre région. En bas, le tableau des régions, le journal du démarrage et le code en train d'être écrit."
-  />
-</Figure>
-
-## La pastille
-
-<Figure
-  cadre={false}
-  legende="Pendant qu'un agent travaille, une pastille dans la barre de menu le nomme et dit ce qu'il fait ; au centre, le même coin agrandi. On l'ouvre, et les étapes de la tâche s'alignent dessous ; chaque genre de travail a sa couleur, jusqu'à « Done ». Avec la carte, c'est la seule interface : tout le reste est du texte."
-  source="Filmé sur l'écran entier de ce Mac, en mode démonstration : interface en anglais, code inventé dans la bille. L'agrandissement au centre est ajouté au montage. Cadre officiel d'Apple."
->
-  <MacBureau
-    src="/projects/gmtr-bureau-25-09.mp4"
-    poster="/projects/gmtr-bureau-25-09.webp"
-    description="Le bureau d'un Mac. En haut à droite, la pastille GreyMatter dans la barre de menu et son panneau ouvert dessous ; au centre de l'écran, le même coin agrandi. Torrens range la carte, Anesidora écrit la synthèse, Torrens enregistre ; la bille de verre change de couleur avec le genre de travail. À la fin, « Done » et trois étapes."
+    src="/projects/gmtr-ouverture-24-09.mp4"
+    poster="/projects/gmtr-ouverture-24-09.webp"
+    description="Le bureau d'un Mac au coucher du soleil. Une petite fenêtre en verre apparaît au milieu ; trois barres blanches s'y empilent puis se changent en logo GMTR, et une barre de chargement se remplit dessous."
   />
 </Figure>
 
