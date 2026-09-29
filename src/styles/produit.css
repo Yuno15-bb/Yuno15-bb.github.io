@@ -41,7 +41,9 @@ html[data-produit] {
   --t-titre2: clamp(32px, 3vw, 42px);
   --t-titre1: clamp(40px, 4.6vw, 65px);
   --mesure: 62ch;
-  --page: 1200px;
+  /* La largeur de page EST celle du site (--container, tokens.css, élargie le 29/09) : à
+     1 200 px, l'en-tête et le contenu n'avaient déjà pas le même bord gauche (221 et 225). */
+  --page: var(--container);
   --arrondi: 16px;
   /* ⚠ La police mono du site (« JetBrains Mono ») n'est chargée nulle part : Chrome
      retombait sur Courier. Ici, la pile système de GitHub — SF Mono sur Mac, Consolas
@@ -129,6 +131,11 @@ html[data-produit="jour"][data-fond] { --p-doux: #5e5e63; --p-accent: #9a4614; }
 .produit__page {
   width: min(var(--page), 100% - 2 * var(--e-24));
   margin-inline: auto;
+}
+/* Au-dessus du téléphone, la gouttière de .container (global.css) : un seul bord gauche,
+   en-tête compris. Sur téléphone, les 24 px d'origine restent. */
+@media (min-width: 721px) {
+  .produit__page { width: min(var(--page), 100% - 2 * var(--space-6)); }
 }
 .produit p { max-width: var(--mesure); }
 .produit :where(h1, h2, h3) {
@@ -235,6 +242,9 @@ html[data-produit][data-fond] :is(.capa__carte, .aa__cas, .inst, .fig__plate:not
 /* Les fiches d'incident gardaient la police de titre du site (à empattements) :
    sur ces pages, tous les titres sont en Inter. */
 .produit .inc .inc__titre { font-family: var(--font-sans); font-weight: 600; letter-spacing: -0.015em; }
+/* Le cadre d'une fiche d'incident s'arrête où s'arrête la fiche (62rem, Incident.astro). Page
+   élargie le 29/09, le cadre s'étirait sur toute la page : 40 % de verre vide à droite du texte. */
+.produit .fig__plate:has(> .inc) { width: fit-content; }
 
 /* ---------------- Apparition au défilement ---------------- */
 /* `.p-anime` n'est posé que par le script : sans JavaScript, rien n'est caché. */

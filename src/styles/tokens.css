@@ -71,8 +71,14 @@ html { font-size: 90%; }
   --grid-cols: 12;
   --grid-gutter: var(--space-3);
   --measure: 68ch;
-  /* Canevas elargi dans le meme mouvement : plus d'air autour du contenu. */
-  --container: 84rem;
+  /* LA LARGEUR DU SITE — un seul bouton, pour l'accueil comme pour les pages produit
+     (produit.css s'y aligne). Demande du 29/09 : « pourquoi le portfolio ne remplis pas la
+     largeur de la page », puis « elargi oui ». À 84rem, la racine à 90 % et le cran de
+     zoom à 85 % se multipliaient : 1 028 points sur un écran de 1 470, 69 % de la
+     largeur, parmi les plus étroites des onze pages relevées le 25/09. Mesuré le 29/09 dans
+     Chrome : Linear et Raycast arrêtent leur contenu à 1 285-1 300 points quel que soit
+     l'écran (87-88 % à 1 470). 106rem × 14,4 px × 0,85 = 1 297 points : la même borne. */
+  --container: 106rem;
 
   --radius: 0px;
 
