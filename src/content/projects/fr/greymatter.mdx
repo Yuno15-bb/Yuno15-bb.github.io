@@ -1,12 +1,12 @@
 ---
 titre: "GreyMatter"
-pitch: "Une mémoire persistante pour agents en ligne de commande : un moteur installable, tenu séparé des notes, qui se met à jour tout seul. Publié en open source."
+pitch: "Une mémoire persistante pour agents en ligne de commande : un moteur installable, tenu séparé des notes, qui cherche ses mises à jour à chaque session. Publié en open source."
 audience: ["business"]
 contexte: "Projet personnel · open source"
 role: "Conception, architecture, extraction, publication"
 stack: ["Python", "Bash", "Electron", "WebGL", "GitHub Actions", "Apache 2.0"]
 annee: 2026
-resultat: "46 versions publiées sous Apache 2.0, installable en une commande — et un contrôle de fuite qui a le droit de bloquer toute publication."
+resultat: "53 versions publiées sous Apache 2.0, installable en une commande — et un contrôle de fuite qui a le droit de bloquer toute publication."
 cover: "/projects/gmtr-principes-mac-25-09.webp"
 coverEntier: true
 featured: false
@@ -32,7 +32,7 @@ export const depot = 'https://github.com/Yuno15-bb/GreyMatter-engine';
 
 <Ouverture
   logo={{ src: '/projects/gmtr-icone-22-09.png', alt: "Icône de l'app GreyMatter" }}
-  annonce="V2 bientôt"
+  annonce="V2 disponible"
   reperes={['Open source', 'macOS']}
   titre="Une mémoire persistante pour agents CLI."
   chapo="GreyMatter transforme chaque session en notes Markdown reliées et versionnées avec git, que votre agent retrouve d'une session à l'autre. Construit sur et pour Claude Code, il fonctionne aussi dans l'environnement d'autres agents, à la demande."
@@ -52,8 +52,8 @@ export const depot = 'https://github.com/Yuno15-bb/GreyMatter-engine';
 </Ouverture>
 
 <Preuves items={[
-  { valeur: '46 versions', sens: 'publiées sous licence Apache 2.0, sur un dépôt public.' },
-  { valeur: '< 50 ms', sens: 'pour une recherche sur mille notes.' },
+  { valeur: '53 versions', sens: 'publiées sous licence Apache 2.0, sur un dépôt public.' },
+  { valeur: '2,4 ms', sens: 'pour une recherche sur mille notes, sur un banc synthétique.' },
   { valeur: '100 % local', sens: 'aucun compte, aucun serveur : des fichiers sur votre machine.' },
   { valeur: '21 marqueurs', sens: 'de fuite vérifiés avant chaque publication. Un seul positif la bloque.' },
 ]} />
@@ -71,7 +71,7 @@ export const depot = 'https://github.com/Yuno15-bb/GreyMatter-engine';
       description="Le bureau d'un Mac au coucher du soleil. Une petite fenêtre en verre apparaît au milieu ; trois barres blanches s'y empilent puis se changent en logo GMTR, et une barre de chargement se remplit dessous."
     />
   </Moment>
-  <Moment surtitre="Barre de menus" titre="Suivez vos agents en direct." badge="V2 · bientôt">
+  <Moment surtitre="Barre de menus" titre="Suivez vos agents en direct." badge="V2.2 · bientôt">
     <p slot="texte">Deux vraies sessions Claude Code, la pastille au-dessus. Ce que la première apprend, Narcissus le range en note ; la seconde le retrouve avant que Claude réponde. Chaque agent s'affiche sous la pastille, dans sa couleur. Au repos, elle consomme 4 % d'un cœur CPU.</p>
     <Apercu
       src="/projects/gmtr-pastille-29-09.mp4"
@@ -90,11 +90,11 @@ export const depot = 'https://github.com/Yuno15-bb/GreyMatter-engine';
 >
   <Capacites items={[
     { titre: 'Distillation', texte: 'En fin de session, le transcript est découpé en notes : un fait par note, avec sa source et son niveau de certitude.' },
-    { titre: 'Recherche à la demande', texte: "Un mot-clé, une phrase ou brain recall : les notes pertinentes arrivent dans le contexte. Rien n'y entre sans avoir été demandé.", badge: "Publiée (1.28) : d'office · V2 bientôt : sur demande" },
+    { titre: 'Recherche à la demande', texte: "Un mot-clé, une phrase ou brain recall : les notes pertinentes arrivent dans le contexte. Rien n'y entre sans avoir été demandé." },
     { titre: 'Notes liées entre projets', texte: "Une leçon apprise sur un projet est disponible dans tous les autres. Plus le dépôt grossit, plus les réponses sont précises." },
-    { titre: '8 agents de maintenance', texte: "Distiller, ranger, contester, relier, archiver, réparer, surveiller la machine, synthétiser. Chaque agent n'a le droit d'écrire que dans sa zone.", badge: 'Publiée (1.28) : 8 agents · V2 bientôt : en 4 vaisseaux' },
+    { titre: 'Quatre agents, huit missions', texte: "Distiller, ranger, contester, relier, archiver, réparer, surveiller la machine, synthétiser. Chaque agent n'a le droit d'écrire que dans sa zone." },
     { titre: 'Revue de fraîcheur', texte: "Une note jamais revérifiée entre dans une file de relecture, datée par l'historique git." },
-    { titre: 'Mises à jour avec retour arrière', texte: 'Le moteur se remplace en entier à chaque session, et brain update --rollback revient à la version précédente. Vos notes ne sont jamais modifiées.' },
+    { titre: 'Mises à jour avec retour arrière', texte: "Chaque session cherche une nouvelle version, et votre agent vous demande avant de l'installer. brain update --rollback revient à la précédente. Vos notes ne sont jamais modifiées." },
   ]} />
 </Section>
 
@@ -129,15 +129,15 @@ export const depot = 'https://github.com/Yuno15-bb/GreyMatter-engine';
 
 <Installer
   titre="Installer en deux commandes."
-  chapo="GreyMatter s'installe comme plugin Claude Code, puis se met à jour tout seul à chaque session."
-  lignes={['/plugin marketplace add Yuno15-bb/GreyMatter-engine', '/plugin install c-brain@c-brain']}
+  chapo="GreyMatter s'installe comme plugin Claude Code, puis cherche une nouvelle version à chaque session et vous demande avant de l'installer."
+  lignes={['/plugin marketplace add Yuno15-bb/GreyMatter-engine', '/plugin install greymatter@greymatter']}
   copier="Copier"
   copie="Copié"
   actions={[
     { label: 'Code source sur GitHub', url: depot, plein: true },
     { label: "Guide d'installation complet", url: `${depot}/blob/main/INSTALL.md` },
   ]}
-  note="Chaque version passe par la CI : installation, désinstallation et rejeu de toutes les migrations, deux fois, avec zéro note perdue exigée. Version publique : 1.28. La pastille, les 4 vaisseaux et la recherche à la demande arrivent dans la suivante."
+  note="Chaque version passe par la CI : installation, désinstallation et rejeu de toutes les migrations, deux fois, avec zéro note perdue exigée. Version publique : 2.1.1. La pastille de la barre de menus arrive dans la suivante, la 2.2."
 />
 
 <Fabrication items={[

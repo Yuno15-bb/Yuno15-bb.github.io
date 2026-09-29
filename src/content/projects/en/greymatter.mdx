@@ -1,12 +1,12 @@
 ---
 titre: "GreyMatter"
-pitch: "Persistent memory for command-line agents: an installable engine, kept separate from your notes, that updates itself. Published as open source."
+pitch: "Persistent memory for command-line agents: an installable engine, kept separate from your notes, that checks for updates every session. Published as open source."
 audience: ["business"]
 contexte: "Personal project · open source"
 role: "Design, architecture, extraction, publication"
 stack: ["Python", "Bash", "Electron", "WebGL", "GitHub Actions", "Apache 2.0"]
 annee: 2026
-resultat: "46 releases published under Apache 2.0, installable in one command — and a leak check that is allowed to block any publication."
+resultat: "53 releases published under Apache 2.0, installable in one command — and a leak check that is allowed to block any publication."
 cover: "/projects/gmtr-principes-mac-25-09.webp"
 coverEntier: true
 featured: false
@@ -33,7 +33,7 @@ export const depot = 'https://github.com/Yuno15-bb/GreyMatter-engine';
 
 <Ouverture
   logo={{ src: '/projects/gmtr-icone-22-09.png', alt: "GreyMatter app icon" }}
-  annonce="V2 release soon"
+  annonce="V2 released"
   reperes={['Open source', 'macOS']}
   titre="Persistent memory for CLI agents."
   chapo="GreyMatter turns every session into linked Markdown notes, versioned with git, that your agent finds again from one session to the next. Built on and for Claude Code, and it also works in other agents' environments, on demand."
@@ -53,8 +53,8 @@ export const depot = 'https://github.com/Yuno15-bb/GreyMatter-engine';
 </Ouverture>
 
 <Preuves items={[
-  { valeur: '46 releases', sens: 'published under the Apache 2.0 licence, on a public repository.' },
-  { valeur: '< 50 ms', sens: 'per search across a thousand notes.' },
+  { valeur: '53 releases', sens: 'published under the Apache 2.0 licence, on a public repository.' },
+  { valeur: '2.4 ms', sens: 'per search across a thousand notes, on a synthetic bench.' },
   { valeur: '100% local', sens: 'no account, no server: files on your machine.' },
   { valeur: '21 markers', sens: 'checked for leaks before every release. A single hit blocks it.' },
 ]} />
@@ -72,7 +72,7 @@ export const depot = 'https://github.com/Yuno15-bb/GreyMatter-engine';
       description="A Mac desktop at sunset. A small glass window appears in the middle; three white bars stack inside it, then turn into the GMTR logo, and a loading bar fills underneath."
     />
   </Moment>
-  <Moment surtitre="Menu bar" titre="Watch your agents work, live." badge="V2 · soon">
+  <Moment surtitre="Menu bar" titre="Watch your agents work, live." badge="V2.2 · soon">
     <p slot="texte">Two real Claude Code sessions, with the pill above them. What the first one learns, Narcissus files as a note; the second finds it before Claude answers. Each agent shows up under the pill in its own colour. At idle it uses 4% of one CPU core.</p>
     <Apercu
       src="/projects/gmtr-pastille-29-09.mp4"
@@ -91,11 +91,11 @@ export const depot = 'https://github.com/Yuno15-bb/GreyMatter-engine';
 >
   <Capacites items={[
     { titre: 'Distillation', texte: 'At the end of a session, the transcript is split into notes: one fact per note, with its source and confidence level.' },
-    { titre: 'Search on demand', texte: 'A keyword, a sentence or brain recall: the relevant notes land in context. Nothing gets in unless you asked for it.', badge: 'Released (1.28): automatic · V2, soon: on request' },
+    { titre: 'Search on demand', texte: 'A keyword, a sentence or brain recall: the relevant notes land in context. Nothing gets in unless you asked for it.' },
     { titre: 'Notes linked across projects', texte: 'A lesson learned on one project is available in every other. The bigger the repository, the sharper the answers.' },
-    { titre: '8 maintenance agents', texte: 'Distil, file, challenge, link, archive, repair, watch the machine, synthesise. Each agent can only write to its own zone.', badge: 'Released (1.28): 8 agents · V2, soon: in 4 ships' },
+    { titre: 'Four agents, eight missions', texte: 'Distil, file, challenge, link, archive, repair, watch the machine, synthesise. Each agent can only write to its own zone.' },
     { titre: 'Freshness review', texte: 'A note that was never re-checked enters a review queue, dated from the git history.' },
-    { titre: 'Updates with rollback', texte: 'The engine replaces itself on every session, and brain update --rollback returns to the previous version. Your notes are never modified.' },
+    { titre: 'Updates with rollback', texte: 'Every session looks for a new version, and your agent asks you before installing it. brain update --rollback returns to the previous one. Your notes are never modified.' },
   ]} />
 </Section>
 
@@ -130,15 +130,15 @@ export const depot = 'https://github.com/Yuno15-bb/GreyMatter-engine';
 
 <Installer
   titre="Install in two commands."
-  chapo="GreyMatter installs as a Claude Code plugin, then updates itself every session."
-  lignes={['/plugin marketplace add Yuno15-bb/GreyMatter-engine', '/plugin install c-brain@c-brain']}
+  chapo="GreyMatter installs as a Claude Code plugin, then checks for a new version every session and asks before installing it."
+  lignes={['/plugin marketplace add Yuno15-bb/GreyMatter-engine', '/plugin install greymatter@greymatter']}
   copier="Copy"
   copie="Copied"
   actions={[
     { label: 'Source code on GitHub', url: depot, plein: true },
     { label: 'Full install guide', url: `${depot}/blob/main/INSTALL.md` },
   ]}
-  note="Every release goes through CI: install, uninstall and a replay of every migration, twice, with zero lost notes required. Public version: 1.28. The pill, the 4 ships and search on demand ship in the next one."
+  note="Every release goes through CI: install, uninstall and a replay of every migration, twice, with zero lost notes required. Public version: 2.1.1. The menu bar pill ships in the next one, 2.2."
 />
 
 <Fabrication items={[
