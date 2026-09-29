@@ -83,10 +83,13 @@ html { font-size: 90%; }
   --radius: 0px;
 
   /* Écrans de présentation — UN seul bouton pour tous les cadres d'appareil (Apercu,
-     MacBureau, Appareils, Mac). Dylan, 25/09 : « c'est trop grand ça prend trop de largeur
-     réduit de 1/4 », puis « tous les écrans de présentation ». Chaque cadre multiplie sa
-     largeur d'avant par ce facteur ; sur téléphone ils restent à 100 %, la borne ne mord pas. */
-  --ecran-echelle: 0.75;
+     MacBureau, Appareils, Mac). 25/09 : « c'est trop grand ça prend trop de largeur réduit
+     de 1/4 », puis « tous les écrans de présentation » : 0,75, soit un MacBook à 68 % d'une
+     page de 1 028 points. 29/09 : la page passe à 1 297 points (--container) et le MacBook
+     n'en fait plus que 54 %. Trois tailles comparées côte à côte, choix « 3 » : 0,94, qui
+     rend les 68 % validés le 25/09. Chaque cadre multiplie sa largeur d'avant par ce
+     facteur ; sur téléphone ils restent à 100 %, la borne ne mord pas. */
+  --ecran-echelle: 0.94;
 
   /* --- Motion (tokens partages avec /motion et /gsap) --- */
   --dur-micro: 180ms;
