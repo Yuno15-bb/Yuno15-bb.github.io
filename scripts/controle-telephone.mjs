@@ -1,5 +1,7 @@
 /* Le garde-fou du TÉLÉPHONE. Il rougit sur les quatre défauts trouvés le 19/09, et sur eux
  * seuls — chacun a été vu à l'écran avant d'être écrit ici, et chacun a une valeur mesurée.
+ * Depuis le 30/09, il rougit aussi quand le fond animé de l'accueil se dessine plusieurs fois
+ * par image (le gel de la machine au bout de deux minutes).
  *
  *   node scripts/controle-telephone.mjs            # sert dist/ et contrôle
  *   node scripts/controle-telephone.mjs http://…   # contrôle un site déjà servi
@@ -11,7 +13,7 @@
  * format iPhone 1/10. Un contrôle qui ne regarde qu'une largeur ne protège qu'une largeur.
  *
  * CE QU'IL NE FAIT PAS : juger. Il ne dit pas si la page est belle, ni si le récit tient. Il
- * mesure quatre choses chiffrables. Le reste se regarde, en capture, une par une.
+ * mesure cinq choses chiffrables. Le reste se regarde, en capture, une par une.
  *
  * ⚠ Playwright est emprunté à dgc-suivi, comme le fait déjà `recolter.mjs` du dossier d'audit.
  * Ce dépôt n'a pas de navigateur à lui : si ce chemin disparaît, le contrôle ne tourne plus.
@@ -176,6 +178,34 @@ for (const [nom, voie] of VOIES) {
          `sur ${m.paragraphes} paragraphes (moyenne ${m.signesMoyenne}), plancher ${SIGNES_MINIMUM}`);
   if (m.petites.length)
     rate(nom, 'des cibles tactiles sous 44 px', m.petites.join(' · '));
+
+  /* 30/09 — le fond animé relançait une boucle de dessin à chaque changement de taille, et
+     la barre de Safari en provoque un à chaque défilement. Après deux minutes, téléphone et
+     Mac gelaient (Dylan : « ça fait bugué tout le pc ou tout le téléphone »). Mesuré en
+     ligne ce jour-là : 2 dessins par image au chargement, 12 après 10 changements de taille. */
+  if (voie === '/fr/') {
+    for (let i = 0; i < 10; i++) {
+      await page.setViewportSize({ width: LARGEUR, height: i % 2 ? HAUTEUR : HAUTEUR - 92 });
+      await page.waitForTimeout(150);
+    }
+    await page.setViewportSize({ width: LARGEUR, height: HAUTEUR });
+    const parImage = await page.evaluate(async () => {
+      const fond = [...document.querySelectorAll('.fond-anime *')].find((e) => e.__gbg)?.__gbg;
+      if (!fond) return null;
+      let images = 0, suite = true;
+      const compte = () => { images++; if (suite) requestAnimationFrame(compte); };
+      requestAnimationFrame(compte);
+      const avant = fond.frames;
+      await new Promise((r) => setTimeout(r, 2000));
+      suite = false;
+      return (fond.frames - avant) / images;
+    });
+    if (parImage !== null && parImage > 1.5)
+      rate(nom, 'le fond animé se dessine plusieurs fois par image',
+           `${parImage.toFixed(1)} dessins par image après 10 changements de taille (attendu : 1)`);
+    console.log(`${''.padEnd(14)} fond animé : ${parImage === null ? 'absent, non mesuré'
+                : `${parImage.toFixed(1)} dessin(s) par image après 10 changements de taille`}`);
+  }
 
   console.log(
     `${nom.padEnd(14)} page ${m.pageLargeur} px · en-tête ${m.teteBesoin}/${m.teteDispo} · ` +

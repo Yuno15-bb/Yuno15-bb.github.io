@@ -226,7 +226,10 @@
 
     var ro = null;
     if (typeof ResizeObserver !== "undefined") {
-      ro = new ResizeObserver(function () { draw(performance.now()); });
+      // En marche, la boucle relit la taille à la prochaine image. Appeler draw() ici
+      // en lançait une DEUXIÈME, jamais arrêtée : une de plus à chaque changement de
+      // taille (la barre de Safari qui se replie au défilement), jusqu'à geler la machine.
+      ro = new ResizeObserver(function () { if (!running) draw(performance.now()); });
       ro.observe(root_);
     }
 
